@@ -33,4 +33,4 @@ class TagsRelationsIndexView(generic.ListView):
 
     def get_queryset(self):
         search_request = self.request.resolver_match.kwargs.get('pk')
-        return Article.objects.filter(tags__pk=search_request)
+        return Article.objects.filter(tags__pk=search_request, date_published__lte=timezone.now())
