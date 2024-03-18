@@ -25,5 +25,5 @@ class Article(models.Model):
         return self.title
     
     @admin.display(description='tags')
-    def tags_as_str(self):
+    def tags_as_str(self) -> str:
         return ', '.join(tag.name for tag in self.tags.all())
