@@ -10,15 +10,15 @@ class ArticleAdmin(admin.ModelAdmin):
                 'fields': [
                     'title',
                     'tags',
-                    'date_published',
+                    'pub_date',
                     'content'
                 ]
             }
         )
     ]
     filter_horizontal = ['tags']
-    list_display = ['title', 'date_published', 'tags_as_str']
-    list_filter = ['date_published', 'tags']
+    list_display = ['title', 'pub_date', 'tags_as_str']
+    list_filter = ['pub_date', 'tags']
 
 
 admin.site.register(Article, ArticleAdmin)

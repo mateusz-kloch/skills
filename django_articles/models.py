@@ -15,7 +15,7 @@ class Tag(models.Model):
 class Article(models.Model):
     title = models.CharField(max_length=250)
     tags = models.ManyToManyField(Tag)
-    date_published = models.DateTimeField()
+    pub_date = models.DateTimeField('date published')
     content = models.TextField()
 
     class Meta:

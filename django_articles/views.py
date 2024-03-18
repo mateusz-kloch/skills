@@ -9,14 +9,14 @@ class ArticlesIndexView(generic.ListView):
     context_object_name = 'published_articles_list'
 
     def get_queryset(self):
-        return Article.objects.filter(date_published__lte=timezone.now())
+        return Article.objects.filter(pub_date__lte=timezone.now())
     
 
 class ArticlesDetailView(generic.DetailView):
     template_name = 'django_articles/articles_detail.html'
 
     def get_queryset(self):
-        return Article.objects.filter(date_published__lte=timezone.now())
+        return Article.objects.filter(pub_date__lte=timezone.now())
 
 
 class TagsIndexView(generic.ListView):
@@ -33,4 +33,4 @@ class TagsRelationsIndexView(generic.ListView):
 
     def get_queryset(self):
         search_request = self.request.resolver_match.kwargs.get('pk')
-        return Article.objects.filter(tags__pk=search_request, date_published__lte=timezone.now())
+        return Article.objects.filter(tags__pk=search_request, pub_date__lte=timezone.now())
