@@ -4,31 +4,31 @@ from django.views import generic
 from .models import Article, Tag
 
 
-class ArticlesIndexView(generic.ListView):
-    template_name = 'django_articles/articles_index.html'
+class ArticleIndexView(generic.ListView):
+    template_name = 'django_articles/article_index.html'
     context_object_name = 'published_articles_list'
 
     def get_queryset(self):
         return Article.objects.filter(pub_date__lte=timezone.now())
     
 
-class ArticlesDetailView(generic.DetailView):
-    template_name = 'django_articles/articles_detail.html'
+class ArticleDetailView(generic.DetailView):
+    template_name = 'django_articles/article_detail.html'
 
     def get_queryset(self):
         return Article.objects.filter(pub_date__lte=timezone.now())
 
 
-class TagsIndexView(generic.ListView):
-    template_name = 'django_articles/tags_index.html'
+class TagIndexView(generic.ListView):
+    template_name = 'django_articles/tag_index.html'
     context_object_name = 'available_tags_list'
 
     def get_queryset(self):
         return Tag.objects.all()
     
 
-class TagsRelationsIndexView(generic.ListView):
-    template_name = 'django_articles/tags_relations_index.html'
+class TagRelationsIndexView(generic.ListView):
+    template_name = 'django_articles/tag_relations_index.html'
     context_object_name = 'tags_relations_list'
 
     def get_queryset(self):
