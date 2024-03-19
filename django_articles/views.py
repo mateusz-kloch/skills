@@ -55,7 +55,7 @@ class TagRelationsIndexView(generic.ListView):
     def get_queryset(self):
         search_request = self.request.resolver_match.kwargs.get('pk')
         """
-        Returns a query set of articles whose tags contain the tag with pk provided in the request, and excludes articles with empty fields.
+        Returns a query set of articles whose tags contain the tag with primary key provided in the request, and excludes articles with empty fields.
         """
         return Article.objects.filter(
             tags__pk=search_request,
