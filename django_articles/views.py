@@ -29,7 +29,7 @@ class TagIndexView(generic.ListView):
 
 class TagRelationsIndexView(generic.ListView):
     template_name = 'django_articles/tag_relations_index.html'
-    context_object_name = 'tags_relations_list'
+    context_object_name = 'tag_relations_list'
 
     def get_queryset(self):
         search_request = self.request.resolver_match.kwargs.get('pk')

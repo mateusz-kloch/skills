@@ -5,9 +5,9 @@
         <title>Tags relations index</title>
     </head>
     <body>
-        {% if tags_relations_list %}
+        {% if tag_relations_list %}
             <ul>
-                {% for article in tags_relations_list %}
+                {% for article in tag_relations_list %}
                 <li><a href="{% url 'django_articles:article_detail' article.id %}">{{ article.title }}</a></li>
                 {% endfor %}
             </ul>
