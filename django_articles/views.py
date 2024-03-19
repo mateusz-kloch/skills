@@ -27,9 +27,11 @@ class ArticleDetailView(generic.DetailView):
 
     def get_queryset(self):
         """
-        Returns a query set that includes articles whose pub_data is present or past.
+        Returns a query set of the article whose primary key is provided in the request.
         """
+        search_request = self.request.resolver_match.kwargs.get('pk')
         return Article.objects.filter(
+            pk=search_request,
             tags__isnull=False,
             pub_date__lte=timezone.now()
         )
