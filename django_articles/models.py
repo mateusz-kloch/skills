@@ -26,6 +26,9 @@ class Article(models.Model):
     
     @admin.display(description='tags')
     def tags_as_str(self) -> str:
+        """
+        Returns names of all tags as a single string for an article.
+        """
         return ', '.join(
             tag.name for tag in self.tags.all()
         )
