@@ -13,10 +13,11 @@ class ArticleIndexView(generic.ListView):
         Returns a query set that includes articles whose pub_data is present or past, and excludes articles with empty fields.
         """
         return Article.objects.filter(
-            tags__isnull=False,
             pub_date__lte=timezone.now()
         ).exclude(
             title=''
+        ).exclude(
+            tags__isnull=True
         ).exclude(
             content=''
         )
@@ -32,8 +33,9 @@ class ArticleDetailView(generic.DetailView):
         search_request = self.request.resolver_match.kwargs.get('pk')
         return Article.objects.filter(
             pk=search_request,
-            tags__isnull=False,
             pub_date__lte=timezone.now()
+        ).exclude(
+            tags__isnull=True
         )
 
 
@@ -53,10 +55,10 @@ class TagRelationsIndexView(generic.ListView):
     context_object_name = 'tag_relations_list'
 
     def get_queryset(self):
-        search_request = self.request.resolver_match.kwargs.get('pk')
         """
         Returns a query set of articles whose tags contain the tag with primary key provided in the request, and excludes articles with empty fields.
         """
+        search_request = self.request.resolver_match.kwargs.get('pk')
         return Article.objects.filter(
             tags__pk=search_request,
             pub_date__lte=timezone.now()
