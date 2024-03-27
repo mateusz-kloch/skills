@@ -1,6 +1,8 @@
 from django.urls import path
 
 from .views import (
+    AuthorIndexView,
+    AuthorDetailView,
     ArticleIndexView,
     ArticleDetailView,
     TagIndexView,
@@ -11,8 +13,10 @@ from .views import (
 app_name = 'django_articles'
 
 urlpatterns = [
-    path('articles/', ArticleIndexView.as_view(), name='article_index'),
-    path('articles/<int:pk>/', ArticleDetailView.as_view(), name='article_detail'),
-    path('tags/', TagIndexView.as_view(), name='tag_index'),
-    path('tags/<int:pk>/', TagRelationsIndexView.as_view(), name='tag_relations_index')
+    path('authors/', AuthorIndexView.as_view(), name='author-index'),
+    path('authors/<int:pk>/', AuthorDetailView.as_view(), name='author-detail'),
+    path('articles/', ArticleIndexView.as_view(), name='article-index'),
+    path('articles/<int:pk>/', ArticleDetailView.as_view(), name='article-detail'),
+    path('tags/', TagIndexView.as_view(), name='tag-index'),
+    path('tags/<int:pk>/', TagRelationsIndexView.as_view(), name='tag-relations-index')
 ]

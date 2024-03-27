@@ -1,7 +1,29 @@
 from django.utils import timezone
 from django.views import generic
 
-from .models import Article, Tag
+from .models import Author, Article, Tag
+
+
+class AuthorIndexView(generic.ListView):
+    template_name = 'django_articles/author_index.html'
+    context_object_name = 'authors_list'
+
+    def get_queryset(self):
+        """
+        Returns a query set that includes authors of published articles.
+        """
+        return Author.objects.all()
+    
+
+class AuthorDetailView(generic.DetailView):
+    template_name = 'django_articles/author_detail.html'
+
+    def get_queryset(self):
+        """
+        Returns author whose primary key is provided in the request.
+        """
+        search_request = self.request.resolver_match.kwargs.get('pk')
+        return Author.objects.filter(pk=search_request)
 
 
 class ArticleIndexView(generic.ListView):
@@ -28,14 +50,18 @@ class ArticleDetailView(generic.DetailView):
 
     def get_queryset(self):
         """
-        Returns a query set of the article whose primary key is provided in the request.
+        Returns article whose primary key is provided in the request.
         """
         search_request = self.request.resolver_match.kwargs.get('pk')
         return Article.objects.filter(
             pk=search_request,
             pub_date__lte=timezone.now()
         ).exclude(
+            title=''
+        ).exclude(
             tags__isnull=True
+        ).exclude(
+            content=''
         )
 
 
@@ -63,7 +89,7 @@ class TagRelationsIndexView(generic.ListView):
             tags__pk=search_request,
             pub_date__lte=timezone.now()
         ).exclude(
-                title=''
+            title=''
         ).exclude(
             content=''
         )
