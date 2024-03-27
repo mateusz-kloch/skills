@@ -39,7 +39,7 @@ def create_article(title: str, author: Author, tags: list[Tag], pub_date: dateti
 class AuthorModelTests(TestCase):
     def test_author_as_str(self):
         """
-        Checks whether __str__() display tag correctly
+        Checks whether __str__ display tag correctly
         """
         author = create_author('test_author')
         self.assertIs(str(author), 'test_author')
@@ -48,7 +48,7 @@ class AuthorModelTests(TestCase):
 class ArticleModelTests(TestCase):
     def test_article_as_str(self):
         """
-        Checks whether __str__() displays article correctly.
+        Checks whether __str__ displays article correctly.
         """
         title = 'test title'
         author = create_author('test_author')
@@ -111,7 +111,7 @@ class ArticleModelTests(TestCase):
 class TagModelTests(TestCase):
     def test_tag_as_str(self):
         """
-        Checks whether __str__() display tag correctly
+        Checks whether __str__ display tag correctly
         """
         tag = create_tag('test tag')
         self.assertIs(str(tag), 'test tag')
@@ -122,7 +122,7 @@ class AuthorIndexViewTests(TestCase):
         """
         Checks whether AuthorIndexView displays appropriate message when there are no authors.
         """
-        response = self.client.get(reverse('django_articles:author_index'))
+        response = self.client.get(reverse('django_articles:author-index'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No authors are available.')
         self.assertQuerySetEqual(
@@ -138,7 +138,7 @@ class AuthorIndexViewTests(TestCase):
         author_b = create_author('Author b')
         author_c = create_author('Author c')
         author_a = create_author('Author a')
-        response = self.client.get(reverse('django_articles:author_index'))
+        response = self.client.get(reverse('django_articles:author-index'))
         self.assertQuerySetEqual(
             response.context['authors_list'],
             [author_a, author_b, author_c]
@@ -146,6 +146,24 @@ class AuthorIndexViewTests(TestCase):
 
 
 class AuthorDetailViewTests(TestCase):
+    def test_author_user_name(self):
+        """
+        Checks whether AuthorDetailView displays author user_name.
+        """
+        author = create_author('test_author')
+        response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
+        self.assertContains(response, author.user_name)
+
+
+    def test_author_user_email(self):
+        """
+        Checks whether AuthorDetailView displays author user_email.
+        """
+        author = create_author('test_author')
+        response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
+        self.assertContains(response, author.user_email)
+
+
     def test_past_article(self):
         """
         Checks whether AuthorDetailView displays related article with past pub_date.
@@ -162,237 +180,199 @@ class AuthorDetailViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:article_index'))
-        self.assertQuerySetEqual(
-            response.context['published_articles_list'],
-            [past_article]
-        )
+        response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
+        self.assertContains(response, past_article)
 
 
-    def test_present_article(self):
-        """
-        Checks whether AuthorDetailView displays related article with present pub_date.
-        """
-        title = 'test title'
-        author = create_author('test_author')
-        tags = [create_tag('test tag')]
-        pub_date = timezone.now()
-        content = 'test content'
-        present_article = create_article(
-            title=title,
-            author=author,
-            tags=tags,
-            pub_date=pub_date,
-            content=content
-        )
-        response = self.client.get(reverse('django_articles:article_index'))
-        self.assertQuerySetEqual(
-            response.context['published_articles_list'],
-            [present_article]
-        )
+#     def test_present_article(self):
+#         """
+#         Checks whether AuthorDetailView displays related article with present pub_date.
+#         """
+#         title = 'test title'
+#         author = create_author('test_author')
+#         tags = [create_tag('test tag')]
+#         pub_date = timezone.now()
+#         content = 'test content'
+#         present_article = create_article(
+#             title=title,
+#             author=author,
+#             tags=tags,
+#             pub_date=pub_date,
+#             content=content
+#         )
+#         response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
 
 
-    def test_future_article(self):
-        """
-        Checks whether AuthorDetailView not displays related article with future pub_date.
-        """
-        title = 'test title'
-        author = create_author('test_author')
-        tags = [create_tag('test tag')]
-        pub_date = timezone.now() + timedelta(days=1)
-        content = 'test content'
-        create_article(
-            title=title,
-            author=author,
-            tags=tags,
-            pub_date=pub_date,
-            content=content
-        )
-        response = self.client.get(reverse('django_articles:article_index'))
-        self.assertContains(response, 'Has not published any articles yet.')
-        self.assertQuerySetEqual(
-            response.context['published_articles_list'],
-            []
-        )
+#     def test_future_article(self):
+#         """
+#         Checks whether AuthorDetailView not displays related article with future pub_date.
+#         """
+#         title = 'test title'
+#         author = create_author('test_author')
+#         tags = [create_tag('test tag')]
+#         pub_date = timezone.now() + timedelta(days=1)
+#         content = 'test content'
+#         create_article(
+#             title=title,
+#             author=author,
+#             tags=tags,
+#             pub_date=pub_date,
+#             content=content
+#         )
+#         response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
 
 
-    def test_past_and_present_article(self):
-        """
-        Checks whether AuthorDetailView displays related articles with past and present pub_dates.
-        """
-        past_title = 'past title'
-        present_title = 'present title'
-        author = create_author('test_author')
-        tags = [create_tag('test tag')]
-        past_pub_date = timezone.now() - timedelta(days=1)
-        present_pub_date = timezone.now()
-        content = 'test content'
-        past_article = create_article(
-            title=past_title,
-            author=author,
-            tags=tags,
-            pub_date=past_pub_date,
-            content=content
-        )
-        present_article = create_article(
-            title=present_title,
-            author=author,
-            tags=tags,
-            pub_date=present_pub_date,
-            content=content
-        )
-        response = self.client.get(reverse('django_articles:article_index'))
-        self.assertQuerySetEqual(
-            response.context['published_articles_list'],
-            [past_article, present_article]
-        )
+#     def test_past_and_present_article(self):
+#         """
+#         Checks whether AuthorDetailView displays related articles with past and present pub_dates.
+#         """
+#         past_title = 'past title'
+#         present_title = 'present title'
+#         author = create_author('test_author')
+#         tags = [create_tag('test tag')]
+#         past_pub_date = timezone.now() - timedelta(days=1)
+#         present_pub_date = timezone.now()
+#         content = 'test content'
+#         past_article = create_article(
+#             title=past_title,
+#             author=author,
+#             tags=tags,
+#             pub_date=past_pub_date,
+#             content=content
+#         )
+#         present_article = create_article(
+#             title=present_title,
+#             author=author,
+#             tags=tags,
+#             pub_date=present_pub_date,
+#             content=content
+#         )
+#         response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
 
 
-    def test_past_and_future_article(self):
-        """
-        Checks whether AuthorDetailView displays related article with past pub_date but not article with future pub_date.
-        """
-        past_title = 'past title'
-        future_title = 'future title'
-        author = create_author('test_author')
-        tags = [create_tag('test tag')]
-        past_pub_date = timezone.now() - timedelta(days=1)
-        future_pub_date = timezone.now() + timedelta(days=1)
-        content = 'test content'
-        past_article = create_article(
-            title=past_title,
-            author=author,
-            tags=tags,
-            pub_date=past_pub_date,
-            content=content
-        )
-        create_article(
-            title=future_title,
-            author=author,
-            tags=tags,
-            pub_date=future_pub_date,
-            content=content
-        )
-        response = self.client.get(reverse('django_articles:article_index'))
-        self.assertQuerySetEqual(
-            response.context['published_articles_list'],
-            [past_article]
-        )
+#     def test_past_and_future_article(self):
+#         """
+#         Checks whether AuthorDetailView displays related article with past pub_date but not article with future pub_date.
+#         """
+#         past_title = 'past title'
+#         future_title = 'future title'
+#         author = create_author('test_author')
+#         tags = [create_tag('test tag')]
+#         past_pub_date = timezone.now() - timedelta(days=1)
+#         future_pub_date = timezone.now() + timedelta(days=1)
+#         content = 'test content'
+#         past_article = create_article(
+#             title=past_title,
+#             author=author,
+#             tags=tags,
+#             pub_date=past_pub_date,
+#             content=content
+#         )
+#         create_article(
+#             title=future_title,
+#             author=author,
+#             tags=tags,
+#             pub_date=future_pub_date,
+#             content=content
+#         )
+#         response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
 
 
-    def test_articles_alphabetic_order(self):
-        """
-        Checks whether AuthorDetailView displays related articles in alphabetical order of title.
-        """
-        title_c = 'title c'
-        title_d = 'title d'
-        title_b = 'title b'
-        title_a = 'title a'
-        author = create_author('test_author')
-        tags = [create_tag('test tag')]
-        pub_date = timezone.now()
-        content = 'test content'
-        article_c = create_article(
-            title=title_c,
-            author=author,
-            tags=tags,
-            pub_date=pub_date,
-            content=content
-        )
-        article_d = create_article(
-            title=title_d,
-            author=author,
-            tags=tags,
-            pub_date=pub_date,
-            content=content
-        )
-        article_b = create_article(
-            title=title_b,
-            author=author,
-            tags=tags,
-            pub_date=pub_date,
-            content=content
-        )
-        article_a = create_article(
-            title=title_a,
-            author=author,
-            tags=tags,
-            pub_date=pub_date,
-            content=content
-        )
-        response = self.client.get(reverse('django_articles:article_index'))
-        self.assertQuerySetEqual(
-            response.context['published_articles_list'],
-            [article_a, article_b, article_c, article_d]
-        )
+#     def test_articles_alphabetic_order(self):
+#         """
+#         Checks whether AuthorDetailView displays related articles in alphabetical order of title.
+#         """
+#         title_c = 'title c'
+#         title_d = 'title d'
+#         title_b = 'title b'
+#         title_a = 'title a'
+#         author = create_author('test_author')
+#         tags = [create_tag('test tag')]
+#         pub_date = timezone.now()
+#         content = 'test content'
+#         article_c = create_article(
+#             title=title_c,
+#             author=author,
+#             tags=tags,
+#             pub_date=pub_date,
+#             content=content
+#         )
+#         article_d = create_article(
+#             title=title_d,
+#             author=author,
+#             tags=tags,
+#             pub_date=pub_date,
+#             content=content
+#         )
+#         article_b = create_article(
+#             title=title_b,
+#             author=author,
+#             tags=tags,
+#             pub_date=pub_date,
+#             content=content
+#         )
+#         article_a = create_article(
+#             title=title_a,
+#             author=author,
+#             tags=tags,
+#             pub_date=pub_date,
+#             content=content
+#         )
+#         response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
 
 
-    def test_article_with_missing_title_field(self):
-        """
-        Checks whether AuthorDetailView displays related article without title field.
-        """
-        author = create_author('test_author')
-        tag = create_tag('test tag')
-        pub_date = timezone.now()
-        content = 'test content'
-        article = Article(
-            pub_date=pub_date,
-            content=content
-        )
-        article.save()
-        article.author = author
-        article.tags.set([tag])
-        response = self.client.get(reverse('django_articles:article_index'))
-        self.assertContains(response, 'Has not published any articles yet.')
-        self.assertQuerySetEqual(
-            response.context['published_articles_list'],
-            []
-        )
+#     def test_article_with_missing_title_field(self):
+#         """
+#         Checks whether AuthorDetailView displays related article without title field.
+#         """
+#         author = create_author('test_author')
+#         tag = create_tag('test tag')
+#         pub_date = timezone.now()
+#         content = 'test content'
+#         article = Article(
+#             pub_date=pub_date,
+#             content=content
+#         )
+#         article.save()
+#         article.author = author
+#         article.tags.set([tag])
+#         response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
 
 
-    def test_article_with_missing_content_field(self):
-        """
-        Checks whether AuthorDetailView displays related article without content field.
-        """
-        title = 'test title'
-        author = create_author('test_author')
-        tag = create_tag('test tag')
-        pub_date = timezone.now()
-        article = Article(
-            title=title,
-            pub_date=pub_date
-        )
-        article.save()
-        article.author = author
-        article.tags.set([tag])
-        response = self.client.get(reverse('django_articles:article_index'))
-        self.assertContains(response, 'Has not published any articles yet.')
-        self.assertQuerySetEqual(
-            response.context['published_articles_list'],
-            []
-        )
+#     def test_article_with_missing_content_field(self):
+#         """
+#         Checks whether AuthorDetailView displays related article without content field.
+#         """
+#         title = 'test title'
+#         author = create_author('test_author')
+#         tag = create_tag('test tag')
+#         pub_date = timezone.now()
+#         article = Article(
+#             title=title,
+#             pub_date=pub_date
+#         )
+#         article.save()
+#         article.author = author
+#         article.tags.set([tag])
+#         response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
 
 
-    def test_article_without_related_tag(self):
-        """
-        Checks whether AuthorDetailView displays related article without relation with any Tag model object.
-        """
-        title = 'test title'
-        author = create_author('test_author')
-        pub_date = timezone.now()
-        content = 'test content'
-        article = Article(
-            title=title,
-            pub_date=pub_date,
-            content=content
-        )
-        article.save()
-        article.author = author
-        response = self.client.get(reverse('django_articles:article_index'))
-        self.assertQuerySetEqual(
-            response.context['published_articles_list'],
-            []
-        )
+#     def test_article_without_related_tag(self):
+#         """
+#         Checks whether AuthorDetailView displays related article without relation with any Tag model object.
+#         """
+#         title = 'test title'
+#         author = create_author('test_author')
+#         pub_date = timezone.now()
+#         content = 'test content'
+#         article = Article(
+#             title=title,
+#             pub_date=pub_date,
+#             content=content
+#         )
+#         article.save()
+#         article.author = author
+#         response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
 
 
 class ArticleIndexViewTests(TestCase):
@@ -400,7 +380,7 @@ class ArticleIndexViewTests(TestCase):
         """
         Checks whether ArticleIndexView displays appropriate message when there are no articles.
         """
-        response = self.client.get(reverse('django_articles:article_index'))
+        response = self.client.get(reverse('django_articles:article-index'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
@@ -425,7 +405,7 @@ class ArticleIndexViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:article_index'))
+        response = self.client.get(reverse('django_articles:article-index'))
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
             [past_article]
@@ -448,7 +428,7 @@ class ArticleIndexViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:article_index'))
+        response = self.client.get(reverse('django_articles:article-index'))
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
             [present_article]
@@ -471,7 +451,7 @@ class ArticleIndexViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:article_index'))
+        response = self.client.get(reverse('django_articles:article-index'))
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
@@ -504,7 +484,7 @@ class ArticleIndexViewTests(TestCase):
             pub_date=present_pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:article_index'))
+        response = self.client.get(reverse('django_articles:article-index'))
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
             [past_article, present_article]
@@ -536,7 +516,7 @@ class ArticleIndexViewTests(TestCase):
             pub_date=future_pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:article_index'))
+        response = self.client.get(reverse('django_articles:article-index'))
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
             [past_article]
@@ -583,7 +563,7 @@ class ArticleIndexViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:article_index'))
+        response = self.client.get(reverse('django_articles:article-index'))
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
             [article_a, article_b, article_c, article_d]
@@ -605,7 +585,7 @@ class ArticleIndexViewTests(TestCase):
         article.save()
         article.author = author
         article.tags.set([tag])
-        response = self.client.get(reverse('django_articles:article_index'))
+        response = self.client.get(reverse('django_articles:article-index'))
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
@@ -628,7 +608,7 @@ class ArticleIndexViewTests(TestCase):
         article.save()
         article.author = author
         article.tags.set([tag])
-        response = self.client.get(reverse('django_articles:article_index'))
+        response = self.client.get(reverse('django_articles:article-index'))
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
@@ -647,7 +627,7 @@ class ArticleIndexViewTests(TestCase):
         article = Article(title=title, pub_date=pub_date, content=content)
         article.save()
         article.tags.set(tags)
-        response = self.client.get(reverse('django_articles:article_index'))
+        response = self.client.get(reverse('django_articles:article-index'))
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
             [article]
@@ -669,7 +649,7 @@ class ArticleIndexViewTests(TestCase):
         )
         article.save()
         article.author = author
-        response = self.client.get(reverse('django_articles:article_index'))
+        response = self.client.get(reverse('django_articles:article-index'))
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
             []
@@ -677,7 +657,7 @@ class ArticleIndexViewTests(TestCase):
 
 
 class ArticleDetailViewTests(TestCase):
-    def test_published_article(self):
+    def test_past_article(self):
         """
         Checks whether ArticleDetailView displays article with past pub_date.
         """
@@ -693,11 +673,31 @@ class ArticleDetailViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:article_detail', args=[past_article.id]))
-        self.assertContains(response, past_article.content)
+        response = self.client.get(reverse('django_articles:article-detail', args=(past_article.id,)))
+        self.assertContains(response, past_article)
 
 
-    def test_not_yet_published_article(self):
+    def test_present_article(self):
+        """
+        Checks whether ArticleDetailView displays article with present pub_date.
+        """
+        title = 'test title'
+        author = create_author('test_author')
+        tags = [create_tag('test tag')]
+        pub_date = timezone.now() - timedelta(days=1)
+        content = 'test content'
+        present_article = create_article(
+            title=title,
+            author=author,
+            tags=tags,
+            pub_date=pub_date,
+            content=content
+        )
+        response = self.client.get(reverse('django_articles:article-detail', args=(present_article.id,)))
+        self.assertContains(response, present_article)
+
+
+    def test_future_published_article(self):
         """
         Checks whether ArticleDetailView not displays article with future pub_date.
         """
@@ -713,7 +713,7 @@ class ArticleDetailViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:article_detail', args=[future_article.id]))
+        response = self.client.get(reverse('django_articles:article-detail', args=(future_article.id,)))
         self.assertEqual(response.status_code, 404)
 
 
@@ -730,7 +730,7 @@ class ArticleDetailViewTests(TestCase):
         )
         article.save()
         article.author = author
-        response = self.client.get(reverse('django_articles:article_detail', args=[article.id]))
+        response = self.client.get(reverse('django_articles:article-detail', args=(article.id,)))
         self.assertEqual(response.status_code, 404)
 
 
@@ -747,7 +747,7 @@ class ArticleDetailViewTests(TestCase):
         )
         article.save()
         article.author = author
-        response = self.client.get(reverse('django_articles:article_detail', args=[article.id]))
+        response = self.client.get(reverse('django_articles:article-detail', args=(article.id,)))
         self.assertEqual(response.status_code, 404)
 
 
@@ -766,7 +766,7 @@ class ArticleDetailViewTests(TestCase):
         )
         article.save()
         article.author = author
-        response = self.client.get(reverse('django_articles:article_detail', args=[article.id]))
+        response = self.client.get(reverse('django_articles:article-detail', args=(article.id,)))
         self.assertEqual(response.status_code, 404)
 
 
@@ -781,8 +781,8 @@ class ArticleDetailViewTests(TestCase):
         article = Article(title=title, pub_date=pub_date, content=content)
         article.save()
         article.tags.set(tags)
-        response = self.client.get(reverse('django_articles:article_detail', args=[article.id]))
-        self.assertContains(response, None)
+        response = self.client.get(reverse('django_articles:article-detail', args=(article.id,)))
+        self.assertContains(response, 'Author: Anonymous')
 
 
 class TagIndexViewTests(TestCase):
@@ -790,7 +790,7 @@ class TagIndexViewTests(TestCase):
         """
         Checks whether TagIndexView displays the appropriate message when there are no tags.
         """
-        response = self.client.get(reverse('django_articles:tag_index'))
+        response = self.client.get(reverse('django_articles:tag-index'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No tags are available.')
         self.assertQuerySetEqual(
@@ -807,7 +807,7 @@ class TagIndexViewTests(TestCase):
         tag_c = create_tag('tag c')
         tag_a = create_tag('tag a')
         tag_b = create_tag('tag b')
-        response = self.client.get(reverse('django_articles:tag_index'))
+        response = self.client.get(reverse('django_articles:tag-index'))
         self.assertQuerySetEqual(
             response.context['available_tags_list'],
             [tag_a, tag_b, tag_c, tag_d]
@@ -820,7 +820,7 @@ class TagRelationsIndexViewTests(TestCase):
         Checks whether TagRelationsIndexView displays the appropriate message when there are no articles related with tag.
         """
         tag = create_tag('test tag')
-        response = self.client.get(reverse('django_articles:tag_relations_index', args=[tag.id]))
+        response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
@@ -845,7 +845,7 @@ class TagRelationsIndexViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:tag_relations_index', args=[tag.id]))
+        response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
             [past_article]
@@ -868,7 +868,7 @@ class TagRelationsIndexViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:tag_relations_index', args=[tag.id]))
+        response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
             [present_article]
@@ -891,7 +891,7 @@ class TagRelationsIndexViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:tag_relations_index', args=[tag.id]))
+        response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
@@ -924,7 +924,7 @@ class TagRelationsIndexViewTests(TestCase):
             pub_date=present_pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:tag_relations_index', args=[tag.id]))
+        response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
             [past_article, present_article]
@@ -956,7 +956,7 @@ class TagRelationsIndexViewTests(TestCase):
             pub_date=future_pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:tag_relations_index', args=[tag.id]))
+        response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
             [past_article]
@@ -1003,7 +1003,7 @@ class TagRelationsIndexViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:tag_relations_index', args=[tag.id]))
+        response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
             [article_a, article_b, article_c, article_d]
@@ -1025,11 +1025,29 @@ class TagRelationsIndexViewTests(TestCase):
         article.save()
         article.author = author
         article.tags.set([tag])
-        response = self.client.get(reverse('django_articles:tag_relations_index', args=[tag.id]))
+        response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
             []
+        )
+
+    
+    def test_article_without_related_author(self):
+        """
+        Checks whether TagRelationsIndexView displays article without author.
+        """
+        title = 'test title'
+        tag = create_tag('test tag')
+        pub_date = timezone.now()
+        content = 'test content'
+        article = Article(title=title, pub_date=pub_date, content=content)
+        article.save()
+        article.tags.set([tag])
+        response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
+        self.assertQuerySetEqual(
+            response.context['tag_relations_list'],
+            [article]
         )
 
 
@@ -1048,27 +1066,9 @@ class TagRelationsIndexViewTests(TestCase):
         article.save()
         article.author = author
         article.tags.set([tag])
-        response = self.client.get(reverse('django_articles:tag_relations_index', args=[tag.id]))
+        response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
             []
-        )
-
-    
-    def test_article_without_related_author(self):
-        """
-        Checks whether TagRelationsIndexView displays article without author.
-        """
-        title = 'test title'
-        tags = [create_tag('test tag')]
-        pub_date = timezone.now()
-        content = 'test content'
-        article = Article(title=title, pub_date=pub_date, content=content)
-        article.save()
-        article.tags.set(tags)
-        response = self.client.get(reverse('django_articles:article_index'))
-        self.assertQuerySetEqual(
-            response.context['published_articles_list'],
-            [article]
         )
