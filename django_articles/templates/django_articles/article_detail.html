@@ -2,12 +2,18 @@
 <html lang="en-US">
     <head>
         <meta charset="utf-8" />
-        <title>Article detail</title>
+        <title>Article detail page</title>
     </head>
     <body>
-        <h1>{{ article.title }}</h1>
-        <h2>{{ article.tags_as_str }}</h2>
-        <h3>{{ article.pub_date }}</h3>
+        <h1>Title: {{ article.title }}</h1>
+        <h2>Author: <a href="{% url 'django_articles:author-detail' article.author.id %}">{{ article.author }}</a></h2>
+        <h3>Tags:</h3>
+        <ul>
+            {% for tag in article.get_related_tags %}
+            <li><a href="{% url 'django_articles:tag-relations-index' tag.id %}">{{ tag.name }}</a></li>
+            {% endfor %}
+        </ul>
+        <h4>{{ article.pub_date }}</h4>
         <p>{{ article.content }}</p>
     </body>
 </html>

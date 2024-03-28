@@ -2,13 +2,13 @@
 <html lang="en-US">
     <head>
         <meta charset="utf-8" />
-        <title>Tags index</title>
+        <title>Tags index page</title>
     </head>
     <body>
         {% if available_tags_list %}
             <ul>
                 {% for tag in available_tags_list %}
-                <li><a href="{% url 'django_articles:tag_relations_index' tag.id %}">{{ tag.name }}</a></li>
+                <li><a href="{% url 'django_articles:tag-relations-index' tag.id %}">{{ tag.name }}</a></li>
                 {% endfor %}
             </ul>
         {% else %}

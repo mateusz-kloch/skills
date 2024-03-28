@@ -1,7 +1,38 @@
 from django.utils import timezone
 from django.views import generic
 
-from .models import Article, Tag
+from .models import Author, Article, Tag
+
+
+class AuthorIndexView(generic.ListView):
+    template_name = 'django_articles/author_index.html'
+    context_object_name = 'authors_list'
+
+    def get_queryset(self):
+        """
+        Returns a query set that includes authors of published articles.
+        """
+        return Author.objects.all()
+    
+
+class AuthorDetailView(generic.DetailView):
+    model = Author
+    template_name = 'django_articles/author_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        author = self.get_object()
+        articles = author.article_set.filter(
+            pub_date__lte=timezone.now()
+        ).exclude(
+            title=''
+        ).exclude(
+            tags__isnull=True
+        ).exclude(
+            content=''
+        )
+        context['articles'] = articles
+        return context
 
 
 class ArticleIndexView(generic.ListView):
@@ -10,7 +41,7 @@ class ArticleIndexView(generic.ListView):
 
     def get_queryset(self):
         """
-        Returns a query set that includes articles whose pub_data is present or past, and excludes articles with empty fields.
+        Returns a query set that includes articles whose pub_date is present or past, and excludes articles with empty fields.
         """
         return Article.objects.filter(
             pub_date__lte=timezone.now()
@@ -28,14 +59,18 @@ class ArticleDetailView(generic.DetailView):
 
     def get_queryset(self):
         """
-        Returns a query set of the article whose primary key is provided in the request.
+        Returns article whose primary key is provided in the request.
         """
         search_request = self.request.resolver_match.kwargs.get('pk')
         return Article.objects.filter(
             pk=search_request,
             pub_date__lte=timezone.now()
         ).exclude(
+            title=''
+        ).exclude(
             tags__isnull=True
+        ).exclude(
+            content=''
         )
 
 
@@ -63,7 +98,9 @@ class TagRelationsIndexView(generic.ListView):
             tags__pk=search_request,
             pub_date__lte=timezone.now()
         ).exclude(
-                title=''
+            title=''
+        ).exclude(
+            tags__isnull=True
         ).exclude(
             content=''
         )
