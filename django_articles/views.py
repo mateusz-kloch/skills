@@ -32,7 +32,7 @@ class ArticleIndexView(generic.ListView):
 
     def get_queryset(self):
         """
-        Returns a query set that includes articles whose pub_data is present or past, and excludes articles with empty fields.
+        Returns a query set that includes articles whose pub_date is present or past, and excludes articles with empty fields.
         """
         return Article.objects.filter(
             pub_date__lte=timezone.now()
