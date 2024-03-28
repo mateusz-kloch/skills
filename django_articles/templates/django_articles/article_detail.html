@@ -6,11 +6,7 @@
     </head>
     <body>
         <h1>Title: {{ article.title }}</h1>
-        {% if article.author %}
-            <h2>Author: <a href="{% url 'django_articles:author-detail' article.author.id %}">{{ article.author }}</a></h2>
-        {% else %}
-            <h2>Author: Anonymous</h2>
-        {% endif %}
+        <h2>Author: <a href="{% url 'django_articles:author-detail' article.author.id %}">{{ article.author }}</a></h2>
         <h3>Tags:</h3>
         <ul>
             {% for tag in article.get_related_tags %}
