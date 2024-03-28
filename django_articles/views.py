@@ -16,14 +16,23 @@ class AuthorIndexView(generic.ListView):
     
 
 class AuthorDetailView(generic.DetailView):
+    model = Author
     template_name = 'django_articles/author_detail.html'
 
-    def get_queryset(self):
-        """
-        Returns author whose primary key is provided in the request.
-        """
-        search_request = self.request.resolver_match.kwargs.get('pk')
-        return Author.objects.filter(pk=search_request)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        author = self.get_object()
+        articles = author.article_set.filter(
+            pub_date__lte=timezone.now()
+        ).exclude(
+            title=''
+        ).exclude(
+            tags__isnull=True
+        ).exclude(
+            content=''
+        )
+        context['articles'] = articles
+        return context
 
 
 class ArticleIndexView(generic.ListView):
@@ -90,6 +99,8 @@ class TagRelationsIndexView(generic.ListView):
             pub_date__lte=timezone.now()
         ).exclude(
             title=''
+        ).exclude(
+            tags__isnull=True
         ).exclude(
             content=''
         )
