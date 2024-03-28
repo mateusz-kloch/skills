@@ -4,7 +4,7 @@ from django.db import models
 
 class Article(models.Model):
     title = models.CharField(max_length=250)
-    author = models.ForeignKey('Author', on_delete=models.SET_NULL, null=True)
+    author = models.ForeignKey('Author', on_delete=models.CASCADE)
     tags = models.ManyToManyField('Tag')
     pub_date = models.DateTimeField('date published')
     content = models.TextField()
@@ -37,17 +37,6 @@ class Author(models.Model):
 
     def __str__(self):
         return self.user_name
-    
-    def get_related_articles(self) -> list[Article]:
-        return Article.objects.filter(
-            author=self.pk
-        ).exclude(
-            title=''
-        ).exclude(
-            tags__isnull=True
-        ).exclude(
-            content=''
-        )
 
 
 class Tag(models.Model):
