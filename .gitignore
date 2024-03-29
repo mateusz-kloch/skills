@@ -3,3 +3,5 @@
 *__pycache__/
 
 .coverage
+
+example_users.txt
