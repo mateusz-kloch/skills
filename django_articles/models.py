@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -29,14 +30,13 @@ class Article(models.Model):
 
 
 class Author(models.Model):
-    user_name = models.CharField(max_length=100)
-    user_email = models.EmailField(max_length=250)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ['user_name']
+        ordering = ['user']
 
     def __str__(self):
-        return self.user_name
+        return self.user.username
 
 
 class Tag(models.Model):

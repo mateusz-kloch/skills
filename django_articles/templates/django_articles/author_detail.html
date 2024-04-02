@@ -6,8 +6,10 @@
     </head>
     <body>
         <h1>Author info:</h1>
-        <p>Name: {{ author.user_name }}</p>
-        <p>E-mail: {{ author.user_email }}</p>
+        <p>Name: {{ author.user.username }}</p>
+        {% if author.user.email %}
+            <p>E-mail: {{ author.user.email }}</p>
+        {% endif %}
         {% if articles %}
             <h2>Published articles:</h2>
             <ul>
