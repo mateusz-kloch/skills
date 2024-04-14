@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from django_articles.models import Article
-from django_articles.tests.utils import create_article, create_tag, create_user
+from tests.django_articles_test_utils import create_article, create_tag, create_user
 
 
 class AuthorIndexViewTests(TestCase):
