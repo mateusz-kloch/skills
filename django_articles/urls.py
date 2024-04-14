@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import (
+from django_articles.views import (
     AuthorIndexView,
     AuthorDetailView,
     ArticleIndexView,
