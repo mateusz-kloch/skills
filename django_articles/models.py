@@ -4,14 +4,14 @@ from django.db import models
 
 
 class Article(models.Model):
-    title = models.CharField(max_length=250)
-    author = models.ForeignKey('Author', on_delete=models.CASCADE)
-    tags = models.ManyToManyField('Tag')
+    title = models.CharField(max_length=150)
+    author = models.ForeignKey(User, related_name='articles', on_delete=models.CASCADE)
+    tags = models.ManyToManyField('Tag', related_name='articles')
     pub_date = models.DateTimeField('date published')
     content = models.TextField()
 
     class Meta:
-        ordering = ['title']
+        ordering = ['-pub_date']
 
     def __str__(self):
         return self.title
@@ -27,16 +27,6 @@ class Article(models.Model):
     
     def get_related_tags(self) -> list['Tag']:
         return [tag for tag in self.tags.all()]
-
-
-class Author(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-    class Meta:
-        ordering = ['user__username']
-
-    def __str__(self):
-        return self.user.username
 
 
 class Tag(models.Model):

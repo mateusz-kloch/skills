@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Author, Article, Tag
+from django_articles.models import Article, Tag
 
 
 class ArticleAdmin(admin.ModelAdmin):
@@ -21,6 +21,5 @@ class ArticleAdmin(admin.ModelAdmin):
     list_filter = ['author', 'pub_date', 'tags']
 
 
-admin.site.register(Author)
 admin.site.register(Article, ArticleAdmin)
 admin.site.register(Tag)

@@ -1,125 +1,12 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from .models import Author, Article, Tag
-
-
-def create_author(name: str) -> Author:
-    """
-    Creates an Author model object.
-    """
-    username = name
-    email = f'{name}@example.com'
-    password = 'DjangoTest123'
-    user = User.objects.create_user(username=username, email=email, password=password)
-    return Author.objects.create(user=user)
-
-
-def create_tag(name: str) -> Tag:
-    """
-    Creates a Tag model object.
-    """
-    return Tag.objects.create(name=name)
-
-
-def create_article(title: str, author: Author, tags: list[Tag], pub_date: datetime, content: str) -> Article:
-    """
-    Creates an article model object and establishes a many-to-many relation with the given Tag objects.
-    """
-    article = Article(
-        title=title,
-        author=author,
-        pub_date=pub_date,
-        content=content
-    )
-    article.save()
-    article.tags.set(tags)
-    return article
-
-
-class AuthorModelTests(TestCase):
-    def test_author_as_str(self):
-        """
-        Checks whether __str__ display tag correctly
-        """
-        author = create_author('test_author')
-        self.assertIs(str(author), author.user.username)
-
-
-class ArticleModelTests(TestCase):
-    def test_article_as_str(self):
-        """
-        Checks whether __str__ displays article correctly.
-        """
-        title = 'test title'
-        author = create_author('test_author')
-        tags = [create_tag('test tag')]
-        pub_date = timezone.now()
-        content = 'test content'
-        article = create_article(
-            title=title,
-            author = author,
-            tags = tags,
-            pub_date=pub_date,
-            content=content
-        )
-        self.assertIs(str(article), article.title)
-
-    
-    def test_article_tags_as_str_one_tag(self):
-        """
-        Checks whether tag_as_str() correctly displays tags if there is one tag.
-        """
-        title = 'test title'
-        author = create_author('test_author')
-        tags = [create_tag('test tag')]
-        pub_date = timezone.now()
-        content = 'test content'
-        article = create_article(
-            title=title,
-            author=author,
-            tags=tags,
-            pub_date=pub_date,
-            content=content
-        )
-        self.assertEqual(article.tags_as_str(), 'test tag')
-
-
-    def test_articles_tags_as_str_many_tags(self):
-        """
-        Checks whether tags_as_str() displays tags in aplhabetic order if there are multiple tags.
-        """
-        title = 'test title'
-        author = create_author('test_author')
-        tags = [
-            create_tag('tag b'),
-            create_tag('tag d'),
-            create_tag('tag c'),
-            create_tag('tag a')
-        ]
-        pub_date = timezone.now()
-        content = 'test content'
-        article = create_article(
-            title=title,
-            author=author,
-            tags=tags,
-            pub_date=pub_date,
-            content=content
-        )
-        self.assertEqual(article.tags_as_str(), 'tag a, tag b, tag c, tag d')
-
-
-class TagModelTests(TestCase):
-    def test_tag_as_str(self):
-        """
-        Checks whether __str__ display tag correctly
-        """
-        tag = create_tag('test tag')
-        self.assertIs(str(tag), tag.name)
+from django_articles.models import Article
+from django_articles.tests.utils import create_article, create_tag, create_user
 
 
 class AuthorIndexViewTests(TestCase):
@@ -149,9 +36,9 @@ class AuthorIndexViewTests(TestCase):
         """
         Checks whether AuthorIndexView displays authors in alphabetic order.
         """
-        author_b = create_author('Author b')
-        author_c = create_author('Author c')
-        author_a = create_author('Author a')
+        author_b = create_user('Author b')
+        author_c = create_user('Author c')
+        author_a = create_user('Author a')
         response = self.client.get(reverse('django_articles:author-index'))
         self.assertQuerySetEqual(
             response.context['authors_list'],
@@ -165,7 +52,7 @@ class AuthorDetailViewTests(TestCase):
         Checks whether AuthorDetailView uses correct template.
         """
         expect_template = 'django_articles/author_detail.html'
-        author = create_author('test_author')
+        author = create_user('test_author')
         response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
         self.assertTemplateUsed(response, expect_template)
 
@@ -174,18 +61,18 @@ class AuthorDetailViewTests(TestCase):
         """
         Checks whether AuthorDetailView displays author related username.
         """
-        author = create_author('test_author')
+        author = create_user('test_author')
         response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
-        self.assertContains(response, author.user.username)
+        self.assertContains(response, author.username)
 
 
     def test_author_user_email(self):
         """
         Checks whether AuthorDetailView displays author related email.
         """
-        author = create_author('test_author')
+        author = create_user('test_author')
         response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
-        self.assertContains(response, author.user.email)
+        self.assertContains(response, author.email)
 
 
     def test_author_user_without_email(self):
@@ -194,8 +81,7 @@ class AuthorDetailViewTests(TestCase):
         """
         username = 'test_user'
         password = 'DjangoTest123'
-        user = User.objects.create_user(username=username, password=password)
-        author =  Author.objects.create(user=user)
+        author = User.objects.create_user(username=username, password=password)
         response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
         self.assertNotContains(response, 'E-mail:')
 
@@ -205,7 +91,7 @@ class AuthorDetailViewTests(TestCase):
         Checks whether AuthorDetailView displays related article with past pub_date.
         """
         title = 'test title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tags = [create_tag('test tag')]
         pub_date = timezone.now() - timedelta(days=1)
         content = 'test content'
@@ -228,7 +114,7 @@ class AuthorDetailViewTests(TestCase):
         Checks whether AuthorDetailView displays related article with present pub_date.
         """
         title = 'test title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tags = [create_tag('test tag')]
         pub_date = timezone.now()
         content = 'test content'
@@ -251,7 +137,7 @@ class AuthorDetailViewTests(TestCase):
         Checks whether AuthorDetailView not displays related article with future pub_date.
         """
         title = 'test title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tags = [create_tag('test tag')]
         pub_date = timezone.now() + timedelta(days=1)
         content = 'test content'
@@ -276,7 +162,7 @@ class AuthorDetailViewTests(TestCase):
         """
         past_title = 'past title'
         present_title = 'present title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tags = [create_tag('test tag')]
         past_pub_date = timezone.now() - timedelta(days=1)
         present_pub_date = timezone.now()
@@ -298,7 +184,7 @@ class AuthorDetailViewTests(TestCase):
         response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
         self.assertQuerySetEqual(
             response.context['articles'],
-            [past_article, present_article]
+            [present_article, past_article]
         )
 
 
@@ -308,7 +194,7 @@ class AuthorDetailViewTests(TestCase):
         """
         past_title = 'past title'
         future_title = 'future title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tags = [create_tag('test tag')]
         past_pub_date = timezone.now() - timedelta(days=1)
         future_pub_date = timezone.now() + timedelta(days=1)
@@ -336,42 +222,42 @@ class AuthorDetailViewTests(TestCase):
 
     def test_articles_alphabetic_order(self):
         """
-        Checks whether AuthorDetailView displays related articles in alphabetical order of title.
+        Checks whether AuthorDetailView displays related articles ordered by date, latest first.
         """
-        title_c = 'title c'
-        title_d = 'title d'
-        title_b = 'title b'
-        title_a = 'title a'
-        author = create_author('test_author')
+        title = 'test title'
+        author = create_user('test_author')
         tags = [create_tag('test tag')]
-        pub_date = timezone.now()
+        pub_date_a = timezone.now()
+        pub_date_b = timezone.now() - timedelta(hours=1)
+        pub_date_c = timezone.now() - timedelta(hours=2)
+        pub_date_d = timezone.now() - timedelta(hours=3)
         content = 'test content'
         article_c = create_article(
-            title=title_c,
+            title=title,
             author=author,
             tags=tags,
-            pub_date=pub_date,
+            pub_date=pub_date_c,
             content=content
         )
         article_d = create_article(
-            title=title_d,
+            title=title,
             author=author,
             tags=tags,
-            pub_date=pub_date,
+            pub_date=pub_date_d,
             content=content
         )
         article_b = create_article(
-            title=title_b,
+            title=title,
             author=author,
             tags=tags,
-            pub_date=pub_date,
+            pub_date=pub_date_b,
             content=content
         )
         article_a = create_article(
-            title=title_a,
+            title=title,
             author=author,
             tags=tags,
-            pub_date=pub_date,
+            pub_date=pub_date_a,
             content=content
         )
         response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
@@ -385,7 +271,7 @@ class AuthorDetailViewTests(TestCase):
         """
         Checks whether AuthorDetailView displays related article without title field.
         """
-        author = create_author('test_author')
+        author = create_user('test_author')
         title = ''
         tag = create_tag('test tag')
         pub_date = timezone.now()
@@ -411,7 +297,7 @@ class AuthorDetailViewTests(TestCase):
         Checks whether AuthorDetailView displays related article without content field.
         """
         title = 'test title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tag = create_tag('test tag')
         pub_date = timezone.now()
         article = Article(
@@ -434,7 +320,7 @@ class AuthorDetailViewTests(TestCase):
         Checks whether AuthorDetailView displays related article without relation with any Tag model object.
         """
         title = 'test title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         pub_date = timezone.now()
         content = 'test content'
         article = Article(
@@ -480,7 +366,7 @@ class ArticleIndexViewTests(TestCase):
         Checks whether ArticleIndexView displays article with past pub_date.
         """
         title = 'test title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tags = [create_tag('test tag')]
         pub_date = timezone.now() - timedelta(days=1)
         content = 'test content'
@@ -503,7 +389,7 @@ class ArticleIndexViewTests(TestCase):
         Checks whether ArticleIndexView displays article with present pub_date.
         """
         title = 'test title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tags = [create_tag('test tag')]
         pub_date = timezone.now()
         content = 'test content'
@@ -526,7 +412,7 @@ class ArticleIndexViewTests(TestCase):
         Checks whether ArticleIndexView not displays article with future pub_date.
         """
         title = 'test title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tags = [create_tag('test tag')]
         pub_date = timezone.now() + timedelta(days=1)
         content = 'test content'
@@ -551,7 +437,7 @@ class ArticleIndexViewTests(TestCase):
         """
         past_title = 'past title'
         present_title = 'present title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tags = [create_tag('test tag')]
         past_pub_date = timezone.now() - timedelta(days=1)
         present_pub_date = timezone.now()
@@ -573,7 +459,7 @@ class ArticleIndexViewTests(TestCase):
         response = self.client.get(reverse('django_articles:article-index'))
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
-            [past_article, present_article]
+            [present_article, past_article]
         )
 
 
@@ -583,7 +469,7 @@ class ArticleIndexViewTests(TestCase):
         """
         past_title = 'past title'
         future_title = 'future title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tags = [create_tag('test tag')]
         past_pub_date = timezone.now() - timedelta(days=1)
         future_pub_date = timezone.now() + timedelta(days=1)
@@ -611,42 +497,42 @@ class ArticleIndexViewTests(TestCase):
 
     def test_articles_alphabetic_order(self):
         """
-        Checks whether ArticleIndexView displays articles in alphabetical order of title.
+        Checks whether ArticleIndexView displays articles ordered by date, latest first.
         """
-        title_c = 'title c'
-        title_d = 'title d'
-        title_b = 'title b'
-        title_a = 'title a'
-        author = create_author('test_author')
+        title = 'test_title'
+        author = create_user('test_author')
         tags = [create_tag('test tag')]
-        pub_date = timezone.now()
+        pub_date_a = timezone.now()
+        pub_date_b = timezone.now() - timedelta(hours=1)
+        pub_date_c = timezone.now() - timedelta(hours=2)
+        pub_date_d = timezone.now() - timedelta(hours=3)
         content = 'test content'
         article_c = create_article(
-            title=title_c,
+            title=title,
             author=author,
             tags=tags,
-            pub_date=pub_date,
+            pub_date=pub_date_c,
             content=content
         )
         article_d = create_article(
-            title=title_d,
+            title=title,
             author=author,
             tags=tags,
-            pub_date=pub_date,
+            pub_date=pub_date_d,
             content=content
         )
         article_b = create_article(
-            title=title_b,
+            title=title,
             author=author,
             tags=tags,
-            pub_date=pub_date,
+            pub_date=pub_date_b,
             content=content
         )
         article_a = create_article(
-            title=title_a,
+            title=title,
             author=author,
             tags=tags,
-            pub_date=pub_date,
+            pub_date=pub_date_a,
             content=content
         )
         response = self.client.get(reverse('django_articles:article-index'))
@@ -660,7 +546,7 @@ class ArticleIndexViewTests(TestCase):
         """
         Checks whether ArticleIndexView displays article without title field.
         """
-        author = create_author('test_author')
+        author = create_user('test_author')
         tag = create_tag('test tag')
         pub_date = timezone.now()
         content = 'test content'
@@ -684,7 +570,7 @@ class ArticleIndexViewTests(TestCase):
         Checks whether ArticleIndexView displays article without content field.
         """
         title = 'test title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tag = create_tag('test tag')
         pub_date = timezone.now()
         article = Article(
@@ -707,7 +593,7 @@ class ArticleIndexViewTests(TestCase):
         Checks whether ArticleIndexView displays article without relation with any Tag model object.
         """
         title = 'test title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         pub_date = timezone.now()
         content = 'test content'
         article = Article(
@@ -731,7 +617,7 @@ class ArticleDetailViewTests(TestCase):
         """
         expect_template = 'django_articles/article_detail.html'
         title = 'test title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tags = [create_tag('test tag')]
         pub_date = timezone.now() - timedelta(days=1)
         content = 'test content'
@@ -751,7 +637,7 @@ class ArticleDetailViewTests(TestCase):
         Checks whether ArticleDetailView displays article with past pub_date.
         """
         title = 'test title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tags = [create_tag('test tag')]
         pub_date = timezone.now() - timedelta(days=1)
         content = 'test content'
@@ -771,7 +657,7 @@ class ArticleDetailViewTests(TestCase):
         Checks whether ArticleDetailView displays article with present pub_date.
         """
         title = 'test title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tags = [create_tag('test tag')]
         pub_date = timezone.now() - timedelta(days=1)
         content = 'test content'
@@ -791,7 +677,7 @@ class ArticleDetailViewTests(TestCase):
         Checks whether ArticleDetailView not displays article with future pub_date.
         """
         title = 'test title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tags = [create_tag('test tag')]
         pub_date = timezone.now() + timedelta(days=1)
         content = 'test content'
@@ -810,7 +696,7 @@ class ArticleDetailViewTests(TestCase):
         """
         Checks whether ArticleDetailView displays article without title field.
         """
-        author = create_author('test_author')
+        author = create_user('test_author')
         pub_date = timezone.now()
         content = 'test content'
         article = Article(
@@ -828,7 +714,7 @@ class ArticleDetailViewTests(TestCase):
         Checks whether ArticleDetailView displays article without content field.
         """
         title = 'test title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         pub_date = timezone.now()
         article = Article(
             title=title,
@@ -845,7 +731,7 @@ class ArticleDetailViewTests(TestCase):
         Checks whether ArticleDetailView displays article without relation with any Tag model object.
         """
         title = 'test title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         pub_date = timezone.now()
         content = 'test content'
         article = Article(
@@ -927,7 +813,7 @@ class TagRelationsIndexViewTests(TestCase):
         Checks whether TagRelationsIndexView displays related article with past pub_date.
         """
         title = 'test title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tag = create_tag('test tag')
         pub_date = timezone.now() - timedelta(days=1)
         content = 'test content'
@@ -950,7 +836,7 @@ class TagRelationsIndexViewTests(TestCase):
         Checks whether TagRelationsIndexView displays related article with present pub_date.
         """
         title = 'test title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tag = create_tag('test tag')
         pub_date = timezone.now()
         content = 'test content'
@@ -973,7 +859,7 @@ class TagRelationsIndexViewTests(TestCase):
         Checks whether TagRelationsIndexView not displays related article with future pub_date.
         """
         title = 'test title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tag = create_tag('test tag')
         pub_date = timezone.now() + timedelta(days=1)
         content = 'test content'
@@ -998,7 +884,7 @@ class TagRelationsIndexViewTests(TestCase):
         """
         past_title = 'past title'
         present_title = 'present title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tag = create_tag('test tag')
         past_pub_date = timezone.now() - timedelta(days=1)
         present_pub_date = timezone.now()
@@ -1020,7 +906,7 @@ class TagRelationsIndexViewTests(TestCase):
         response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
-            [past_article, present_article]
+            [present_article, past_article]
         )
 
 
@@ -1030,7 +916,7 @@ class TagRelationsIndexViewTests(TestCase):
         """
         past_title = 'past title'
         future_title = 'future title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tag = create_tag('test tag')
         past_pub_date = timezone.now() - timedelta(days=1)
         future_pub_date = timezone.now() + timedelta(days=1)
@@ -1058,42 +944,42 @@ class TagRelationsIndexViewTests(TestCase):
 
     def test_articles_alphabetic_order(self):
         """
-        Checks whether TagRelationsIndexView displays related articles in alphabetical order of title.
+        Checks whether TagRelationsIndexView displays related articles ordered by date, latest first.
         """
-        title_c = 'title c'
-        title_d = 'title d'
-        title_b = 'title b'
-        title_a = 'title a'
-        author = create_author('test_author')
+        title = 'test_title'
+        author = create_user('test_author')
         tag = create_tag('test tag')
-        pub_date = timezone.now()
+        pub_date_a = timezone.now()
+        pub_date_b = timezone.now() - timedelta(hours=1)
+        pub_date_c = timezone.now() - timedelta(hours=2)
+        pub_date_d = timezone.now() - timedelta(hours=3)
         content = 'test content'
         article_c = create_article(
-            title=title_c,
+            title=title,
             author=author,
             tags=[tag],
-            pub_date=pub_date,
+            pub_date=pub_date_c,
             content=content
         )
         article_d = create_article(
-            title=title_d,
+            title=title,
             author=author,
             tags=[tag],
-            pub_date=pub_date,
+            pub_date=pub_date_d,
             content=content
         )
         article_b = create_article(
-            title=title_b,
+            title=title,
             author=author,
             tags=[tag],
-            pub_date=pub_date,
+            pub_date=pub_date_b,
             content=content
         )
         article_a = create_article(
-            title=title_a,
+            title=title,
             author=author,
             tags=[tag],
-            pub_date=pub_date,
+            pub_date=pub_date_a,
             content=content
         )
         response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
@@ -1107,7 +993,7 @@ class TagRelationsIndexViewTests(TestCase):
         """
         Checks whether TagRelationsIndexView displays article without title field.
         """
-        author = create_author('test_author')
+        author = create_user('test_author')
         tag = create_tag('test tag')
         pub_date = timezone.now()
         content = 'test content'
@@ -1131,7 +1017,7 @@ class TagRelationsIndexViewTests(TestCase):
         Checks whether TagRelationsIndexView displays article without content field.
         """
         title = 'test title'
-        author = create_author('test_author')
+        author = create_user('test_author')
         tag = create_tag('test tag')
         pub_date = timezone.now()
         article = Article(
