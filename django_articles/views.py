@@ -1,7 +1,8 @@
 from django.utils import timezone
 from django.views import generic
+from django.contrib.auth.models import User
 
-from .models import Author, Article, Tag
+from .models import Article, Tag
 
 
 class AuthorIndexView(generic.ListView):
@@ -12,17 +13,17 @@ class AuthorIndexView(generic.ListView):
         """
         Returns a query set that includes authors of published articles.
         """
-        return Author.objects.all()
+        return User.objects.all().order_by('username')
     
 
 class AuthorDetailView(generic.DetailView):
-    model = Author
+    model = User
     template_name = 'django_articles/author_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         author = self.get_object()
-        articles = author.article_set.filter(
+        articles = author.articles.filter(
             pub_date__lte=timezone.now()
         ).exclude(
             title=''
