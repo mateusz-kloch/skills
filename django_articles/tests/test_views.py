@@ -1,115 +1,12 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from .models import Article, Tag
-
-
-def create_user(name: str) -> User:
-    """
-    Creates an Author model object.
-    """
-    username = name
-    email = f'{name}@example.com'
-    password = 'DjangoTest123'
-    return User.objects.create_user(username=username, email=email, password=password)
-
-
-def create_tag(name: str) -> Tag:
-    """
-    Creates a Tag model object.
-    """
-    return Tag.objects.create(name=name)
-
-
-def create_article(title: str, author: User, tags: list[Tag], pub_date: datetime, content: str) -> Article:
-    """
-    Creates an article model object and establishes a many-to-many relation with the given Tag objects.
-    """
-    article = Article(
-        title=title,
-        author=author,
-        pub_date=pub_date,
-        content=content
-    )
-    article.save()
-    article.tags.set(tags)
-    return article
-
-
-class ArticleModelTests(TestCase):
-    def test_article_as_str(self):
-        """
-        Checks whether __str__ displays article correctly.
-        """
-        title = 'test title'
-        author = create_user('test_author')
-        tags = [create_tag('test tag')]
-        pub_date = timezone.now()
-        content = 'test content'
-        article = create_article(
-            title=title,
-            author = author,
-            tags = tags,
-            pub_date=pub_date,
-            content=content
-        )
-        self.assertIs(str(article), article.title)
-
-    
-    def test_article_tags_as_str_one_tag(self):
-        """
-        Checks whether tag_as_str() returns tag as string if ther is one related tag.
-        """
-        title = 'test title'
-        author = create_user('test_author')
-        tags = [create_tag('test tag')]
-        pub_date = timezone.now()
-        content = 'test content'
-        article = create_article(
-            title=title,
-            author=author,
-            tags=tags,
-            pub_date=pub_date,
-            content=content
-        )
-        self.assertEqual(article.tags_as_str(), 'test tag')
-
-
-    def test_articles_tags_as_str_many_tags(self):
-        """
-        Checks whether tags_as_str() returns tags as string in alphabetic order if there is many related tags.
-        """
-        title = 'test title'
-        author = create_user('test_author')
-        tags = [
-            create_tag('tag b'),
-            create_tag('tag d'),
-            create_tag('tag c'),
-            create_tag('tag a')
-        ]
-        pub_date = timezone.now()
-        content = 'test content'
-        article = create_article(
-            title=title,
-            author=author,
-            tags=tags,
-            pub_date=pub_date,
-            content=content
-        )
-        self.assertEqual(article.tags_as_str(), 'tag a, tag b, tag c, tag d')
-
-
-class TagModelTests(TestCase):
-    def test_tag_as_str(self):
-        """
-        Checks whether __str__ display tag correctly
-        """
-        tag = create_tag('test tag')
-        self.assertIs(str(tag), tag.name)
+from django_articles.models import Article
+from django_articles.tests.utils import create_article, create_tag, create_user
 
 
 class AuthorIndexViewTests(TestCase):
@@ -327,10 +224,7 @@ class AuthorDetailViewTests(TestCase):
         """
         Checks whether AuthorDetailView displays related articles ordered by date, latest first.
         """
-        title_c = 'title c'
-        title_d = 'title d'
-        title_b = 'title b'
-        title_a = 'title a'
+        title = 'test title'
         author = create_user('test_author')
         tags = [create_tag('test tag')]
         pub_date_a = timezone.now()
@@ -339,28 +233,28 @@ class AuthorDetailViewTests(TestCase):
         pub_date_d = timezone.now() - timedelta(hours=3)
         content = 'test content'
         article_c = create_article(
-            title=title_c,
+            title=title,
             author=author,
             tags=tags,
             pub_date=pub_date_c,
             content=content
         )
         article_d = create_article(
-            title=title_d,
+            title=title,
             author=author,
             tags=tags,
             pub_date=pub_date_d,
             content=content
         )
         article_b = create_article(
-            title=title_b,
+            title=title,
             author=author,
             tags=tags,
             pub_date=pub_date_b,
             content=content
         )
         article_a = create_article(
-            title=title_a,
+            title=title,
             author=author,
             tags=tags,
             pub_date=pub_date_a,
