@@ -1,7 +1,5 @@
-*.pyc
+*.dev/
 
 *__pycache__/
 
 .coverage
-
-example_users.txt
