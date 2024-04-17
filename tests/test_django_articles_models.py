@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 from django_articles.models import Article, Tag
-from tests.django_articles_test_utils import create_article, create_tag, create_user
+from tests.utils import create_article, create_tag, create_user
 
 
 
@@ -14,7 +14,7 @@ class ArticleModelTests(TestCase):
         Checks whether __str__ displays article correctly.
         """
         title = 'test title'
-        author = create_user('test_author')
+        author = create_user('test_author', 'test123')
         tags = [create_tag('test tag')]
         pub_date = timezone.now()
         content = 'test content'
@@ -33,7 +33,7 @@ class ArticleModelTests(TestCase):
         CHecks whether articles are ordered by pub_date, latest first.
         """
         title = 'test title'
-        author = create_user('test_author')
+        author = create_user('test_author', 'test123')
         tags = [create_tag('test tag')]
         pub_date_a = timezone.now()
         pub_date_b = timezone.now() - timedelta(hours=1)
@@ -79,7 +79,7 @@ class ArticleModelTests(TestCase):
         Checks whether tag_as_str() returns tag as string if ther is one related tag.
         """
         title = 'test title'
-        author = create_user('test_author')
+        author = create_user('test_author', 'test123')
         tags = [create_tag('test tag')]
         pub_date = timezone.now()
         content = 'test content'
@@ -98,7 +98,7 @@ class ArticleModelTests(TestCase):
         Checks whether tags_as_str() returns tags as string in alphabetic order if there is many related tags.
         """
         title = 'test title'
-        author = create_user('test_author')
+        author = create_user('test_author', 'test123')
         tags = [
             create_tag('tag b'),
             create_tag('tag d'),
