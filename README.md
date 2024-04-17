@@ -9,7 +9,6 @@
 │   ├── serializers.py
 │   ├── urls.py
 │   └── views.py
-├── db.sqlite3
 ├── django_articles
 │   ├── admin.py
 │   ├── apps.py
@@ -33,27 +32,29 @@
 │   │       └── tag_relations_index.html
 │   ├── urls.py
 │   └── views.py
-├── LICENSE
-├── manage.py
-├── Pipfile
-├── Pipfile.lock
-├── README.md
 ├── skills
 │   ├── asgi.py
 │   ├── __init__.py
 │   ├── settings.py
 │   ├── urls.py
 │   └── wsgi.py
-└── tests
-    ├── __init__.py
-    ├── test_api_articles_endpoint.py
-    ├── test_api_register_endpoint.py
-    ├── test_api_root.py
-    ├── test_api_tags_endpoint.py
-    ├── test_api_users_endpoint.py
-    ├── test_django_articles_models.py
-    ├── test_django_articles_views.py
-    └── utils.py
+|── tests
+|   ├── __init__.py
+|   ├── test_api_articles_endpoint.py
+|   ├── test_api_register_endpoint.py
+|   ├── test_api_root.py
+|   ├── test_api_tags_endpoint.py
+|   ├── test_api_users_endpoint.py
+|   ├── test_django_articles_models.py
+|   ├── test_django_articles_views.py
+|   └── utils.py
+├── .gitignore
+├── LICENSE
+├── Pipfile
+├── Pipfile.lock
+├── README.md
+├── db.sqlite3
+└── manage.py
 ```
 #### Tools used in development:
 - python 3.11.6
