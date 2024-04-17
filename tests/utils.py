@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.contrib.auth.models import User
 
-from api.serializers import ArticleSerializer, UserSerializer
+from api.serializers import ArticleSerializer, TagSerializer, UserSerializer
 from django_articles.models import Article, Tag
 
 
@@ -48,3 +48,10 @@ def serialize_user_with_absolute_urls(user: User):
     serialized_user['url'] = f'http://testserver{serialized_user["url"]}'
     serialized_user['articles'] = [f'http://testserver{article}' for article in serialized_user['articles']]
     return serialized_user
+
+
+def serialize_tag_with_absolute_urls(tag: Tag):
+    serialized_tag = TagSerializer(tag, context={'request': None}).data
+    serialized_tag['url'] = f'http://testserver{serialized_tag["url"]}'
+    serialized_tag['articles'] = [f'http://testserver{article}' for article in serialized_tag['articles']]
+    return serialized_tag
