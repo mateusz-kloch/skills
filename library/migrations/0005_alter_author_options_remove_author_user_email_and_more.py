@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('django_articles', '0004_alter_article_author'),
+        ('library', '0004_alter_article_author'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 

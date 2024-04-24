@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('django_articles', '0005_alter_author_options_remove_author_user_email_and_more'),
+        ('library', '0005_alter_author_options_remove_author_user_email_and_more'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='article',
             name='tags',
-            field=models.ManyToManyField(related_name='articles', to='django_articles.tag'),
+            field=models.ManyToManyField(related_name='articles', to='library.tag'),
         ),
         migrations.AlterField(
             model_name='article',

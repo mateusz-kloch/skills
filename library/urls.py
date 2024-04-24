@@ -1,6 +1,6 @@
 from django.urls import path
 
-from django_articles.views import (
+from library.views import (
     AuthorIndexView,
     AuthorDetailView,
     ArticleIndexView,
@@ -10,7 +10,7 @@ from django_articles.views import (
 )
 
 
-app_name = 'django_articles'
+app_name = 'library'
 
 urlpatterns = [
     path('authors/', AuthorIndexView.as_view(), name='author-index'),

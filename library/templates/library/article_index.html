@@ -8,7 +8,7 @@
         {% if published_articles_list %}
             <ul>
                 {% for article in published_articles_list %}
-                <li><a href="{% url 'django_articles:article-detail' article.id %}">{{ article.title }}</a></li>
+                <li><a href="{% url 'library:article-detail' article.id %}">{{ article.title }}</a></li>
                 {% endfor %}
             </ul>
         {% else %}

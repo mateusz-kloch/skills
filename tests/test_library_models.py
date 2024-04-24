@@ -3,7 +3,7 @@ from datetime import timedelta
 from django.test import TestCase
 from django.utils import timezone
 
-from django_articles.models import Article, Tag
+from library.models import Article, Tag
 from tests.utils import create_article, create_tag, create_user
 
 

@@ -6,7 +6,7 @@ from rest_framework import permissions
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
-from django_articles.models import Article, Tag
+from library.models import Article, Tag
 from api.permissions import IsOwnerOrReadOnly
 from api.serializers import ArticleSerializer, TagSerializer, UserSerializer
 

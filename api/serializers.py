@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from django_articles.models import Article, Tag
+from library.models import Article, Tag
 
 
 class ArticleSerializer(serializers.HyperlinkedModelSerializer):

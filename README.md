@@ -9,7 +9,7 @@ This platform was developed with Django and Django REST framework to let people 
 │   ├── serializers.py
 │   ├── urls.py
 │   └── views.py
-├── django_articles
+├── library
 │   ├── admin.py
 │   ├── apps.py
 │   ├── __init__.py
@@ -23,7 +23,7 @@ This platform was developed with Django and Django REST framework to let people 
 │   │   ├── __init__.py
 │   ├── models.py
 │   ├── templates
-│   │   └── django_articles
+│   │   └── library
 │   │       ├── article_detail.html
 │   │       ├── article_index.html
 │   │       ├── author_detail.html
@@ -45,8 +45,8 @@ This platform was developed with Django and Django REST framework to let people 
 |   ├── test_api_root.py
 |   ├── test_api_tags_endpoint.py
 |   ├── test_api_users_endpoint.py
-|   ├── test_django_articles_models.py
-|   ├── test_django_articles_views.py
+|   ├── test_library_models.py
+|   ├── test_library_views.py
 |   └── utils.py
 ├── .gitignore
 ├── LICENSE

@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from django_articles.models import Article
+from library.models import Article
 from tests.utils import create_article, create_tag, create_user
 
 
@@ -14,8 +14,8 @@ class AuthorIndexViewTests(TestCase):
         """
         Checks whether AuthorIndexView uses correct template.
         """
-        expect_template = 'django_articles/author_index.html'
-        response = self.client.get(reverse('django_articles:author-index'))
+        expect_template = 'library/author_index.html'
+        response = self.client.get(reverse('library:author-index'))
         self.assertTemplateUsed(response, expect_template)
     
     
@@ -23,7 +23,7 @@ class AuthorIndexViewTests(TestCase):
         """
         Checks whether AuthorIndexView displays appropriate message when there are no authors.
         """
-        response = self.client.get(reverse('django_articles:author-index'))
+        response = self.client.get(reverse('library:author-index'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No authors are available.')
         self.assertQuerySetEqual(
@@ -39,7 +39,7 @@ class AuthorIndexViewTests(TestCase):
         author_b = create_user('Author b', 'test123')
         author_c = create_user('Author c', 'test123')
         author_a = create_user('Author a', 'test123')
-        response = self.client.get(reverse('django_articles:author-index'))
+        response = self.client.get(reverse('library:author-index'))
         self.assertQuerySetEqual(
             response.context['authors_list'],
             [author_a, author_b, author_c]
@@ -51,9 +51,9 @@ class AuthorDetailViewTests(TestCase):
         """
         Checks whether AuthorDetailView uses correct template.
         """
-        expect_template = 'django_articles/author_detail.html'
+        expect_template = 'library/author_detail.html'
         author = create_user('test_author', 'test123')
-        response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
+        response = self.client.get(reverse('library:author-detail', args=(author.id,)))
         self.assertTemplateUsed(response, expect_template)
 
 
@@ -62,7 +62,7 @@ class AuthorDetailViewTests(TestCase):
         Checks whether AuthorDetailView displays author related username.
         """
         author = create_user('test_author', 'test123')
-        response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
+        response = self.client.get(reverse('library:author-detail', args=(author.id,)))
         self.assertContains(response, author.username)
 
 
@@ -71,7 +71,7 @@ class AuthorDetailViewTests(TestCase):
         Checks whether AuthorDetailView displays author related email.
         """
         author = create_user('test_author', 'test123')
-        response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
+        response = self.client.get(reverse('library:author-detail', args=(author.id,)))
         self.assertContains(response, author.email)
 
 
@@ -80,7 +80,7 @@ class AuthorDetailViewTests(TestCase):
         Checks whether AuthorDetailView displays only username if related User not have email
         """
         author = User.objects.create_user(username='test_user', password='test123')
-        response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
+        response = self.client.get(reverse('library:author-detail', args=(author.id,)))
         self.assertNotContains(response, 'E-mail:')
 
 
@@ -100,7 +100,7 @@ class AuthorDetailViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
+        response = self.client.get(reverse('library:author-detail', args=(author.id,)))
         self.assertQuerySetEqual(
             response.context['articles'],
             [past_article]
@@ -123,7 +123,7 @@ class AuthorDetailViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
+        response = self.client.get(reverse('library:author-detail', args=(author.id,)))
         self.assertQuerySetEqual(
             response.context['articles'],
             [present_article]
@@ -146,7 +146,7 @@ class AuthorDetailViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
+        response = self.client.get(reverse('library:author-detail', args=(author.id,)))
         self.assertContains(response, 'Has not published any articles yet.')
         self.assertQuerySetEqual(
             response.context['articles'],
@@ -179,7 +179,7 @@ class AuthorDetailViewTests(TestCase):
             pub_date=present_pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
+        response = self.client.get(reverse('library:author-detail', args=(author.id,)))
         self.assertQuerySetEqual(
             response.context['articles'],
             [present_article, past_article]
@@ -211,7 +211,7 @@ class AuthorDetailViewTests(TestCase):
             pub_date=future_pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
+        response = self.client.get(reverse('library:author-detail', args=(author.id,)))
         self.assertQuerySetEqual(
             response.context['articles'],
             [past_article]
@@ -258,7 +258,7 @@ class AuthorDetailViewTests(TestCase):
             pub_date=pub_date_a,
             content=content
         )
-        response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
+        response = self.client.get(reverse('library:author-detail', args=(author.id,)))
         self.assertQuerySetEqual(
             response.context['articles'],
             [article_a, article_b, article_c, article_d]
@@ -282,7 +282,7 @@ class AuthorDetailViewTests(TestCase):
         )
         article.save()
         article.tags.set([tag])
-        response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
+        response = self.client.get(reverse('library:author-detail', args=(author.id,)))
         self.assertContains(response, 'Has not published any articles yet.')
         self.assertQuerySetEqual(
             response.context['articles'],
@@ -305,7 +305,7 @@ class AuthorDetailViewTests(TestCase):
         )
         article.save()
         article.tags.set([tag])
-        response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
+        response = self.client.get(reverse('library:author-detail', args=(author.id,)))
         self.assertContains(response, 'Has not published any articles yet.')
         self.assertQuerySetEqual(
             response.context['articles'],
@@ -328,7 +328,7 @@ class AuthorDetailViewTests(TestCase):
             content=content
         )
         article.save()
-        response = self.client.get(reverse('django_articles:author-detail', args=(author.id,)))
+        response = self.client.get(reverse('library:author-detail', args=(author.id,)))
         self.assertContains(response, 'Has not published any articles yet.')
         self.assertQuerySetEqual(
             response.context['articles'],
@@ -341,8 +341,8 @@ class ArticleIndexViewTests(TestCase):
         """
         Checks whether ArticleIndexView uses correct template.
         """
-        expect_template = 'django_articles/article_index.html'
-        response = self.client.get(reverse('django_articles:article-index'))
+        expect_template = 'library/article_index.html'
+        response = self.client.get(reverse('library:article-index'))
         self.assertTemplateUsed(response, expect_template)
 
 
@@ -350,7 +350,7 @@ class ArticleIndexViewTests(TestCase):
         """
         Checks whether ArticleIndexView displays appropriate message when there are no articles.
         """
-        response = self.client.get(reverse('django_articles:article-index'))
+        response = self.client.get(reverse('library:article-index'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
@@ -375,7 +375,7 @@ class ArticleIndexViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:article-index'))
+        response = self.client.get(reverse('library:article-index'))
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
             [past_article]
@@ -398,7 +398,7 @@ class ArticleIndexViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:article-index'))
+        response = self.client.get(reverse('library:article-index'))
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
             [present_article]
@@ -421,7 +421,7 @@ class ArticleIndexViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:article-index'))
+        response = self.client.get(reverse('library:article-index'))
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
@@ -454,7 +454,7 @@ class ArticleIndexViewTests(TestCase):
             pub_date=present_pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:article-index'))
+        response = self.client.get(reverse('library:article-index'))
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
             [present_article, past_article]
@@ -486,7 +486,7 @@ class ArticleIndexViewTests(TestCase):
             pub_date=future_pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:article-index'))
+        response = self.client.get(reverse('library:article-index'))
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
             [past_article]
@@ -533,7 +533,7 @@ class ArticleIndexViewTests(TestCase):
             pub_date=pub_date_a,
             content=content
         )
-        response = self.client.get(reverse('django_articles:article-index'))
+        response = self.client.get(reverse('library:article-index'))
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
             [article_a, article_b, article_c, article_d]
@@ -555,7 +555,7 @@ class ArticleIndexViewTests(TestCase):
         )
         article.save()
         article.tags.set([tag])
-        response = self.client.get(reverse('django_articles:article-index'))
+        response = self.client.get(reverse('library:article-index'))
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
@@ -578,7 +578,7 @@ class ArticleIndexViewTests(TestCase):
         )
         article.save()
         article.tags.set([tag])
-        response = self.client.get(reverse('django_articles:article-index'))
+        response = self.client.get(reverse('library:article-index'))
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
@@ -601,7 +601,7 @@ class ArticleIndexViewTests(TestCase):
             content=content
         )
         article.save()
-        response = self.client.get(reverse('django_articles:article-index'))
+        response = self.client.get(reverse('library:article-index'))
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
             []
@@ -613,7 +613,7 @@ class ArticleDetailViewTests(TestCase):
         """
         Checks whether ArticleDetailView uses correct template.
         """
-        expect_template = 'django_articles/article_detail.html'
+        expect_template = 'library/article_detail.html'
         title = 'test title'
         author = create_user('test_author', 'test123')
         tags = [create_tag('test tag')]
@@ -626,7 +626,7 @@ class ArticleDetailViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:article-detail', args=(article.id,)))
+        response = self.client.get(reverse('library:article-detail', args=(article.id,)))
         self.assertTemplateUsed(response, expect_template)
 
 
@@ -646,7 +646,7 @@ class ArticleDetailViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:article-detail', args=(past_article.id,)))
+        response = self.client.get(reverse('library:article-detail', args=(past_article.id,)))
         self.assertContains(response, past_article)
 
 
@@ -666,7 +666,7 @@ class ArticleDetailViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:article-detail', args=(present_article.id,)))
+        response = self.client.get(reverse('library:article-detail', args=(present_article.id,)))
         self.assertContains(response, present_article)
 
 
@@ -686,7 +686,7 @@ class ArticleDetailViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:article-detail', args=(future_article.id,)))
+        response = self.client.get(reverse('library:article-detail', args=(future_article.id,)))
         self.assertEqual(response.status_code, 404)
 
 
@@ -703,7 +703,7 @@ class ArticleDetailViewTests(TestCase):
             content=content
         )
         article.save()
-        response = self.client.get(reverse('django_articles:article-detail', args=(article.id,)))
+        response = self.client.get(reverse('library:article-detail', args=(article.id,)))
         self.assertEqual(response.status_code, 404)
 
 
@@ -720,7 +720,7 @@ class ArticleDetailViewTests(TestCase):
             pub_date=pub_date
         )
         article.save()
-        response = self.client.get(reverse('django_articles:article-detail', args=(article.id,)))
+        response = self.client.get(reverse('library:article-detail', args=(article.id,)))
         self.assertEqual(response.status_code, 404)
 
 
@@ -739,7 +739,7 @@ class ArticleDetailViewTests(TestCase):
             content=content
         )
         article.save()
-        response = self.client.get(reverse('django_articles:article-detail', args=(article.id,)))
+        response = self.client.get(reverse('library:article-detail', args=(article.id,)))
         self.assertEqual(response.status_code, 404)
 
 
@@ -748,8 +748,8 @@ class TagIndexViewTests(TestCase):
         """
         Checks whether TagIndexView uses correct template.
         """
-        expect_template = 'django_articles/tag_index.html'
-        response = self.client.get(reverse('django_articles:tag-index'))
+        expect_template = 'library/tag_index.html'
+        response = self.client.get(reverse('library:tag-index'))
         self.assertTemplateUsed(response, expect_template)
 
 
@@ -757,7 +757,7 @@ class TagIndexViewTests(TestCase):
         """
         Checks whether TagIndexView displays the appropriate message when there are no tags.
         """
-        response = self.client.get(reverse('django_articles:tag-index'))
+        response = self.client.get(reverse('library:tag-index'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No tags are available.')
         self.assertQuerySetEqual(
@@ -774,7 +774,7 @@ class TagIndexViewTests(TestCase):
         tag_c = create_tag('tag c')
         tag_a = create_tag('tag a')
         tag_b = create_tag('tag b')
-        response = self.client.get(reverse('django_articles:tag-index'))
+        response = self.client.get(reverse('library:tag-index'))
         self.assertQuerySetEqual(
             response.context['available_tags_list'],
             [tag_a, tag_b, tag_c, tag_d]
@@ -786,9 +786,9 @@ class TagRelationsIndexViewTests(TestCase):
         """
         Checks whether TagRelationsIndexView uses correct template.
         """
-        expect_template = 'django_articles/tag_relations_index.html'
+        expect_template = 'library/tag_relations_index.html'
         tag = create_tag('test tag')
-        response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
+        response = self.client.get(reverse('library:tag-relations-index', args=(tag.id,)))
         self.assertTemplateUsed(response, expect_template)
 
 
@@ -797,7 +797,7 @@ class TagRelationsIndexViewTests(TestCase):
         Checks whether TagRelationsIndexView displays the appropriate message when there are no articles related with tag.
         """
         tag = create_tag('test tag')
-        response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
+        response = self.client.get(reverse('library:tag-relations-index', args=(tag.id,)))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
@@ -822,7 +822,7 @@ class TagRelationsIndexViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
+        response = self.client.get(reverse('library:tag-relations-index', args=(tag.id,)))
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
             [past_article]
@@ -845,7 +845,7 @@ class TagRelationsIndexViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
+        response = self.client.get(reverse('library:tag-relations-index', args=(tag.id,)))
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
             [present_article]
@@ -868,7 +868,7 @@ class TagRelationsIndexViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
+        response = self.client.get(reverse('library:tag-relations-index', args=(tag.id,)))
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
@@ -901,7 +901,7 @@ class TagRelationsIndexViewTests(TestCase):
             pub_date=present_pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
+        response = self.client.get(reverse('library:tag-relations-index', args=(tag.id,)))
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
             [present_article, past_article]
@@ -933,7 +933,7 @@ class TagRelationsIndexViewTests(TestCase):
             pub_date=future_pub_date,
             content=content
         )
-        response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
+        response = self.client.get(reverse('library:tag-relations-index', args=(tag.id,)))
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
             [past_article]
@@ -980,7 +980,7 @@ class TagRelationsIndexViewTests(TestCase):
             pub_date=pub_date_a,
             content=content
         )
-        response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
+        response = self.client.get(reverse('library:tag-relations-index', args=(tag.id,)))
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
             [article_a, article_b, article_c, article_d]
@@ -1002,7 +1002,7 @@ class TagRelationsIndexViewTests(TestCase):
         )
         article.save()
         article.tags.set([tag])
-        response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
+        response = self.client.get(reverse('library:tag-relations-index', args=(tag.id,)))
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
@@ -1025,7 +1025,7 @@ class TagRelationsIndexViewTests(TestCase):
         )
         article.save()
         article.tags.set([tag])
-        response = self.client.get(reverse('django_articles:tag-relations-index', args=(tag.id,)))
+        response = self.client.get(reverse('library:tag-relations-index', args=(tag.id,)))
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],

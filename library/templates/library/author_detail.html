@@ -14,7 +14,7 @@
             <h2>Published articles:</h2>
             <ul>
                 {% for article in articles %}
-                <li><a href="{% url 'django_articles:article-detail' article.id %}">{{ article.title }}</a></li>
+                <li><a href="{% url 'library:article-detail' article.id %}">{{ article.title }}</a></li>
                 {% endfor %}
             </ul>
         {% else %}

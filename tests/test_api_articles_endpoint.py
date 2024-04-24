@@ -4,7 +4,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from django_articles.models import Article
+from library.models import Article
 from tests.utils import create_article, create_tag, create_user, serialize_article_with_absolute_urls
 
 

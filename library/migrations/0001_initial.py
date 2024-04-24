@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=250)),
                 ('date_published', models.DateTimeField()),
                 ('content', models.TextField()),
-                ('tags', models.ManyToManyField(to='django_articles.tag')),
+                ('tags', models.ManyToManyField(to='library.tag')),
             ],
             options={
                 'ordering': ['title'],

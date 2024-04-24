@@ -2,11 +2,11 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.views import generic
 
-from .models import Article, Tag
+from library.models import Article, Tag
 
 
 class AuthorIndexView(generic.ListView):
-    template_name = 'django_articles/author_index.html'
+    template_name = 'library/author_index.html'
     context_object_name = 'authors_list'
 
     def get_queryset(self):
@@ -18,7 +18,7 @@ class AuthorIndexView(generic.ListView):
 
 class AuthorDetailView(generic.DetailView):
     model = User
-    template_name = 'django_articles/author_detail.html'
+    template_name = 'library/author_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -37,7 +37,7 @@ class AuthorDetailView(generic.DetailView):
 
 
 class ArticleIndexView(generic.ListView):
-    template_name = 'django_articles/article_index.html'
+    template_name = 'library/article_index.html'
     context_object_name = 'published_articles_list'
 
     def get_queryset(self):
@@ -56,7 +56,7 @@ class ArticleIndexView(generic.ListView):
     
 
 class ArticleDetailView(generic.DetailView):
-    template_name = 'django_articles/article_detail.html'
+    template_name = 'library/article_detail.html'
 
     def get_queryset(self):
         """
@@ -76,7 +76,7 @@ class ArticleDetailView(generic.DetailView):
 
 
 class TagIndexView(generic.ListView):
-    template_name = 'django_articles/tag_index.html'
+    template_name = 'library/tag_index.html'
     context_object_name = 'available_tags_list'
 
     def get_queryset(self):
@@ -87,7 +87,7 @@ class TagIndexView(generic.ListView):
     
 
 class TagRelationsIndexView(generic.ListView):
-    template_name = 'django_articles/tag_relations_index.html'
+    template_name = 'library/tag_relations_index.html'
     context_object_name = 'tag_relations_list'
 
     def get_queryset(self):

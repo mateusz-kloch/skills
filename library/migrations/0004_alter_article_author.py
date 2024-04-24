@@ -7,13 +7,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('django_articles', '0003_author_article_author'),
+        ('library', '0003_author_article_author'),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='article',
             name='author',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='django_articles.author'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='library.author'),
         ),
     ]
