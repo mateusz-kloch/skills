@@ -17,4 +17,5 @@ router.register(r'register', CreateUserView, basename='user-register')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('auth/', include('rest_framework.urls')),
 ]
