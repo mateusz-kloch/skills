@@ -57,7 +57,7 @@ This platform was developed with Django and Django REST framework to let people 
 └── manage.py
 ```
 ### Tools used in development:
-- python 3.11.6
+- python 3.12.3
 - coverage 7.4.4
 - django 5.0.4
 - django-debug-toolbar 4.3.0
