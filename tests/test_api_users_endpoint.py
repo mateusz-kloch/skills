@@ -54,6 +54,25 @@ class ApiUserListTests(APITestCase):
         self.assertEqual(register.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertQuerySetEqual(User.objects.all(), [])
 
+    
+    def test_post_user_list_new_user_by_logged_user(self):
+        """
+        Checks register respone for create new user if user is logged in.
+        """
+        user_data = {
+            'username': 'user',
+            'password': 'woeiuhtg9823y'
+        }
+        register = self.client.post('/api/users/', user_data)
+        self.assertEqual(register.status_code, status.HTTP_201_CREATED)
+        self.client.login(username=user_data['username'], password=user_data['password'])
+        new_user_data = {
+            'username': 'new_user',
+            'password': 'a82orsihg'
+        }
+        register = self.client.post('/api/users/', new_user_data)
+        self.assertEqual(register.status_code, status.HTTP_403_FORBIDDEN)
+
 
 class ApiUserDetailTests(APITestCase):
     def test_get_user_detail_response(self):
