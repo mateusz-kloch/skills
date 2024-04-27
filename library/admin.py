@@ -4,6 +4,9 @@ from library.models import Article, Tag
 
 
 class ArticleAdmin(admin.ModelAdmin):
+    """
+    Creates custom view of articles for an admin.
+    """
     fieldset = [('Article informations', {'fields': [
         'title',
         'author',

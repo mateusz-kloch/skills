@@ -21,6 +21,9 @@ class AuthorDetailView(generic.DetailView):
     template_name = 'library/author_detail.html'
 
     def get_context_data(self, **kwargs):
+        """
+        Returns a queryset of articles related with an author, excludes defective articles.
+        """
         context = super().get_context_data(**kwargs)
         author = self.get_object()
         articles = author.articles.filter(
@@ -42,7 +45,7 @@ class ArticleIndexView(generic.ListView):
 
     def get_queryset(self):
         """
-        Returns a query set that includes articles whose pub_date is present or past, and excludes articles with empty fields.
+        Returns a query set that includes articles whose pub_date is present or past, and excludes defective articles.
         """
         return Article.objects.filter(
             pub_date__lte=timezone.now()
@@ -60,7 +63,7 @@ class ArticleDetailView(generic.DetailView):
 
     def get_queryset(self):
         """
-        Returns article whose primary key is provided in the request.
+        Returns article whose primary key is provided in the request, excludes defective articles.
         """
         search_request = self.request.resolver_match.kwargs.get('pk')
         return Article.objects.filter(
@@ -92,7 +95,7 @@ class TagRelationsIndexView(generic.ListView):
 
     def get_queryset(self):
         """
-        Returns a query set of articles whose tags contain the tag with primary key provided in the request, and excludes articles with empty fields.
+        Returns a query set of articles whose tags contain the tag with primary key provided in the request, excludes defective articles.
         """
         search_request = self.request.resolver_match.kwargs.get('pk')
         return Article.objects.filter(
