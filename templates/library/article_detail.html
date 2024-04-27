@@ -9,7 +9,7 @@
         <h2>Author: <a href="{% url 'library:author-detail' article.author.id %}">{{ article.author }}</a></h2>
         <h3>Tags:</h3>
         <ul>
-            {% for tag in article.get_related_tags %}
+            {% for tag in article.tags.all %}
             <li><a href="{% url 'library:tag-relations-index' tag.id %}">{{ tag.name }}</a></li>
             {% endfor %}
         </ul>

@@ -19,14 +19,11 @@ class Article(models.Model):
     @admin.display(description='tags')
     def tags_as_str(self) -> str:
         """
-        Returns names of all tags as a single string for an article.
+        Returns names of all tags related with an article as a single string.
         """
         return ', '.join(
             tag.name for tag in self.tags.all()
         )
-    
-    def get_related_tags(self) -> list['Tag']:
-        return [tag for tag in self.tags.all()]
 
 
 class Tag(models.Model):
