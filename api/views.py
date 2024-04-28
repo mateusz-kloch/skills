@@ -13,9 +13,7 @@ from api.serializers import ArticleSerializer, TagSerializer, UserSerializer
 
 class ArticleViewSet(viewsets.ModelViewSet):
     """
-    A set of views for Article model.
-
-    Consists of Article list and detail views that allows anyone to display published articles and to create a new article by logged in User.
+    Allows anyone to display published articles and to create a new article by logged in User.
     
     Uses custom permission `IsOwnerOrReadOnly` that ensures only author of article can edit it.
     """
@@ -40,7 +38,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    Consists of Tag list and detail views that allows anyone to display tags and articles related to them.
+    Allows anyone to display tags and articles related to them.
     """
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
@@ -49,7 +47,9 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 class UserViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     """
-    Consists of User list and detail views that allows anyone to display users and create a new account by anonymous visitors.
+    Allows anyone to display users and create a new account by anonymous visitors.
+
+    Uses custom permission `IsAnonOrNotAllowed` that ensures only not loggen in user can create account.
     """
     queryset = User.objects.all().order_by('username')
     serializer_class = UserSerializer
