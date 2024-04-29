@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from tests.utils import create_tag, serialize_tag_with_absolute_urls
+from library.tests.utils import create_tag, serialize_tag_with_absolute_urls
 
 
 class ApiTagListTest(APITestCase):

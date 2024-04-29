@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from library.models import Article
-from tests.utils import create_article, create_tag, create_user, serialize_article_with_absolute_urls
+from library.tests.utils import create_article, create_tag, create_user, serialize_article_with_absolute_urls
 
 
 class ApiArticleListTests(APITestCase):

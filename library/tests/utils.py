@@ -2,8 +2,8 @@ from datetime import datetime
 
 from django.contrib.auth.models import User
 
-from api.serializers import ArticleSerializer, TagSerializer, UserSerializer
 from library.models import Article, Tag
+from library.api.serializers import ArticleSerializer, TagSerializer, UserSerializer
 
 
 def create_user(name: str, password: str) -> User:

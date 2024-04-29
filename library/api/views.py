@@ -5,8 +5,8 @@ from rest_framework import permissions
 from rest_framework import viewsets
 
 from library.models import Article, Tag
-from api.permissions import IsAnonymousOrNotAllowed ,IsOwnerOrReadOnly
-from api.serializers import ArticleSerializer, TagSerializer, UserSerializer
+from library.api.permissions import IsAnonymousOrNotAllowed ,IsOwnerOrReadOnly
+from library.api.serializers import ArticleSerializer, TagSerializer, UserSerializer
 
 
 class ArticleViewSet(viewsets.ModelViewSet):
