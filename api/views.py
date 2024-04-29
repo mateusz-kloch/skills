@@ -7,7 +7,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 
 from library.models import Article, Tag
-from api.permissions import IsAnonOrNotAllowed ,IsOwnerOrReadOnly
+from api.permissions import IsAnonymousOrNotAllowed ,IsOwnerOrReadOnly
 from api.serializers import ArticleSerializer, TagSerializer, UserSerializer
 
 
@@ -53,4 +53,4 @@ class UserViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.Creat
     """
     queryset = User.objects.all().order_by('username')
     serializer_class = UserSerializer
-    permission_classes = [permissions.AllowAny, IsAnonOrNotAllowed]
+    permission_classes = [permissions.AllowAny, IsAnonymousOrNotAllowed]

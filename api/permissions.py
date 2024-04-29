@@ -14,7 +14,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
             return obj.author == request.user
         
 
-class IsAnonOrNotAllowed(permissions.BasePermission):
+class IsAnonymousOrNotAllowed(permissions.BasePermission):
     def has_permission(self, request, view):
         """
         Ensures that only anonymous visitors can create a new account.
