@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.contrib.auth.models import User
 
-from library.api.serializers import ArticleSerializer, TagSerializer, UserSerializer
+from api.serializers import ArticleSerializer, TagSerializer, UserSerializer
 from library.models import Article, Tag
 
 
