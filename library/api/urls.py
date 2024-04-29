@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from api.views import (
+from library.api.views import (
     ArticleViewSet,
     TagViewSet,
     UserViewSet
