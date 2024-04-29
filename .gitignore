@@ -1,10 +1,10 @@
+.dev
+
 .venv
 
 __pycache__/
 
 migrations/
-
-example_users.txt
 
 db.sqlite3
 
