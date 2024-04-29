@@ -1,10 +1,8 @@
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.utils import timezone
 from rest_framework import mixins
 from rest_framework import permissions
 from rest_framework import viewsets
-from rest_framework.decorators import action
 
 from library.models import Article, Tag
 from api.permissions import IsAnonymousOrNotAllowed ,IsOwnerOrReadOnly
