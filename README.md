@@ -31,6 +31,7 @@ This platform was developed with Django and Django REST framework to let people 
 │   │       ├── article_index.html
 │   │       ├── author_detail.html
 │   │       ├── author_index.html
+│   │       ├── index.html
 │   │       ├── tag_index.html
 │   │       └── tag_relations_index.html
 │   |── tests
