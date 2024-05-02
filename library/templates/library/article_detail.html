@@ -10,7 +10,7 @@
         <h3>Tags:</h3>
         <ul>
             {% for tag in article.tags.all %}
-            <li><a href="{% url 'library:tag-relations-index' tag.id %}">{{ tag.name }}</a></li>
+            <li><a href="{% url 'library:tag-relations-list' tag.id %}">{{ tag.name }}</a></li>
             {% endfor %}
         </ul>
         <h4>{{ article.pub_date }}</h4>

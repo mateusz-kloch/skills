@@ -8,7 +8,7 @@
         {% if available_tags_list %}
             <ul>
                 {% for tag in available_tags_list %}
-                <li><a href="{% url 'library:tag-relations-index' tag.id %}">{{ tag.name }}</a></li>
+                <li><a href="{% url 'library:tag-relations-list' tag.id %}">{{ tag.name }}</a></li>
                 {% endfor %}
             </ul>
         {% else %}
