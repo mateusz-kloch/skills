@@ -19,16 +19,12 @@ This platform was developed with Django and Django REST framework to let people 
 │   ├── urls.py
 │   └── wsgi.py
 ├── library
-│   ├── admin.py
 │   ├── api
 │   │   ├── __init__.py
 │   │   ├── permissions.py
 │   │   ├── serializers.py
 │   │   ├── urls.py
 │   │   └── views.py
-│   ├── apps.py
-│   ├── __init__.py
-│   ├── models.py
 │   ├── templates
 │   │   └── library
 │   │       ├── article_detail.html
@@ -47,6 +43,10 @@ This platform was developed with Django and Django REST framework to let people 
 │   |   ├── test_library_models.py
 │   |   ├── test_library_views.py
 │   |   └── utils.py
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
 │   ├── urls.py
 │   └── views.py
 ├── .gitignore
