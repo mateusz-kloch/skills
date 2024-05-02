@@ -1,5 +1,4 @@
 from django.contrib.auth.models import User
-from django.utils import timezone
 from rest_framework import mixins
 from rest_framework import permissions
 from rest_framework import viewsets
@@ -15,15 +14,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
     
     Uses custom permission `IsOwnerOrReadOnly` that ensures only author of article can edit it.
     """
-    queryset = Article.objects.filter(
-            pub_date__lte=timezone.now()
-        ).exclude(
-            title=''
-        ).exclude(
-            tags__isnull=True
-        ).exclude(
-            content=''
-        )
+    queryset = Article.verified_objects.all()
     serializer_class = ArticleSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 

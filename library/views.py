@@ -26,15 +26,7 @@ class AuthorDetailView(generic.DetailView):
         """
         context = super().get_context_data(**kwargs)
         author = self.get_object()
-        articles = author.articles.filter(
-            pub_date__lte=timezone.now()
-        ).exclude(
-            title=''
-        ).exclude(
-            tags__isnull=True
-        ).exclude(
-            content=''
-        )
+        articles = Article.verified_objects.filter(author__pk=author.id)
         context['articles'] = articles
         return context
 
@@ -45,17 +37,9 @@ class ArticleListView(generic.ListView):
 
     def get_queryset(self):
         """
-        Returns a query set that includes articles whose pub_date is present or past, and excludes defective articles.
+        Returns a query set that includes verified articles whose pub_date is present or past.
         """
-        return Article.objects.filter(
-            pub_date__lte=timezone.now()
-        ).exclude(
-            title=''
-        ).exclude(
-            tags__isnull=True
-        ).exclude(
-            content=''
-        )
+        return Article.verified_objects.all()
     
 
 class ArticleDetailView(generic.DetailView):
@@ -63,19 +47,10 @@ class ArticleDetailView(generic.DetailView):
 
     def get_queryset(self):
         """
-        Returns article whose primary key is provided in the request, excludes defective articles.
+        Returns verified article whose primary key is provided in the request.
         """
         search_request = self.request.resolver_match.kwargs.get('pk')
-        return Article.objects.filter(
-            pk=search_request,
-            pub_date__lte=timezone.now()
-        ).exclude(
-            title=''
-        ).exclude(
-            tags__isnull=True
-        ).exclude(
-            content=''
-        )
+        return Article.verified_objects.filter(pk=search_request)
 
 
 class TagListView(generic.ListView):
@@ -95,16 +70,7 @@ class TagRelationsListView(generic.ListView):
 
     def get_queryset(self):
         """
-        Returns a query set of articles whose tags contain the tag with primary key provided in the request, excludes defective articles.
+        Returns a query set of verified articles whose tags contain the tag with primary key provided in the request.
         """
         search_request = self.request.resolver_match.kwargs.get('pk')
-        return Article.objects.filter(
-            tags__pk=search_request,
-            pub_date__lte=timezone.now()
-        ).exclude(
-            title=''
-        ).exclude(
-            tags__isnull=True
-        ).exclude(
-            content=''
-        )
+        return Article.verified_objects.filter(tags__pk=search_request)

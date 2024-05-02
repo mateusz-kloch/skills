@@ -5,14 +5,31 @@ from django.utils import timezone
 
 
 class Article(models.Model):
+    class VerifiedArticles(models.Manager):
+        def get_queryset(self) -> models.QuerySet:
+            return super().get_queryset().filter(
+            pub_date__lte=timezone.now()
+        ).exclude(
+            title=''
+        ).exclude(
+            tags__isnull=True
+        ).exclude(
+            content=''
+        )
+    
     title = models.CharField(max_length=150)
-    author = models.ForeignKey(User, related_name='articles', on_delete=models.CASCADE)
-    tags = models.ManyToManyField('Tag', related_name='articles')
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    tags = models.ManyToManyField('Tag')
     pub_date = models.DateTimeField('date published', default=timezone.now)
     content = models.TextField()
 
+    objects = models.Manager()
+    verified_objects = VerifiedArticles()
+
     class Meta:
         ordering = ['-pub_date']
+        default_related_name = 'articles'
+        
 
     def __str__(self):
         return self.title
