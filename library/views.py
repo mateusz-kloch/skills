@@ -5,8 +5,8 @@ from django.views import generic
 from library.models import Article, Tag
 
 
-class AuthorIndexView(generic.ListView):
-    template_name = 'library/author_index.html'
+class AuthorListView(generic.ListView):
+    template_name = 'library/author_list.html'
     context_object_name = 'authors_list'
 
     def get_queryset(self):
@@ -39,8 +39,8 @@ class AuthorDetailView(generic.DetailView):
         return context
 
 
-class ArticleIndexView(generic.ListView):
-    template_name = 'library/article_index.html'
+class ArticleListView(generic.ListView):
+    template_name = 'library/article_list.html'
     context_object_name = 'published_articles_list'
 
     def get_queryset(self):
@@ -78,8 +78,8 @@ class ArticleDetailView(generic.DetailView):
         )
 
 
-class TagIndexView(generic.ListView):
-    template_name = 'library/tag_index.html'
+class TagListView(generic.ListView):
+    template_name = 'library/tag_list.html'
     context_object_name = 'available_tags_list'
 
     def get_queryset(self):
@@ -89,8 +89,8 @@ class TagIndexView(generic.ListView):
         return Tag.objects.all()
     
 
-class TagRelationsIndexView(generic.ListView):
-    template_name = 'library/tag_relations_index.html'
+class TagRelationsListView(generic.ListView):
+    template_name = 'library/tag_relations_list.html'
     context_object_name = 'tag_relations_list'
 
     def get_queryset(self):

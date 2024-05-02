@@ -1,22 +1,24 @@
 from django.urls import path
+from django.views.generic import TemplateView
 
 from library.views import (
-    AuthorIndexView,
+    AuthorListView,
     AuthorDetailView,
-    ArticleIndexView,
+    ArticleListView,
     ArticleDetailView,
-    TagIndexView,
-    TagRelationsIndexView
+    TagListView,
+    TagRelationsListView
 )
 
 
 app_name = 'library'
 
 urlpatterns = [
-    path('authors/', AuthorIndexView.as_view(), name='author-index'),
+    path('', TemplateView.as_view(template_name='library/index.html'), name='index'),
+    path('authors/', AuthorListView.as_view(), name='author-list'),
     path('authors/<int:pk>/', AuthorDetailView.as_view(), name='author-detail'),
-    path('articles/', ArticleIndexView.as_view(), name='article-index'),
+    path('articles/', ArticleListView.as_view(), name='article-list'),
     path('articles/<int:pk>/', ArticleDetailView.as_view(), name='article-detail'),
-    path('tags/', TagIndexView.as_view(), name='tag-index'),
-    path('tags/<int:pk>/', TagRelationsIndexView.as_view(), name='tag-relations-index')
+    path('tags/', TagListView.as_view(), name='tag-list'),
+    path('tags/<int:pk>/', TagRelationsListView.as_view(), name='tag-relations-list')
 ]
