@@ -1,13 +1,14 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
 
 class Article(models.Model):
     title = models.CharField(max_length=150)
     author = models.ForeignKey(User, related_name='articles', on_delete=models.CASCADE)
     tags = models.ManyToManyField('Tag', related_name='articles')
-    pub_date = models.DateTimeField('date published')
+    pub_date = models.DateTimeField('date published', default=timezone.now)
     content = models.TextField()
 
     class Meta:

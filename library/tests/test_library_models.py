@@ -9,6 +9,21 @@ from library.tests.utils import create_article, create_tag, create_user
 
 
 class ArticleModelTests(TestCase):
+    def test_article_default_pub_date(self):
+        """
+        Checks whether pub_date is provided by default if not passed.
+        """
+        article = Article(
+        title='test title',
+        author=create_user('test_author', 'test123'),
+        content='test content'
+        )
+        article.save()
+        tags = [create_tag('test tag')]
+        article.tags.set(tags)
+        self.assertTrue(article.pub_date)
+
+    
     def test_article_as_str(self):
         """
         Checks whether __str__ displays article correctly.
