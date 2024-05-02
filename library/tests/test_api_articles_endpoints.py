@@ -11,7 +11,7 @@ from library.tests.utils import create_article, create_tag, create_user, seriali
 class ApiArticleListTests(APITestCase):
     def test_get_article_list_response_no_articles(self):
         """
-        Checks article-list response when there are no articles in db.
+        Checks article list endpoint response when there are no articles in db.
         """
         response = self.client.get('/api/articles/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -21,7 +21,7 @@ class ApiArticleListTests(APITestCase):
 
     def test_get_article_list_response_past_article(self):
         """
-        Checks article-list response when there is article with past pub_date in db.
+        Checks article list endpoint response when there is article with past pub_date in db.
         """
         past_article = create_article(
             title='past_article_title',
@@ -38,7 +38,7 @@ class ApiArticleListTests(APITestCase):
 
     def test_get_article_list_response_future_article(self):
         """
-        Checks article-list response when there is article with future pub_date in db.
+        Checks article list endpoint response when there is article with future pub_date in db.
         """
         future_article = create_article(
             title='future_article_title',
@@ -55,7 +55,7 @@ class ApiArticleListTests(APITestCase):
 
     def test_get_article_list_response_two_past_articles(self):
         """
-        Checks article-list response when there are two articles with past pub_date in db.
+        Checks article list endpoint response when there are two articles with past pub_date in db.
         """
         first_past_article = create_article(
             title='first_past_article_title',
@@ -81,7 +81,7 @@ class ApiArticleListTests(APITestCase):
 
     def test_get_article_list_response_past_and_future_article(self):
         """
-        Checks article-list response when there are article with past and article with future pub_date in db.
+        Checks article list endpoint response when there are article with past and article with future pub_date in db.
         """
         past_article = create_article(
             title='past_article_title',
@@ -107,7 +107,7 @@ class ApiArticleListTests(APITestCase):
 
     def test_post_article_list_response_logged_user(self):
         """
-        Checks article-list response for create new article by logged user.
+        Checks article list endpoint response for create new article by logged user.
         """
         create_user('user', 'test123')
         self.client.login(username='user', password='test123')
@@ -124,7 +124,7 @@ class ApiArticleListTests(APITestCase):
 
     def test_post_article_list_response_logout_user(self):
         """
-        Checks article-list response for create new article after user is logged out.
+        Checks article list endpoint response for create new article after user is logged out.
         """
         create_user('user', 'test123')
         self.client.login(username='user', password='test123')
@@ -142,7 +142,7 @@ class ApiArticleListTests(APITestCase):
 
     def test_post_article_list_response_not_logged_user(self):
         """
-        Checks article-list response for create new article by not logged user.
+        Checks article list endpoint response for create new article by not logged user.
         """
         article_data = {
             'title': 'article_title',
@@ -157,7 +157,7 @@ class ApiArticleListTests(APITestCase):
 class ApiArticleDetailTests(APITestCase):
     def test_get_article_detail_response_past_article(self):
         """
-        Checks article-detail response for article with past pub_date. 
+        Checks article detail endpoint response for article with past pub_date. 
         """
         past_article = create_article(
             title='past_article_title',
@@ -174,7 +174,7 @@ class ApiArticleDetailTests(APITestCase):
 
     def test_get_article_detail_response_future_article(self):
         """
-        Checks article-detail response for article with future pub_date.
+        Checks article detail endpoint response for article with future pub_date.
         """
         future_article = create_article(
             title='future_article_title',
@@ -189,7 +189,7 @@ class ApiArticleDetailTests(APITestCase):
 
     def test_put_article_detail_logged_user_author(self):
         """
-        Checks article-detail response for new data added by logged user who is author of article.
+        Checks article detail endpoint response for new data added by logged user who is author of article.
         """
         user = create_user('author', 'test123')
         article = create_article(
@@ -215,7 +215,7 @@ class ApiArticleDetailTests(APITestCase):
 
     def test_put_article_detail_logged_user_not_author(self):
         """
-        Checks article-detail response for new data added by logged user who is not author of article.
+        Checks article detail endpoint response for new data added by logged user who is not author of article.
         """
         article = create_article(
             title='article_title',
@@ -241,7 +241,7 @@ class ApiArticleDetailTests(APITestCase):
 
     def test_put_article_detail_not_logged_user(self):
         """
-        Checks article-detail response for new data added by not logged user.
+        Checks article detail endpoint response for new data added by not logged user.
         """
         article = create_article(
             title='article_title',
@@ -263,7 +263,7 @@ class ApiArticleDetailTests(APITestCase):
 
     def test_patch_article_detail_logged_user_author(self):
         """
-        Checks article-detail response for new data updated by logged user who is author of article.
+        Checks article detail endpoint response for new data updated by logged user who is author of article.
         """
         user = create_user('author', 'test123')
         article = create_article(
@@ -284,7 +284,7 @@ class ApiArticleDetailTests(APITestCase):
 
     def test_patch_article_detail_logged_user_not_author(self):
         """
-        Checks article-detail response for new data updated by logged user who is not author of article.
+        Checks article detail endpoint response for new data updated by logged user who is not author of article.
         """
         article = create_article(
             title='article_title',
@@ -305,7 +305,7 @@ class ApiArticleDetailTests(APITestCase):
 
     def test_patch_article_detail_not_logged_user(self):
         """
-        Checks article-detail response for new data updated by not logged user.
+        Checks article detail endpoint response for new data updated by not logged user.
         """
         article = create_article(
             title='article_title',
@@ -322,7 +322,7 @@ class ApiArticleDetailTests(APITestCase):
 
     def test_delete_article_detail_logged_user_author(self):
         """
-        Checks article-detail response for delete article by logged user who is author of article.
+        Checks article detail endpoint response for delete article by logged user who is author of article.
         """
         user = create_user('author', 'test123')
         article = create_article(
@@ -341,7 +341,7 @@ class ApiArticleDetailTests(APITestCase):
 
     def test_delete_article_detail_logged_user_not_author(self):
         """
-        Checks article-detail response for delete article by logged user who is not author of article.
+        Checks article detail endpoint response for delete article by logged user who is not author of article.
         """
         article = create_article(
             title='article_title',
@@ -361,7 +361,7 @@ class ApiArticleDetailTests(APITestCase):
 
     def test_delete_article_detail_not_logged_user(self):
         """
-        Checks article-detail response for delete article by not logged user.
+        Checks article detail endpoint response for delete article by not logged user.
         """
         article = create_article(
             title='article_title',
