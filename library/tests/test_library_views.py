@@ -9,21 +9,31 @@ from library.models import Article
 from library.tests.utils import create_article, create_tag, create_user
 
 
-class AuthorIndexViewTests(TestCase):
+class IndexPageTests(TestCase):
     def test_template_used(self):
         """
-        Checks whether AuthorIndexView uses correct template.
+        Checks whether index page uses correct template.
         """
-        expect_template = 'library/author_index.html'
-        response = self.client.get(reverse('library:author-index'))
+        expect_template = 'library/index.html'
+        response = self.client.get(reverse('library:index'))
+        self.assertTemplateUsed(response, expect_template)
+
+
+class AuthorListViewTests(TestCase):
+    def test_template_used(self):
+        """
+        Checks whether AuthorListView uses correct template.
+        """
+        expect_template = 'library/author_list.html'
+        response = self.client.get(reverse('library:author-list'))
         self.assertTemplateUsed(response, expect_template)
     
     
     def test_no_authors(self):
         """
-        Checks whether AuthorIndexView displays appropriate message when there are no authors.
+        Checks whether AuthorListView displays appropriate message when there are no authors.
         """
-        response = self.client.get(reverse('library:author-index'))
+        response = self.client.get(reverse('library:author-list'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No authors are available.')
         self.assertQuerySetEqual(
@@ -34,12 +44,12 @@ class AuthorIndexViewTests(TestCase):
 
     def test_authors_alphabetic_order(self):
         """
-        Checks whether AuthorIndexView displays authors in alphabetic order.
+        Checks whether AuthorListView displays authors in alphabetic order.
         """
         author_b = create_user('Author b', 'test123')
         author_c = create_user('Author c', 'test123')
         author_a = create_user('Author a', 'test123')
-        response = self.client.get(reverse('library:author-index'))
+        response = self.client.get(reverse('library:author-list'))
         self.assertQuerySetEqual(
             response.context['authors_list'],
             [author_a, author_b, author_c]
@@ -336,21 +346,21 @@ class AuthorDetailViewTests(TestCase):
         )
 
 
-class ArticleIndexViewTests(TestCase):
+class ArticleListViewTests(TestCase):
     def test_template_used(self):
         """
-        Checks whether ArticleIndexView uses correct template.
+        Checks whether ArticleListView uses correct template.
         """
-        expect_template = 'library/article_index.html'
-        response = self.client.get(reverse('library:article-index'))
+        expect_template = 'library/article_list.html'
+        response = self.client.get(reverse('library:article-list'))
         self.assertTemplateUsed(response, expect_template)
 
 
     def test_no_articles(self):
         """
-        Checks whether ArticleIndexView displays appropriate message when there are no articles.
+        Checks whether ArticleListView displays appropriate message when there are no articles.
         """
-        response = self.client.get(reverse('library:article-index'))
+        response = self.client.get(reverse('library:article-list'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
@@ -361,7 +371,7 @@ class ArticleIndexViewTests(TestCase):
 
     def test_past_article(self):
         """
-        Checks whether ArticleIndexView displays article with past pub_date.
+        Checks whether ArticleListView displays article with past pub_date.
         """
         title = 'test title'
         author = create_user('test_author', 'test123')
@@ -375,7 +385,7 @@ class ArticleIndexViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('library:article-index'))
+        response = self.client.get(reverse('library:article-list'))
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
             [past_article]
@@ -384,7 +394,7 @@ class ArticleIndexViewTests(TestCase):
 
     def test_present_article(self):
         """
-        Checks whether ArticleIndexView displays article with present pub_date.
+        Checks whether ArticleListView displays article with present pub_date.
         """
         title = 'test title'
         author = create_user('test_author', 'test123')
@@ -398,7 +408,7 @@ class ArticleIndexViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('library:article-index'))
+        response = self.client.get(reverse('library:article-list'))
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
             [present_article]
@@ -407,7 +417,7 @@ class ArticleIndexViewTests(TestCase):
 
     def test_future_article(self):
         """
-        Checks whether ArticleIndexView not displays article with future pub_date.
+        Checks whether ArticleListView not displays article with future pub_date.
         """
         title = 'test title'
         author = create_user('test_author', 'test123')
@@ -421,7 +431,7 @@ class ArticleIndexViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('library:article-index'))
+        response = self.client.get(reverse('library:article-list'))
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
@@ -431,7 +441,7 @@ class ArticleIndexViewTests(TestCase):
 
     def test_past_and_present_article(self):
         """
-        Checks whether ArticleIndexView displays articles with past and present pub_dates.
+        Checks whether ArticleListView displays articles with past and present pub_dates.
         """
         past_title = 'past title'
         present_title = 'present title'
@@ -454,7 +464,7 @@ class ArticleIndexViewTests(TestCase):
             pub_date=present_pub_date,
             content=content
         )
-        response = self.client.get(reverse('library:article-index'))
+        response = self.client.get(reverse('library:article-list'))
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
             [present_article, past_article]
@@ -463,7 +473,7 @@ class ArticleIndexViewTests(TestCase):
 
     def test_past_and_future_article(self):
         """
-        Checks whether ArticleIndexView displays article with past pub_date but not article with future pub_date.
+        Checks whether ArticleListView displays article with past pub_date but not article with future pub_date.
         """
         past_title = 'past title'
         future_title = 'future title'
@@ -486,7 +496,7 @@ class ArticleIndexViewTests(TestCase):
             pub_date=future_pub_date,
             content=content
         )
-        response = self.client.get(reverse('library:article-index'))
+        response = self.client.get(reverse('library:article-list'))
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
             [past_article]
@@ -495,7 +505,7 @@ class ArticleIndexViewTests(TestCase):
 
     def test_articles_alphabetic_order(self):
         """
-        Checks whether ArticleIndexView displays articles ordered by date, latest first.
+        Checks whether ArticleListView displays articles ordered by date, latest first.
         """
         title = 'test_title'
         author = create_user('test_author', 'test123')
@@ -533,7 +543,7 @@ class ArticleIndexViewTests(TestCase):
             pub_date=pub_date_a,
             content=content
         )
-        response = self.client.get(reverse('library:article-index'))
+        response = self.client.get(reverse('library:article-list'))
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
             [article_a, article_b, article_c, article_d]
@@ -542,7 +552,7 @@ class ArticleIndexViewTests(TestCase):
 
     def test_article_with_missing_title_field(self):
         """
-        Checks whether ArticleIndexView displays article without title field.
+        Checks whether ArticleListView displays article without title field.
         """
         author = create_user('test_author', 'test123')
         tag = create_tag('test tag')
@@ -555,7 +565,7 @@ class ArticleIndexViewTests(TestCase):
         )
         article.save()
         article.tags.set([tag])
-        response = self.client.get(reverse('library:article-index'))
+        response = self.client.get(reverse('library:article-list'))
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
@@ -565,7 +575,7 @@ class ArticleIndexViewTests(TestCase):
 
     def test_article_with_missing_content_field(self):
         """
-        Checks whether ArticleIndexView displays article without content field.
+        Checks whether ArticleListView displays article without content field.
         """
         title = 'test title'
         author = create_user('test_author', 'test123')
@@ -578,7 +588,7 @@ class ArticleIndexViewTests(TestCase):
         )
         article.save()
         article.tags.set([tag])
-        response = self.client.get(reverse('library:article-index'))
+        response = self.client.get(reverse('library:article-list'))
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
@@ -588,7 +598,7 @@ class ArticleIndexViewTests(TestCase):
 
     def test_article_without_related_tag(self):
         """
-        Checks whether ArticleIndexView displays article without relation with any Tag model object.
+        Checks whether ArticleListView displays article without relation with any Tag model object.
         """
         title = 'test title'
         author = create_user('test_author', 'test123')
@@ -601,7 +611,7 @@ class ArticleIndexViewTests(TestCase):
             content=content
         )
         article.save()
-        response = self.client.get(reverse('library:article-index'))
+        response = self.client.get(reverse('library:article-list'))
         self.assertQuerySetEqual(
             response.context['published_articles_list'],
             []
@@ -743,21 +753,21 @@ class ArticleDetailViewTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
 
-class TagIndexViewTests(TestCase):
+class TagListViewTests(TestCase):
     def test_template_used(self):
         """
-        Checks whether TagIndexView uses correct template.
+        Checks whether TagListView uses correct template.
         """
-        expect_template = 'library/tag_index.html'
-        response = self.client.get(reverse('library:tag-index'))
+        expect_template = 'library/tag_list.html'
+        response = self.client.get(reverse('library:tag-list'))
         self.assertTemplateUsed(response, expect_template)
 
 
     def test_no_tags(self):
         """
-        Checks whether TagIndexView displays the appropriate message when there are no tags.
+        Checks whether TagListView displays the appropriate message when there are no tags.
         """
-        response = self.client.get(reverse('library:tag-index'))
+        response = self.client.get(reverse('library:tag-list'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No tags are available.')
         self.assertQuerySetEqual(
@@ -768,36 +778,36 @@ class TagIndexViewTests(TestCase):
 
     def test_tags_alphabetic_order(self):
         """
-        Checks whether TagIndexView displays tags in aplhabetic order.
+        Checks whether TagListView displays tags in aplhabetic order.
         """
         tag_d = create_tag('tag d')
         tag_c = create_tag('tag c')
         tag_a = create_tag('tag a')
         tag_b = create_tag('tag b')
-        response = self.client.get(reverse('library:tag-index'))
+        response = self.client.get(reverse('library:tag-list'))
         self.assertQuerySetEqual(
             response.context['available_tags_list'],
             [tag_a, tag_b, tag_c, tag_d]
         )
 
 
-class TagRelationsIndexViewTests(TestCase):
+class TagRelationsListViewTests(TestCase):
     def test_template_used(self):
         """
-        Checks whether TagRelationsIndexView uses correct template.
+        Checks whether TagRelationsListView uses correct template.
         """
-        expect_template = 'library/tag_relations_index.html'
+        expect_template = 'library/tag_relations_list.html'
         tag = create_tag('test tag')
-        response = self.client.get(reverse('library:tag-relations-index', args=(tag.id,)))
+        response = self.client.get(reverse('library:tag-relations-list', args=(tag.id,)))
         self.assertTemplateUsed(response, expect_template)
 
 
     def test_no_articles(self):
         """
-        Checks whether TagRelationsIndexView displays the appropriate message when there are no articles related with tag.
+        Checks whether TagRelationsListView displays the appropriate message when there are no articles related with tag.
         """
         tag = create_tag('test tag')
-        response = self.client.get(reverse('library:tag-relations-index', args=(tag.id,)))
+        response = self.client.get(reverse('library:tag-relations-list', args=(tag.id,)))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
@@ -808,7 +818,7 @@ class TagRelationsIndexViewTests(TestCase):
 
     def test_past_article(self):
         """
-        Checks whether TagRelationsIndexView displays related article with past pub_date.
+        Checks whether TagRelationsListView displays related article with past pub_date.
         """
         title = 'test title'
         author = create_user('test_author', 'test123')
@@ -822,7 +832,7 @@ class TagRelationsIndexViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('library:tag-relations-index', args=(tag.id,)))
+        response = self.client.get(reverse('library:tag-relations-list', args=(tag.id,)))
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
             [past_article]
@@ -831,7 +841,7 @@ class TagRelationsIndexViewTests(TestCase):
 
     def test_present_article(self):
         """
-        Checks whether TagRelationsIndexView displays related article with present pub_date.
+        Checks whether TagRelationsListView displays related article with present pub_date.
         """
         title = 'test title'
         author = create_user('test_author', 'test123')
@@ -845,7 +855,7 @@ class TagRelationsIndexViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('library:tag-relations-index', args=(tag.id,)))
+        response = self.client.get(reverse('library:tag-relations-list', args=(tag.id,)))
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
             [present_article]
@@ -854,7 +864,7 @@ class TagRelationsIndexViewTests(TestCase):
 
     def test_future_article(self):
         """
-        Checks whether TagRelationsIndexView not displays related article with future pub_date.
+        Checks whether TagRelationsListView not displays related article with future pub_date.
         """
         title = 'test title'
         author = create_user('test_author', 'test123')
@@ -868,7 +878,7 @@ class TagRelationsIndexViewTests(TestCase):
             pub_date=pub_date,
             content=content
         )
-        response = self.client.get(reverse('library:tag-relations-index', args=(tag.id,)))
+        response = self.client.get(reverse('library:tag-relations-list', args=(tag.id,)))
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
@@ -878,7 +888,7 @@ class TagRelationsIndexViewTests(TestCase):
 
     def test_past_and_present_article(self):
         """
-        Checks whether TagRelationsIndexView displays related articles with past and present pub_dates.
+        Checks whether TagRelationsListView displays related articles with past and present pub_dates.
         """
         past_title = 'past title'
         present_title = 'present title'
@@ -901,7 +911,7 @@ class TagRelationsIndexViewTests(TestCase):
             pub_date=present_pub_date,
             content=content
         )
-        response = self.client.get(reverse('library:tag-relations-index', args=(tag.id,)))
+        response = self.client.get(reverse('library:tag-relations-list', args=(tag.id,)))
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
             [present_article, past_article]
@@ -910,7 +920,7 @@ class TagRelationsIndexViewTests(TestCase):
 
     def test_past_and_future_article(self):
         """
-        Checks whether TagRelationsIndexView displays related article with past pub_date but not related article with future pub_date.
+        Checks whether TagRelationsListView displays related article with past pub_date but not related article with future pub_date.
         """
         past_title = 'past title'
         future_title = 'future title'
@@ -933,7 +943,7 @@ class TagRelationsIndexViewTests(TestCase):
             pub_date=future_pub_date,
             content=content
         )
-        response = self.client.get(reverse('library:tag-relations-index', args=(tag.id,)))
+        response = self.client.get(reverse('library:tag-relations-list', args=(tag.id,)))
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
             [past_article]
@@ -942,7 +952,7 @@ class TagRelationsIndexViewTests(TestCase):
 
     def test_articles_alphabetic_order(self):
         """
-        Checks whether TagRelationsIndexView displays related articles ordered by date, latest first.
+        Checks whether TagRelationsListView displays related articles ordered by date, latest first.
         """
         title = 'test_title'
         author = create_user('test_author', 'test123')
@@ -980,7 +990,7 @@ class TagRelationsIndexViewTests(TestCase):
             pub_date=pub_date_a,
             content=content
         )
-        response = self.client.get(reverse('library:tag-relations-index', args=(tag.id,)))
+        response = self.client.get(reverse('library:tag-relations-list', args=(tag.id,)))
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
             [article_a, article_b, article_c, article_d]
@@ -989,7 +999,7 @@ class TagRelationsIndexViewTests(TestCase):
 
     def test_article_with_missing_title_field(self):
         """
-        Checks whether TagRelationsIndexView displays article without title field.
+        Checks whether TagRelationsListView displays article without title field.
         """
         author = create_user('test_author', 'test123')
         tag = create_tag('test tag')
@@ -1002,7 +1012,7 @@ class TagRelationsIndexViewTests(TestCase):
         )
         article.save()
         article.tags.set([tag])
-        response = self.client.get(reverse('library:tag-relations-index', args=(tag.id,)))
+        response = self.client.get(reverse('library:tag-relations-list', args=(tag.id,)))
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
@@ -1012,7 +1022,7 @@ class TagRelationsIndexViewTests(TestCase):
 
     def test_article_with_missing_content_field(self):
         """
-        Checks whether TagRelationsIndexView displays article without content field.
+        Checks whether TagRelationsListView displays article without content field.
         """
         title = 'test title'
         author = create_user('test_author', 'test123')
@@ -1025,7 +1035,7 @@ class TagRelationsIndexViewTests(TestCase):
         )
         article.save()
         article.tags.set([tag])
-        response = self.client.get(reverse('library:tag-relations-index', args=(tag.id,)))
+        response = self.client.get(reverse('library:tag-relations-list', args=(tag.id,)))
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
             response.context['tag_relations_list'],
