@@ -12,6 +12,12 @@ This platform was developed with Django and Django REST framework to let people 
 
 ### Repository layout:
 ```
+├── backend
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
 ├── library
 │   ├── admin.py
 │   ├── api
@@ -43,15 +49,9 @@ This platform was developed with Django and Django REST framework to let people 
 │   |   └── utils.py
 │   ├── urls.py
 │   └── views.py
-├── skills
-│   ├── asgi.py
-│   ├── __init__.py
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
 ├── .gitignore
 ├── LICENSE
-├── README.md
 ├── manage.py
+├── README.md
 └── requirements.txt
 ```
