@@ -4,11 +4,13 @@
 This platform was developed with Django and Django REST framework to let people share and expand their knowledge. Users can read articles as guests or can register to create their own articles.
 
 ### Tools used in development:
-- python 3.12.3
-- coverage 7.4.4
-- django 5.0.4
-- django-debug-toolbar 4.3.0
-- djangorestframework 3.15.1
+- python
+- coverage
+- django
+- django-debug-toolbar
+- djangorestframework
+
+:memo: Tool versions are specified in the `requirements.txt` file.
 
 ### Repository layout:
 ```
