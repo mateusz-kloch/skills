@@ -7,6 +7,7 @@ This platform was developed with Django and Django REST framework to let people 
 - python
 - coverage
 - django
+- django-cors-headers
 - django-debug-toolbar
 - djangorestframework
 
