@@ -15,7 +15,7 @@ This platform was developed with Django and Django REST framework to let people 
 
 ### Repository layout:
 ```
-├── backend
+├── core
 │   ├── __init__.py
 │   ├── asgi.py
 │   ├── settings.py
