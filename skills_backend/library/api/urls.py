@@ -14,6 +14,5 @@ router.register(r'users', UserViewSet)
 router.register(r'tags', TagViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('auth/', include('rest_framework.urls')),
+    path('', include(router.urls))
 ]
