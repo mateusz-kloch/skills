@@ -18,7 +18,7 @@ class IsAnonymousOrNotAllowed(permissions.BasePermission):
         """
         Ensures that only anonymous visitors can create a new account.
         """
-        if request.method in ['POST']:
+        if request.method == 'POST':
             return isinstance(request.user, AnonymousUser)
         else:
             return True
