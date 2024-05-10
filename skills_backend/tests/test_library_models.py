@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 from library.models import Article, Tag
-from library.tests.utils import create_article, create_tag, create_user
+from tests.utils import create_article, create_tag, create_user
 
 
 

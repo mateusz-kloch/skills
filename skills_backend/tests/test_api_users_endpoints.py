@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from library.tests.utils import create_user, serialize_user_with_absolute_urls
+from tests.utils import create_user, serialize_user_with_absolute_urls
 
 
 class ApiUserListTests(APITestCase):

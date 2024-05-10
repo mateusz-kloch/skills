@@ -3,8 +3,8 @@ from rest_framework import mixins
 from rest_framework import permissions
 from rest_framework import viewsets
 
-from library.api.permissions import IsAnonymousOrNotAllowed ,IsOwnerOrReadOnly
-from library.api.serializers import ArticleSerializer, TagSerializer, UserSerializer
+from api.permissions import IsAnonymousOrNotAllowed ,IsOwnerOrReadOnly
+from api.serializers import ArticleSerializer, TagSerializer, UserSerializer
 from library.models import Article, Tag
 
 
