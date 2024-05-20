@@ -6,6 +6,11 @@ This platform was developed with Django and Django REST framework to let people 
 ### Repository layout:
 ```
 ├── skills_backend
+│   ├── accounts
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   └── models.py
 │   ├── api
 │   │   ├── __init__.py
 │   │   ├── permissions.py
@@ -47,4 +52,5 @@ This platform was developed with Django and Django REST framework to let people 
 │   ├── manage.py
 │   ├── README.md
 │   └── requirements.txt
+└── README.md
 ```
