@@ -1,7 +1,7 @@
 # SKILLS
 
 ## A platform to share knowledge!
-This platform was developed with Django and Django REST framework to let people share and expand their knowledge. Users can read articles as guests or can register to create their own articles.
+This platform was developed with Django and Django REST framework.
 
 ### Repository layout:
 ```
