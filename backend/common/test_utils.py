@@ -1,16 +1,18 @@
 from datetime import datetime
 
-from django.contrib.auth.models import User
-
+from accounts.models import Author
+from api.serializers import ArticleSerializer, TagSerializer, AuthorSerializer
 from library.models import Article, Tag
-from api.serializers import ArticleSerializer, TagSerializer, UserSerializer
 
 
-def create_user(name: str, password: str) -> User:
+def create_author(user_name: str, password: str) -> Author:
     """
     Creates an Author model object.
+    Sets author.email as: `f'{user_name}@ex.com'`.
     """
-    return User.objects.create_user(username=name, email=f'{name}@example.com', password=password)
+    return Author.objects.create_user(
+        user_name=user_name, email=f'{user_name}@ex.com', password=password
+    )
 
 
 def create_tag(name: str) -> Tag:
@@ -20,9 +22,12 @@ def create_tag(name: str) -> Tag:
     return Tag.objects.create(name=name)
 
 
-def create_article(title: str, author: User, tags: list[Tag], pub_date: datetime, content: str) -> Article:
+def create_article(
+        title: str, author: Author, pub_date: datetime|None, tags: list[Tag], content: str
+    ) -> Article:
     """
-    Creates an article model object and establishes a many-to-many relation with the given Tag objects.
+    Creates an article model object and establishes a many-to-many relation with
+    the given Tag objects.
     """
     article = Article(
         title=title,
@@ -43,11 +48,11 @@ def serialize_article_with_absolute_urls(article: Article):
     return serialized_article
 
 
-def serialize_user_with_absolute_urls(user: User):
-    serialized_user = UserSerializer(user, context={'request': None}).data
-    serialized_user['url'] = f'http://testserver{serialized_user["url"]}'
-    serialized_user['articles'] = [f'http://testserver{article}' for article in serialized_user['articles']]
-    return serialized_user
+def serialize_author_with_absolute_urls(author: Author):
+    serialized_author = AuthorSerializer(author, context={'request': None}).data
+    serialized_author['url'] = f'http://testserver{serialized_author["url"]}'
+    serialized_author['articles'] = [f'http://testserver{article}' for article in serialized_author['articles']]
+    return serialized_author
 
 
 def serialize_tag_with_absolute_urls(tag: Tag):
