@@ -5,7 +5,12 @@ Tests are tagged with the name of the endpoint they concern.
 
 Available tags:
 - `api_root`
+- `author_list_endpoint`
+- `author_detail_endpoint`
+- `tag_list_endpoint`
+- `tag_detail_endpoint`
 - `article_list_endpoint`
+- `article_detail_endpoint`
 
 Usage:
 `python manage.py test --tag={tag_name}`
@@ -41,6 +46,10 @@ class ApiEndpointsTests(APITestCase):
         
         self.author = create_author('author', 'wao7984v')
         self.another_author = create_author('another_author', '28h4t032')
+
+        self.staff_user = create_author('staff_user', '9aw4vt94hmt')
+        self.staff_user.is_staff = True
+        self.staff_user.save()
         
         self.tag = create_tag('tag')
         self.another_tag = create_tag('another_tag')
@@ -84,8 +93,12 @@ class ApiEndpointsTests(APITestCase):
             'password': 'password',
         }
 
+        self.new_tag_data = {'name': 'new_tag'}
+        self.changed_tag_name = {'name': 'changed_tag_name'}
+
         self.serialized_author = serialize_author_with_absolute_urls(self.author)
         self.serialized_another_author = serialize_author_with_absolute_urls(self.another_author)
+        self.serialized_staff_user = serialize_author_with_absolute_urls(self.staff_user)
         
         self.serialized_tag = serialize_tag_with_absolute_urls(self.tag)
         self.serialized_another_tag = serialize_tag_with_absolute_urls(self.another_tag)
@@ -108,7 +121,7 @@ class ApiEndpointsTests(APITestCase):
         """
         response = self.client.get(self.url_author_list)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['results'], [self.serialized_another_author, self.serialized_author])
+        self.assertEqual(response.data['results'], [self.serialized_another_author, self.serialized_author, self.serialized_staff_user])
 
     @tag('author_list_endpoint')
     def test_get_author_list_response_no_authors(self):
@@ -207,14 +220,126 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['results'], [])
 
+    @tag('tag_list_endpoint')
+    def test_post_tag_list_new_tag_by_staff_user(self):
+        """
+        Checks tag list endpoint response for create a new tag object by
+        staff user.
+        """
+        self.client.login(username=self.staff_user.user_name, password='9aw4vt94hmt')
+        response = self.client.post(self.url_tag_list, self.new_tag_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(Tag.objects.get(name=self.new_tag_data['name']))
+
+    @tag('tag_list_endpoint')
+    def test_post_tag_list_new_tag_by_not_staff_user(self):
+        """
+        Checks tag list endpoint response for create a new tag object by
+        not staff user.
+        """
+        self.client.login(username=self.author.user_name, password='wao7984v')
+        response = self.client.post(self.url_tag_list, self.new_tag_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @tag('tag_list_endpoint')
+    def test_post_tag_list_new_tag_by_not_logged_user(self):
+        """
+        Checks tag list endpoint response for create a new tag object by
+        not logged in user.
+        """
+        response = self.client.post(self.url_tag_list, self.new_tag_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
     @tag('tag_detail_endpoint')
-    def test_tag_detail_response_tag_exist(self):
+    def test_get_tag_detail_response_tag_exist(self):
         """
         Checks tag detail endpoint response for tag in db.
         """
         response = self.client.get(f'{self.url_tag_list}{self.tag.id}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, self.serialized_tag)
+
+    @tag('tag_detail_endpoint')
+    def test_put_tag_detail_new_tag_by_staff_user(self):
+        """
+        Checks tag detail endpoint response for put a new data by staff user.
+        """
+        self.client.login(username=self.staff_user.user_name, password='9aw4vt94hmt')
+        response = self.client.put(f'{self.url_tag_list}{self.tag.id}/', self.changed_tag_name, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Tag.objects.get(pk=self.tag.id).name, self.changed_tag_name['name'])
+
+    @tag('tag_detail_endpoint')
+    def test_put_tag_detail_new_tag_by_not_staff_user(self):
+        """
+        Checks tag detail endpoint response for put a new data by not staff user.
+        """
+        self.client.login(username=self.author.user_name, password='wao7984v')
+        response = self.client.put(f'{self.url_tag_list}{self.tag.id}/', self.changed_tag_name, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @tag('tag_detail_endpoint')
+    def test_put_tag_detail_new_tag_by_not_logged_user(self):
+        """
+        Checks tag detail endpoint response for put a new data by not logged in user.
+        """
+        response = self.client.put(f'{self.url_tag_list}{self.tag.id}/', self.changed_tag_name, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @tag('tag_detail_endpoint')
+    def test_patch_tag_detail_new_tag_by_staff_user(self):
+        """
+        Checks tag detail endpoint response for update a tag data by staff user.
+        """
+        self.client.login(username=self.staff_user.user_name, password='9aw4vt94hmt')
+        response = self.client.patch(f'{self.url_tag_list}{self.tag.id}/', self.changed_tag_name, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Tag.objects.get(pk=self.tag.id).name, self.changed_tag_name['name'])
+
+    @tag('tag_detail_endpoint')
+    def test_patch_tag_detail_new_tag_by_not_staff_user(self):
+        """
+        Checks tag detail endpoint response for update a tag data by not staff user.
+        """
+        self.client.login(username=self.author.user_name, password='wao7984v')
+        response = self.client.patch(f'{self.url_tag_list}{self.tag.id}/', self.changed_tag_name, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @tag('tag_detail_endpoint')
+    def test_patch_tag_detail_new_tag_by_not_logged_user(self):
+        """
+        Checks tag detail endpoint response for update a tag data by not logged in user.
+        """
+        response = self.client.patch(f'{self.url_tag_list}{self.tag.id}/', self.changed_tag_name, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @tag('tag_detail_endpoint')
+    def test_delete_tag_detail_new_tag_by_staff_user(self):
+        """
+        Checks tag detail endpoint response for delete a tag object by
+        staff user.
+        """
+        self.client.login(username=self.staff_user.user_name, password='9aw4vt94hmt')
+        response = self.client.patch(f'{self.url_tag_list}{self.tag.id}/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @tag('tag_detail_endpoint')
+    def test_delete_tag_detail_new_tag_by_not_staff_user(self):
+        """
+        Checks tag detail endpoint response for delete a tag object by
+        not staff user.
+        """
+        self.client.login(username=self.author.user_name, password='wao7984v')
+        response = self.client.patch(f'{self.url_tag_list}{self.tag.id}/')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @tag('tag_detail_endpoint')
+    def test_delete_tag_detail_new_tag_by_not_logged_user(self):
+        """
+        Checks tag detail endpoint response for delete a tag object by not logged in user.
+        """
+        response = self.client.patch(f'{self.url_tag_list}{self.tag.id}/')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @tag('article_list_endpoint')
     def test_get_article_list_response_no_articles(self):
@@ -251,7 +376,6 @@ class ApiEndpointsTests(APITestCase):
         """
         self.client.login(username=self.author.user_name, password='wao7984v')
         response = self.client.post(self.url_article_list, self.new_article_data, format='json')
-        self.client.logout()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     @tag('article_list_endpoint')
@@ -286,7 +410,6 @@ class ApiEndpointsTests(APITestCase):
         """
         self.client.login(username=self.author.user_name, password='wao7984v')
         response = self.client.put(f'{self.url_article_list}{self.past_article.id}/', self.new_article_data, format='json')
-        self.client.logout()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Article.objects.get(pk=self.past_article.id).title, 'new_article_title')
 
@@ -297,7 +420,6 @@ class ApiEndpointsTests(APITestCase):
         """
         self.client.login(username=self.another_author, password='28h4t032')
         response = self.client.put(f'{self.url_article_list}{self.past_article.id}/', self.new_article_data, format='json')
-        self.client.logout()
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Article.objects.get(pk=self.past_article.id).title, 'past_article_title')
 
@@ -317,7 +439,6 @@ class ApiEndpointsTests(APITestCase):
         """
         self.client.login(username=self.author.user_name, password='wao7984v')
         response = self.client.patch(f'{self.url_article_list}{self.past_article.id}/', self.changed_article_title, format='json')
-        self.client.logout()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Article.objects.get(pk=self.past_article.id).title, 'changed_article_title')
 
@@ -328,7 +449,6 @@ class ApiEndpointsTests(APITestCase):
         """
         self.client.login(username=self.another_author, password='28h4t032')
         response = self.client.patch(f'{self.url_article_list}{self.past_article.id}/', self.changed_article_title, format='json')
-        self.client.logout()
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Article.objects.get(pk=self.past_article.id).title, 'past_article_title')
 
@@ -348,7 +468,6 @@ class ApiEndpointsTests(APITestCase):
         """
         self.client.login(username=self.author.user_name, password='wao7984v')
         response = self.client.delete(f'{self.url_article_list}{self.past_article.id}/')
-        self.client.logout()
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertNotIn(self.past_article, Article.objects.all())
 
@@ -359,7 +478,6 @@ class ApiEndpointsTests(APITestCase):
         """
         self.client.login(username=self.another_author, password='28h4t032')
         response = self.client.delete(f'{self.url_article_list}{self.past_article.id}/')
-        self.client.logout()
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertTrue(Article.objects.get(pk=self.past_article.id))
 
