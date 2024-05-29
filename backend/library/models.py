@@ -3,23 +3,10 @@ from django.contrib import admin
 from django.db import models
 from django.utils import timezone
 
+from common.selectors import CustomArticleManager
+
 
 class Article(models.Model):
-
-    class VerifiedArticles(models.Manager):
-        """
-        Filters out defective articles.
-        """
-        def get_queryset(self) -> models.QuerySet:
-            return super().get_queryset().filter(
-            pub_date__lte=timezone.now()
-        ).exclude(
-            title=''
-        ).exclude(
-            tags__isnull=True
-        ).exclude(
-            content=''
-        )
 
     class Meta:
         ordering = ['-pub_date']
@@ -32,7 +19,7 @@ class Article(models.Model):
     content = models.TextField()
 
     objects = models.Manager()
-    verified_objects = VerifiedArticles()        
+    verified_objects = CustomArticleManager()
 
     def __str__(self):
         return self.title
