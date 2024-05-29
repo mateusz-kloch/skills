@@ -14,7 +14,7 @@ class Author(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=100, unique=True)
     joined = models.DateTimeField(default=timezone.now)
     is_staff = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
 
     objects = CustomAccountManager()
     
