@@ -8,11 +8,15 @@ from library.models import Article, Tag
 def create_author(user_name: str, password: str) -> Author:
     """
     Creates an Author model object.
-    Sets author.email as: `f'{user_name}@ex.com'`.
+    Sets author.email as: `f'{user_name}@ex.com'` and
+    `is_active=True`.
     """
-    return Author.objects.create_user(
+    author = Author.objects.create_user(
         user_name=user_name, email=f'{user_name}@ex.com', password=password
     )
+    author.is_active = True
+    author.save()
+    return author
 
 
 def create_tag(name: str) -> Tag:
