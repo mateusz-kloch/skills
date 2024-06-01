@@ -23,15 +23,15 @@ from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
 from accounts.models import Author
+from library.models import Article, Tag
 from common.test_utils import (
     create_article,
     create_author,
     create_tag,
-    serialize_article_with_absolute_urls,
-    serialize_author_with_absolute_urls,
-    serialize_tag_with_absolute_urls,
+    serialize_article,
+    serialize_author,
+    serialize_tag,
 )
-from library.models import Article, Tag
 
 
 class ApiEndpointsTests(APITestCase):
@@ -96,16 +96,18 @@ class ApiEndpointsTests(APITestCase):
         self.new_tag_data = {'name': 'new_tag'}
         self.changed_tag_name = {'name': 'changed_tag_name'}
 
-        self.serialized_author = serialize_author_with_absolute_urls(self.author)
-        self.serialized_another_author = serialize_author_with_absolute_urls(self.another_author)
-        self.serialized_staff_user = serialize_author_with_absolute_urls(self.staff_user)
+        self.serialized_author = serialize_author(self.author)
+        self.serialized_another_author = serialize_author(self.another_author)
+        self.serialized_staff_user = serialize_author(self.staff_user)
         
-        self.serialized_tag = serialize_tag_with_absolute_urls(self.tag)
-        self.serialized_another_tag = serialize_tag_with_absolute_urls(self.another_tag)
+        self.serialized_tag = serialize_tag(self.tag)
+        self.serialized_another_tag = serialize_tag(self.another_tag)
         
-        self.serialized_past_article = serialize_article_with_absolute_urls(self.past_article)
-        self.serialized_future_article = serialize_article_with_absolute_urls(self.future_article)
+        self.serialized_past_article = serialize_article(self.past_article)
+        self.serialized_future_article = serialize_article(self.future_article)
 
+
+# Tests for API root:
     @tag('api_root')
     def test_get_api_root_response_status_code(self):
         """
@@ -114,6 +116,8 @@ class ApiEndpointsTests(APITestCase):
         response = self.client.get(self.url_root)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+
+# Tests for Author list endpoint:
     @tag('author_list_endpoint')
     def test_get_author_list_response(self):
         """
@@ -192,6 +196,8 @@ class ApiEndpointsTests(APITestCase):
         register = self.client.post(self.url_author_list, self.new_author_data)
         self.assertEqual(register.status_code, status.HTTP_403_FORBIDDEN)
 
+
+# Tests for Author detail endpoint:
     @tag('author_detail_endpoint')
     def test_get_author_detail_response(self):
         """
@@ -201,6 +207,8 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, self.serialized_author)
 
+
+# Tests for Tag list endpoint:
     @tag('tag_list_endpoint')
     def test_get_tag_list_response(self):
         """
@@ -250,6 +258,8 @@ class ApiEndpointsTests(APITestCase):
         response = self.client.post(self.url_tag_list, self.new_tag_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+
+# Tests for Tag detail endpoint:
     @tag('tag_detail_endpoint')
     def test_get_tag_detail_response_tag_exist(self):
         """
@@ -341,6 +351,8 @@ class ApiEndpointsTests(APITestCase):
         response = self.client.patch(f'{self.url_tag_list}{self.tag.id}/')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+
+# Tests for Article list endpoint:
     @tag('article_list_endpoint')
     def test_get_article_list_response_no_articles(self):
         """
@@ -386,6 +398,8 @@ class ApiEndpointsTests(APITestCase):
         response = self.client.post(self.url_article_list, self.new_article_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+
+# Tests for Article detail endpoint:
     @tag('article_detail_endpoint')
     def test_get_article_detail_response_past_article(self):
         """

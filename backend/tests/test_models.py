@@ -17,8 +17,8 @@ from django.test import tag, TestCase
 from django.utils import timezone
 
 from accounts.models import Author
-from common.test_utils import create_article, create_author, create_tag
 from library.models import Article, Tag
+from common.test_utils import create_article, create_author, create_tag
 
 
 class ModelsTests(TestCase):
