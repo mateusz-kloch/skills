@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
@@ -56,7 +55,7 @@ class AuthorSerializer(serializers.HyperlinkedModelSerializer):
         """
         Creates user from validated data.
         """
-        user = get_user_model()(**validated_data)
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
+        author = Author(**validated_data)
+        author.set_password(validated_data['password'])
+        author.save()
+        return author
