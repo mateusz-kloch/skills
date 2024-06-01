@@ -7,7 +7,7 @@ from accounts.models import Author
 
 class ArticleSerializer(serializers.HyperlinkedModelSerializer):
     author = serializers.HyperlinkedRelatedField(
-        read_only=True, view_name='author-detail',
+        read_only=True, view_name='author-detail'
     )
 
     class Meta:
@@ -15,6 +15,19 @@ class ArticleSerializer(serializers.HyperlinkedModelSerializer):
         fields = [
             'url', 'id', 'title', 'author', 'tags', 'pub_date', 'content'
         ]
+    
+    def create(self, validated_data):
+        """
+        Creates Article object from validated data.
+        Assings User who create article as author of it.
+        """
+        author = self.context['request'].user
+        validated_data['author'] = author
+        tags = validated_data.pop('tags', None)
+        article = Article(**validated_data)
+        article.save()
+        article.tags.set(tags)
+        return article
 
 
 class TagSerializer(serializers.HyperlinkedModelSerializer):

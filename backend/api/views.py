@@ -24,12 +24,6 @@ class ArticleViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly
     ]
 
-    def perform_create(self, serializer):
-        """
-        Assings User who create article as author of it.
-        """
-        serializer.save(author=self.request.user)
-
 
 class TagViewSet(viewsets.ModelViewSet):
     """
