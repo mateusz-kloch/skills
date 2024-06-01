@@ -44,7 +44,11 @@ def create_article(
     return article
 
 
-def serialize_article_with_absolute_urls(article: Article):
+def serialize_article(article: Article) -> dict:
+    """
+    Serializes Article model object and
+    creates absolute urls for hyperlinked relations.
+    """
     serialized_article = ArticleSerializer(article, context={'request': None}).data
     serialized_article['url'] = f'http://testserver{serialized_article["url"]}'
     serialized_article['author'] = f'http://testserver{serialized_article["author"]}'
@@ -52,14 +56,22 @@ def serialize_article_with_absolute_urls(article: Article):
     return serialized_article
 
 
-def serialize_author_with_absolute_urls(author: Author):
+def serialize_author(author: Author) -> dict:
+    """
+    Serializes Author model object and
+    creates absolute urls for hyperlinked relations.
+    """
     serialized_author = AuthorSerializer(author, context={'request': None}).data
     serialized_author['url'] = f'http://testserver{serialized_author["url"]}'
     serialized_author['articles'] = [f'http://testserver{article}' for article in serialized_author['articles']]
     return serialized_author
 
 
-def serialize_tag_with_absolute_urls(tag: Tag):
+def serialize_tag(tag: Tag) -> dict:
+    """
+    Serializes Tag model object and
+    creates absolute urls for hyperlinked relations.
+    """
     serialized_tag = TagSerializer(tag, context={'request': None}).data
     serialized_tag['url'] = f'http://testserver{serialized_tag["url"]}'
     serialized_tag['articles'] = [f'http://testserver{article}' for article in serialized_tag['articles']]
