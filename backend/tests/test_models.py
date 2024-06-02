@@ -71,6 +71,13 @@ class ModelsTests(TestCase):
             [self.another_author, self.author, self.yet_another_author]
         )
 
+    @tag('author_model')
+    def test_author_default_slug(self):
+        """
+        Checks whether slug is provided by default.
+        """
+        self.assertTrue(self.author.slug)
+
     @tag('tag_model')
     def test_tag_str(self):
         """
@@ -87,6 +94,13 @@ class ModelsTests(TestCase):
             Tag.objects.all(),
             [self.another_tag, self.tag, self.yet_another_tag]
         )
+
+    @tag('tag_model')
+    def test_tag_default_slug(self):
+        """
+        Checks whether slug is provided by default.
+        """
+        self.assertTrue(self.tag.slug)
 
     @tag('article_model')
     def test_article_str(self):
@@ -116,6 +130,13 @@ class ModelsTests(TestCase):
         test_article.save()
         test_article.tags.set([self.tag])
         self.assertTrue(self.article.pub_date)
+
+    @tag('article_model')
+    def test_article_default_slug(self):
+        """
+        Checks whether slug is provided by default.
+        """
+        self.assertTrue(self.article.slug)
 
     @tag('article_model')
     def test_article_tags_as_str(self):

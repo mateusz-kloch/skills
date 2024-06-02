@@ -76,8 +76,8 @@ class UtilsTests(TestCase):
         Checks whether serialize_author function propertly adds absolute urls.
         """
         expect = {
-            'url': 'http://testserver/api/authors/1/',
-            'articles': ['http://testserver/api/articles/1/'],
+            'url': 'http://testserver/api/authors/test_author/',
+            'articles': ['http://testserver/api/articles/test_title/'],
         }
         self.assertEqual(self.serialized_test_author['url'], expect['url'])
         self.assertEqual(self.serialized_test_author['articles'], expect['articles'])
@@ -87,8 +87,8 @@ class UtilsTests(TestCase):
         Checks whether serialize_tag function propertly adds absolute urls.
         """
         expect = {
-            'url': 'http://testserver/api/tags/1/',
-            'articles' : ['http://testserver/api/articles/1/'],
+            'url': 'http://testserver/api/tags/test_tag/',
+            'articles' : ['http://testserver/api/articles/test_title/'],
         }
         self.assertEqual(self.serialized_test_tag['url'], expect['url'])
         self.assertEqual(self.serialized_test_tag['articles'], expect['articles'])
@@ -98,9 +98,9 @@ class UtilsTests(TestCase):
         Checks whether serialize_article function propertly adds absolute urls.
         """
         expect = {
-            'url': 'http://testserver/api/articles/1/',
-            'author': 'http://testserver/api/authors/1/',
-            'tags': ['http://testserver/api/tags/1/'],
+            'url': 'http://testserver/api/articles/test_title/',
+            'author': 'http://testserver/api/authors/test_author/',
+            'tags': ['http://testserver/api/tags/test_tag/'],
 
         }
         self.assertEqual(self.serialized_test_article['url'], expect['url'])

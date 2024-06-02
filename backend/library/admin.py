@@ -9,7 +9,7 @@ class ArticleAdminConfig(admin.ModelAdmin):
     """
     search_fields = ('title', 'author')
     fieldset = [('Article informations', {'fields': [
-        'title', 'author', 'tags', 'pub_date', 'content'
+        'title', 'slug', 'author', 'tags', 'pub_date', 'content'
     ]})]
     filter_horizontal = ['tags']
     list_display = [

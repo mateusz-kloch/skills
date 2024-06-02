@@ -70,13 +70,13 @@ class ApiEndpointsTests(APITestCase):
         )
         self.new_article_data = {
             'title': 'new_article_title',
-            'tags': [f'http://testserver/api/tags/{self.tag.id}/'],
+            'tags': [f'http://testserver/api/tags/{self.tag.slug}/'],
             'pub_date': str(timezone.now() - timedelta(hours=1)),
             'content': 'new_article_content',
         }
         self.changed_article_data = {
             'title': 'changed_article_title',
-            'tags': [f'http://testserver/api/tags/{self.another_tag.id}/'],
+            'tags': [f'http://testserver/api/tags/{self.another_tag.slug}/'],
             'pub_date': str(timezone.now() - timedelta(hours=2)),
             'content': 'changed_article_content',
         }
@@ -150,7 +150,7 @@ class ApiEndpointsTests(APITestCase):
     def test_post_author_list_new_author_bad_user_name(self):
         """
         Checks author list endpoint response for create new author with
-        user_name that is already id database.
+        user_name that is already in database.
         """
         bad_author_data = {
             'user_name': self.bad_author_data['user_name'],
@@ -203,7 +203,7 @@ class ApiEndpointsTests(APITestCase):
         """
         Checks author detail endpoint response for author in db.
         """
-        response = self.client.get(f'{self.url_author_list}{self.author.id}/')
+        response = self.client.get(f'{self.url_author_list}{self.author.slug}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, self.serialized_author)
 
@@ -265,7 +265,7 @@ class ApiEndpointsTests(APITestCase):
         """
         Checks tag detail endpoint response for tag in db.
         """
-        response = self.client.get(f'{self.url_tag_list}{self.tag.id}/')
+        response = self.client.get(f'{self.url_tag_list}{self.tag.slug}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, self.serialized_tag)
 
@@ -275,7 +275,7 @@ class ApiEndpointsTests(APITestCase):
         Checks tag detail endpoint response for put a new data by staff user.
         """
         self.client.login(username=self.staff_user.user_name, password='9aw4vt94hmt')
-        response = self.client.put(f'{self.url_tag_list}{self.tag.id}/', self.changed_tag_name, format='json')
+        response = self.client.put(f'{self.url_tag_list}{self.tag.slug}/', self.changed_tag_name, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Tag.objects.get(pk=self.tag.id).name, self.changed_tag_name['name'])
 
@@ -285,7 +285,7 @@ class ApiEndpointsTests(APITestCase):
         Checks tag detail endpoint response for put a new data by not staff user.
         """
         self.client.login(username=self.author.user_name, password='wao7984v')
-        response = self.client.put(f'{self.url_tag_list}{self.tag.id}/', self.changed_tag_name, format='json')
+        response = self.client.put(f'{self.url_tag_list}{self.tag.slug}/', self.changed_tag_name, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @tag('tag_detail_endpoint')
@@ -293,7 +293,7 @@ class ApiEndpointsTests(APITestCase):
         """
         Checks tag detail endpoint response for put a new data by not logged in user.
         """
-        response = self.client.put(f'{self.url_tag_list}{self.tag.id}/', self.changed_tag_name, format='json')
+        response = self.client.put(f'{self.url_tag_list}{self.tag.slug}/', self.changed_tag_name, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @tag('tag_detail_endpoint')
@@ -302,7 +302,7 @@ class ApiEndpointsTests(APITestCase):
         Checks tag detail endpoint response for update a tag data by staff user.
         """
         self.client.login(username=self.staff_user.user_name, password='9aw4vt94hmt')
-        response = self.client.patch(f'{self.url_tag_list}{self.tag.id}/', self.changed_tag_name, format='json')
+        response = self.client.patch(f'{self.url_tag_list}{self.tag.slug}/', self.changed_tag_name, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Tag.objects.get(pk=self.tag.id).name, self.changed_tag_name['name'])
 
@@ -312,7 +312,7 @@ class ApiEndpointsTests(APITestCase):
         Checks tag detail endpoint response for update a tag data by not staff user.
         """
         self.client.login(username=self.author.user_name, password='wao7984v')
-        response = self.client.patch(f'{self.url_tag_list}{self.tag.id}/', self.changed_tag_name, format='json')
+        response = self.client.patch(f'{self.url_tag_list}{self.tag.slug}/', self.changed_tag_name, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @tag('tag_detail_endpoint')
@@ -320,7 +320,7 @@ class ApiEndpointsTests(APITestCase):
         """
         Checks tag detail endpoint response for update a tag data by not logged in user.
         """
-        response = self.client.patch(f'{self.url_tag_list}{self.tag.id}/', self.changed_tag_name, format='json')
+        response = self.client.patch(f'{self.url_tag_list}{self.tag.slug}/', self.changed_tag_name, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @tag('tag_detail_endpoint')
@@ -330,7 +330,7 @@ class ApiEndpointsTests(APITestCase):
         staff user.
         """
         self.client.login(username=self.staff_user.user_name, password='9aw4vt94hmt')
-        response = self.client.patch(f'{self.url_tag_list}{self.tag.id}/')
+        response = self.client.patch(f'{self.url_tag_list}{self.tag.slug}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @tag('tag_detail_endpoint')
@@ -340,7 +340,7 @@ class ApiEndpointsTests(APITestCase):
         not staff user.
         """
         self.client.login(username=self.author.user_name, password='wao7984v')
-        response = self.client.patch(f'{self.url_tag_list}{self.tag.id}/')
+        response = self.client.patch(f'{self.url_tag_list}{self.tag.slug}/')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @tag('tag_detail_endpoint')
@@ -348,7 +348,7 @@ class ApiEndpointsTests(APITestCase):
         """
         Checks tag detail endpoint response for delete a tag object by not logged in user.
         """
-        response = self.client.patch(f'{self.url_tag_list}{self.tag.id}/')
+        response = self.client.patch(f'{self.url_tag_list}{self.tag.slug}/')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
@@ -405,7 +405,7 @@ class ApiEndpointsTests(APITestCase):
         """
         Checks article detail endpoint response for article with past pub_date. 
         """
-        response = self.client.get(f'{self.url_article_list}{self.past_article.id}/')
+        response = self.client.get(f'{self.url_article_list}{self.past_article.slug}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, self.serialized_past_article)
 
@@ -414,7 +414,7 @@ class ApiEndpointsTests(APITestCase):
         """
         Checks article detail endpoint response for article with future pub_date.
         """
-        response = self.client.get(f'{self.url_article_list}{self.future_article.id}/')
+        response = self.client.get(f'{self.url_article_list}{self.future_article.slug}/')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @tag('article_detail_endpoint')
@@ -423,7 +423,7 @@ class ApiEndpointsTests(APITestCase):
         Checks article detail endpoint response for new data added by logged user who is author of article.
         """
         self.client.login(username=self.author.user_name, password='wao7984v')
-        response = self.client.put(f'{self.url_article_list}{self.past_article.id}/', self.new_article_data, format='json')
+        response = self.client.put(f'{self.url_article_list}{self.past_article.slug}/', self.new_article_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Article.objects.get(pk=self.past_article.id).title, 'new_article_title')
 
@@ -433,7 +433,7 @@ class ApiEndpointsTests(APITestCase):
         Checks article detail endpoint response for new data added by logged user who is not author of article.
         """
         self.client.login(username=self.another_author, password='28h4t032')
-        response = self.client.put(f'{self.url_article_list}{self.past_article.id}/', self.new_article_data, format='json')
+        response = self.client.put(f'{self.url_article_list}{self.past_article.slug}/', self.new_article_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Article.objects.get(pk=self.past_article.id).title, 'past_article_title')
 
@@ -442,7 +442,7 @@ class ApiEndpointsTests(APITestCase):
         """
         Checks article detail endpoint response for new data added by not logged user.
         """
-        response = self.client.put(f'{self.url_article_list}{self.past_article.id}/', self.new_article_data, format='json')
+        response = self.client.put(f'{self.url_article_list}{self.past_article.slug}/', self.new_article_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Article.objects.get(pk=self.past_article.id).title, 'past_article_title')
 
@@ -452,7 +452,7 @@ class ApiEndpointsTests(APITestCase):
         Checks article detail endpoint response for new data updated by logged user who is author of article.
         """
         self.client.login(username=self.author.user_name, password='wao7984v')
-        response = self.client.patch(f'{self.url_article_list}{self.past_article.id}/', self.changed_article_title, format='json')
+        response = self.client.patch(f'{self.url_article_list}{self.past_article.slug}/', self.changed_article_title, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Article.objects.get(pk=self.past_article.id).title, 'changed_article_title')
 
@@ -462,7 +462,7 @@ class ApiEndpointsTests(APITestCase):
         Checks article detail endpoint response for new data updated by logged user who is not author of article.
         """
         self.client.login(username=self.another_author, password='28h4t032')
-        response = self.client.patch(f'{self.url_article_list}{self.past_article.id}/', self.changed_article_title, format='json')
+        response = self.client.patch(f'{self.url_article_list}{self.past_article.slug}/', self.changed_article_title, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Article.objects.get(pk=self.past_article.id).title, 'past_article_title')
 
@@ -471,7 +471,7 @@ class ApiEndpointsTests(APITestCase):
         """
         Checks article detail endpoint response for new data updated by not logged user.
         """
-        response = self.client.patch(f'{self.url_article_list}{self.past_article.id}/', self.changed_article_title, format='json')
+        response = self.client.patch(f'{self.url_article_list}{self.past_article.slug}/', self.changed_article_title, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Article.objects.get(pk=self.past_article.id).title, 'past_article_title')
 
@@ -481,7 +481,7 @@ class ApiEndpointsTests(APITestCase):
         Checks article detail endpoint response for delete article by logged user who is author of article.
         """
         self.client.login(username=self.author.user_name, password='wao7984v')
-        response = self.client.delete(f'{self.url_article_list}{self.past_article.id}/')
+        response = self.client.delete(f'{self.url_article_list}{self.past_article.slug}/')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertNotIn(self.past_article, Article.objects.all())
 
@@ -491,7 +491,7 @@ class ApiEndpointsTests(APITestCase):
         Checks article detail endpoint response for delete article by logged user who is not author of article.
         """
         self.client.login(username=self.another_author, password='28h4t032')
-        response = self.client.delete(f'{self.url_article_list}{self.past_article.id}/')
+        response = self.client.delete(f'{self.url_article_list}{self.past_article.slug}/')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertTrue(Article.objects.get(pk=self.past_article.id))
 
@@ -500,6 +500,6 @@ class ApiEndpointsTests(APITestCase):
         """
         Checks article detail endpoint response for delete article by not logged user.
         """
-        response = self.client.delete(f'{self.url_article_list}{self.past_article.id}/')
+        response = self.client.delete(f'{self.url_article_list}{self.past_article.slug}/')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertTrue(Article.objects.get(pk=self.past_article.id))

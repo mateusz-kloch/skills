@@ -6,15 +6,20 @@ from accounts.models import Author
 
 
 class ArticleSerializer(serializers.HyperlinkedModelSerializer):
-    author = serializers.HyperlinkedRelatedField(
-        read_only=True, view_name='author-detail'
-    )
 
     class Meta:
         model = Article
-        fields = [
-            'url', 'id', 'title', 'author', 'tags', 'pub_date', 'content'
-        ]
+        fields = '__all__'
+        read_only_fields = ['author', 'slug']
+        extra_kwargs = {
+            'url': {'lookup_field': 'slug'},
+            'author': {
+                'lookup_field': 'slug',
+                'read_only': True,
+            },
+            'slug': {'read_only': True},
+            'tags': {'lookup_field': 'slug'},
+        }
     
     def create(self, validated_data):
         """
@@ -31,29 +36,33 @@ class ArticleSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class TagSerializer(serializers.HyperlinkedModelSerializer):
-    articles = serializers.HyperlinkedRelatedField(
-        many=True, read_only=True, view_name='article-detail'
-    )
 
     class Meta:
         model = Tag
-        fields = [
-            'url', 'id', 'name', 'articles'
-        ]
+        fields = ['url', 'name', 'slug', 'articles']
+        extra_kwargs = {
+            'url': {'lookup_field': 'slug'},
+            'slug': {'read_only': True},
+            'articles': {
+                'lookup_field': 'slug',
+                'read_only': True,
+                },
+        }
 
 
 class AuthorSerializer(serializers.HyperlinkedModelSerializer):
-    articles = serializers.HyperlinkedRelatedField(
-        many=True, read_only=True, view_name='article-detail'
-    )
 
     class Meta:
         model = Author
-        fields = [
-            'url', 'id', 'user_name', 'email', 'password', 'joined', 'articles'
-        ]
+        fields = ['url', 'user_name', 'slug', 'email', 'joined', 'password', 'articles']
         extra_kwargs = {
-            'password': {'write_only': True}
+            'url': {'lookup_field': 'slug'},
+            'slug': {'read_only': True},
+            'password': {'write_only': True},
+            'articles': {
+                'lookup_field': 'slug',
+                'read_only': True,
+                },
         }
 
     def validate_password(self, value):
