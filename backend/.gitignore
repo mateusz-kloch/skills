@@ -1,9 +1,11 @@
 __pycache__
 
-migrations
+.coverage
 
 db.sqlite3
 
 htmlcov
 
-.coverage
+migrations
+
+schema.yml
