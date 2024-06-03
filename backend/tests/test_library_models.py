@@ -1,10 +1,9 @@
 """
-Tests for `accounts` and `library` apps models.
+Tests for `library` app models.
 
 Tests are tagged with the name of the model they concern.
 
 Available tags:
-- `author_model`
 - `tag_model`
 - `article_model`
 
@@ -16,17 +15,14 @@ from datetime import timedelta
 from django.test import tag, TestCase
 from django.utils import timezone
 
-from accounts.models import Author
 from library.models import Article, Tag
 from common.test_utils import create_article, create_author, create_tag
 
 
-class ModelsTests(TestCase):
+class LibraryModelsTests(TestCase):
 
     def setUp(self):
         self.author = create_author('author', '48s5tb4w3')
-        self.another_author = create_author('another_author', 'a49o7wg3qvf')
-        self.yet_another_author = create_author('yet_another_author', 'aiuh3h347q')
 
         self.tag = create_tag('tag')
         self.another_tag = create_tag('another_tag')
@@ -41,43 +37,20 @@ class ModelsTests(TestCase):
         )
         self.another_article = create_article(
             title='another article title',
-            author=self.another_author,
+            author=self.author,
             pub_date=timezone.now() - timedelta(hours=2),
             tags=[self.another_tag],
             content='another article content'
         )
         self.yet_another_article = create_article(
             title='yet another article title',
-            author=self.yet_another_author,
+            author=self.author,
             pub_date=timezone.now(),
             tags=[self.yet_another_tag],
             content='yet another article content'
         )
 
-    @tag('author_model')
-    def test_author_str(self):
-        """
-        Checks whether __str__ displays author correctly.
-        """
-        self.assertEqual(self.author.user_name, str(self.author))
-
-    @tag('author_model')
-    def test_author_ordering(self):
-        """
-        CHecks whether authors are ordered by user_name.
-        """
-        self.assertQuerySetEqual(
-            Author.objects.all(),
-            [self.another_author, self.author, self.yet_another_author]
-        )
-
-    @tag('author_model')
-    def test_author_default_slug(self):
-        """
-        Checks whether slug is provided by default.
-        """
-        self.assertTrue(self.author.slug)
-
+# Tests for Tag model:
     @tag('tag_model')
     def test_tag_str(self):
         """
@@ -102,6 +75,7 @@ class ModelsTests(TestCase):
         """
         self.assertTrue(self.tag.slug)
 
+# Tests for Article model:
     @tag('article_model')
     def test_article_str(self):
         """
