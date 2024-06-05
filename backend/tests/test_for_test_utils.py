@@ -10,6 +10,7 @@ from common.test_utils import (
     create_article,
     create_author,
     create_tag,
+    create_superuser_author,
     serialize_article,
     serialize_author,
     serialize_tag,
@@ -21,6 +22,9 @@ class UtilsTests(TestCase):
     def setUp(self):
         self.test_author = create_author(
             user_name='test_author', password='s874v5t3w'
+        )
+        self.test_superuser = create_superuser_author(
+            user_name='test_superuser', password='ao487v3v1'
         )
         self.test_tag = create_tag(
             name='test_tag'
@@ -50,6 +54,22 @@ class UtilsTests(TestCase):
         self.assertTrue(self.test_author.password)
         self.assertTrue(self.test_author.is_active)
         self.assertTrue(Author.objects.get(user_name='test_author'))
+
+    def test_create_superuser_author(self):
+        """
+        Checks whether the create_superuser_author function creates Author model object,
+        sets attributes correctly and
+        that the superuser created using it can log in.
+        """
+        login = self.client.login(username='test_superuser', password='ao487v3v1')
+        self.assertTrue(login)
+        self.assertEqual(self.test_superuser.user_name, 'test_superuser')
+        self.assertEqual(self.test_superuser.email, 'test_superuser@ex.com')
+        self.assertTrue(self.test_superuser.password)
+        self.assertTrue(self.test_superuser.is_superuser)
+        self.assertTrue(self.test_superuser.is_staff)
+        self.assertTrue(self.test_superuser.is_active)
+        self.assertTrue(Author.objects.get(user_name='test_superuser'))
 
     def test_create_tag(self):
         """
