@@ -3,7 +3,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 
-from common.selectors import CustomAccountManager
+from .managers import CustomAccountManager
 
 
 class Author(AbstractBaseUser, PermissionsMixin):

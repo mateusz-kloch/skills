@@ -4,7 +4,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 
-from common.selectors import CustomArticleManager
+from .managers import CustomArticleManager
 
 
 class Article(models.Model):

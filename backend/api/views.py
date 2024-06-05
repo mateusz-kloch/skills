@@ -2,9 +2,15 @@ from rest_framework import mixins
 from rest_framework import permissions
 from rest_framework import viewsets
 
-from api.serializers import AuthorSerializer, ArticleSerializer, TagSerializer
-from common.permissions import (
-    IsStaffOrReadOnly, IsAnonymousOrNotAllowed ,IsOwnerOrReadOnly
+from .permissions import (
+    IsStaffOrReadOnly,
+    IsAnonymousOrNotAllowed,
+    IsOwnerOrReadOnly,
+)
+from .serializers import (
+    AuthorSerializer,
+    ArticleSerializer,
+    TagSerializer,
 )
 from accounts.models import Author
 from library.models import Article, Tag

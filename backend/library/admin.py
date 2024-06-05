@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from library.models import Article, Tag
+from .models import Article, Tag
 
 
 class ArticleAdminConfig(admin.ModelAdmin):

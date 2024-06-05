@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 from api.views import (
     ArticleViewSet,
     TagViewSet,
-    AuthorViewSet
+    AuthorViewSet,
 )
 
 router = DefaultRouter()
