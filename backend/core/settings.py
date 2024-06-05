@@ -153,3 +153,7 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'Skills API',
     'VERSION': '0.0.1',
 }
+
+DEBUG_TOOLBAR_CONFIG = {
+    'IS_RUNNING_TESTS': False
+}
