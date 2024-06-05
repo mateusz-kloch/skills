@@ -1,5 +1,9 @@
 __pycache__
 
+**/migrations/**
+
+!__init__.py
+
 .coverage
 
 .dev
@@ -9,7 +13,5 @@ __pycache__
 db.sqlite3
 
 htmlcov
-
-migrations
 
 schema.yml
