@@ -18,13 +18,22 @@ def create_author(user_name: str, password: str) -> Author:
     author.save()
     return author
 
+def create_superuser_author(user_name:str, password: str) -> Author:
+    """
+    Creates an Author model supeuser object.
+    Sets superuser.email as: `f'{user_name}@ex.com'`.
+    """
+    superuser = Author.objects.create_superuser(
+        user_name=user_name, email=f'{user_name}@ex.com', password=password
+    )
+    superuser.save()
+    return superuser
 
 def create_tag(name: str) -> Tag:
     """
     Creates a Tag model object.
     """
     return Tag.objects.create(name=name)
-
 
 def create_article(
         title: str, author: Author, pub_date: datetime|None, tags: list[Tag], content: str
@@ -43,7 +52,6 @@ def create_article(
     article.tags.set(tags)
     return article
 
-
 def serialize_article(article: Article) -> dict:
     """
     Serializes Article model object and
@@ -55,7 +63,6 @@ def serialize_article(article: Article) -> dict:
     serialized_article['tags'] = [f'http://testserver{tag}' for tag in serialized_article['tags']]
     return serialized_article
 
-
 def serialize_author(author: Author) -> dict:
     """
     Serializes Author model object and
@@ -65,7 +72,6 @@ def serialize_author(author: Author) -> dict:
     serialized_author['url'] = f'http://testserver{serialized_author["url"]}'
     serialized_author['articles'] = [f'http://testserver{article}' for article in serialized_author['articles']]
     return serialized_author
-
 
 def serialize_tag(tag: Tag) -> dict:
     """
