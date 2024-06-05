@@ -27,6 +27,7 @@ from library.models import Article, Tag
 from common.test_utils import (
     create_article,
     create_author,
+    create_superuser_author,
     create_tag,
     serialize_article,
     serialize_author,
@@ -47,9 +48,9 @@ class ApiEndpointsTests(APITestCase):
         self.author = create_author('author', 'wao7984v')
         self.another_author = create_author('another_author', '28h4t032')
 
-        self.staff_user = create_author('staff_user', '9aw4vt94hmt')
-        self.staff_user.is_staff = True
-        self.staff_user.save()
+        self.superuser = create_superuser_author('superuser', '9aw4vt94hmt')
+        self.superuser.is_staff = True
+        self.superuser.save()
         
         self.tag = create_tag('tag')
         self.another_tag = create_tag('another_tag')
@@ -98,7 +99,7 @@ class ApiEndpointsTests(APITestCase):
 
         self.serialized_author = serialize_author(self.author)
         self.serialized_another_author = serialize_author(self.another_author)
-        self.serialized_staff_user = serialize_author(self.staff_user)
+        self.serialized_superuser = serialize_author(self.superuser)
         
         self.serialized_tag = serialize_tag(self.tag)
         self.serialized_another_tag = serialize_tag(self.another_tag)
@@ -125,7 +126,7 @@ class ApiEndpointsTests(APITestCase):
         """
         response = self.client.get(self.url_author_list)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['results'], [self.serialized_another_author, self.serialized_author, self.serialized_staff_user])
+        self.assertEqual(response.data['results'], [self.serialized_another_author, self.serialized_author, self.serialized_superuser])
 
     @tag('author_list_endpoint')
     def test_get_author_list_response_no_authors(self):
@@ -229,18 +230,18 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.data['results'], [])
 
     @tag('tag_list_endpoint')
-    def test_post_tag_list_new_tag_by_staff_user(self):
+    def test_post_tag_list_new_tag_by_superuser(self):
         """
         Checks tag list endpoint response for create a new tag object by
         staff user.
         """
-        self.client.login(username=self.staff_user.user_name, password='9aw4vt94hmt')
+        self.client.login(username=self.superuser.user_name, password='9aw4vt94hmt')
         response = self.client.post(self.url_tag_list, self.new_tag_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(Tag.objects.get(name=self.new_tag_data['name']))
 
     @tag('tag_list_endpoint')
-    def test_post_tag_list_new_tag_by_not_staff_user(self):
+    def test_post_tag_list_new_tag_by_not_superuser(self):
         """
         Checks tag list endpoint response for create a new tag object by
         not staff user.
@@ -270,17 +271,17 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.data, self.serialized_tag)
 
     @tag('tag_detail_endpoint')
-    def test_put_tag_detail_new_tag_by_staff_user(self):
+    def test_put_tag_detail_new_tag_by_superuser(self):
         """
         Checks tag detail endpoint response for put a new data by staff user.
         """
-        self.client.login(username=self.staff_user.user_name, password='9aw4vt94hmt')
+        self.client.login(username=self.superuser.user_name, password='9aw4vt94hmt')
         response = self.client.put(f'{self.url_tag_list}{self.tag.slug}/', self.changed_tag_name, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Tag.objects.get(pk=self.tag.id).name, self.changed_tag_name['name'])
 
     @tag('tag_detail_endpoint')
-    def test_put_tag_detail_new_tag_by_not_staff_user(self):
+    def test_put_tag_detail_new_tag_by_not_superuser(self):
         """
         Checks tag detail endpoint response for put a new data by not staff user.
         """
@@ -297,17 +298,17 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @tag('tag_detail_endpoint')
-    def test_patch_tag_detail_new_tag_by_staff_user(self):
+    def test_patch_tag_detail_new_tag_by_superuser(self):
         """
         Checks tag detail endpoint response for update a tag data by staff user.
         """
-        self.client.login(username=self.staff_user.user_name, password='9aw4vt94hmt')
+        self.client.login(username=self.superuser.user_name, password='9aw4vt94hmt')
         response = self.client.patch(f'{self.url_tag_list}{self.tag.slug}/', self.changed_tag_name, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Tag.objects.get(pk=self.tag.id).name, self.changed_tag_name['name'])
 
     @tag('tag_detail_endpoint')
-    def test_patch_tag_detail_new_tag_by_not_staff_user(self):
+    def test_patch_tag_detail_new_tag_by_not_superuser(self):
         """
         Checks tag detail endpoint response for update a tag data by not staff user.
         """
@@ -324,17 +325,17 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @tag('tag_detail_endpoint')
-    def test_delete_tag_detail_new_tag_by_staff_user(self):
+    def test_delete_tag_detail_new_tag_by_superuser(self):
         """
         Checks tag detail endpoint response for delete a tag object by
         staff user.
         """
-        self.client.login(username=self.staff_user.user_name, password='9aw4vt94hmt')
+        self.client.login(username=self.superuser.user_name, password='9aw4vt94hmt')
         response = self.client.patch(f'{self.url_tag_list}{self.tag.slug}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @tag('tag_detail_endpoint')
-    def test_delete_tag_detail_new_tag_by_not_staff_user(self):
+    def test_delete_tag_detail_new_tag_by_not_superuser(self):
         """
         Checks tag detail endpoint response for delete a tag object by
         not staff user.
