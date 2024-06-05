@@ -2,6 +2,10 @@ __pycache__
 
 .coverage
 
+.dev
+
+.env
+
 db.sqlite3
 
 htmlcov
