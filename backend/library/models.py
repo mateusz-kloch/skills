@@ -1,10 +1,10 @@
-from django.conf import settings
 from django.contrib import admin
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 
-from .managers import CustomArticleManager
+from .managers import CustomArticleManager, CustomAccountManager
 
 
 class Article(models.Model):
@@ -15,7 +15,7 @@ class Article(models.Model):
 
     title = models.CharField(max_length=250, unique=True)
     slug = models.SlugField(max_length=250, unique=True, blank=True)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    author = models.ForeignKey('Author', on_delete=models.CASCADE)
     tags = models.ManyToManyField('Tag')
     pub_date = models.DateTimeField(default=timezone.now)
     content = models.TextField()
@@ -39,6 +39,32 @@ class Article(models.Model):
         return ', '.join(
             tag.name for tag in self.tags.all()
         )
+    
+
+class Author(AbstractBaseUser, PermissionsMixin):
+    
+    class Meta:
+        ordering = ['user_name']
+
+    user_name = models.CharField(max_length=250, unique=True)
+    slug = models.SlugField(max_length=250, unique=True, blank=True)
+    email = models.EmailField(max_length=250, unique=True)
+    joined = models.DateTimeField(default=timezone.now)
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
+
+    objects = CustomAccountManager()
+    
+    USERNAME_FIELD = 'user_name'
+    REQUIRED_FIELDS = ['email']
+
+    def __str__(self):
+        return self.user_name
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.user_name)
+        super().save(*args, **kwargs)
 
 
 class Tag(models.Model):

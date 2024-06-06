@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8" />
+        <title>Author index page</title>
+    </head>
+    <body>
+        {% if authors_list %}
+            <ul>
+                {% for author in authors_list %}
+                <li><a href="{% url 'library:author-detail' author.id %}">{{ author.user_name }}</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No authors are available.</p>
+        {% endif %}
+    </body>
+</html>

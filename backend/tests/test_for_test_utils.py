@@ -4,8 +4,7 @@ Tests for utilities that are used in tests modules.
 from django.test import TestCase
 from django.utils import timezone
 
-from accounts.models import Author
-from library.models import Article, Tag
+from library.models import Article, Author, Tag
 from common.test_utils import (
     create_article,
     create_author,

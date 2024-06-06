@@ -22,8 +22,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
-from accounts.models import Author
-from library.models import Article, Tag
+from library.models import Article, Author, Tag
 from common.test_utils import (
     create_article,
     create_author,
@@ -107,7 +106,6 @@ class ApiEndpointsTests(APITestCase):
         self.serialized_past_article = serialize_article(self.past_article)
         self.serialized_future_article = serialize_article(self.future_article)
 
-
 # Tests for API root:
     @tag('api_root')
     def test_get_api_root_response_status_code(self):
@@ -116,7 +114,6 @@ class ApiEndpointsTests(APITestCase):
         """
         response = self.client.get(self.url_root)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
 
 # Tests for Author list endpoint:
     @tag('author_list_endpoint')
@@ -197,7 +194,6 @@ class ApiEndpointsTests(APITestCase):
         register = self.client.post(self.url_author_list, self.new_author_data)
         self.assertEqual(register.status_code, status.HTTP_403_FORBIDDEN)
 
-
 # Tests for Author detail endpoint:
     @tag('author_detail_endpoint')
     def test_get_author_detail_response(self):
@@ -207,7 +203,6 @@ class ApiEndpointsTests(APITestCase):
         response = self.client.get(f'{self.url_author_list}{self.author.slug}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, self.serialized_author)
-
 
 # Tests for Tag list endpoint:
     @tag('tag_list_endpoint')
@@ -258,7 +253,6 @@ class ApiEndpointsTests(APITestCase):
         """
         response = self.client.post(self.url_tag_list, self.new_tag_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
 
 # Tests for Tag detail endpoint:
     @tag('tag_detail_endpoint')
@@ -352,7 +346,6 @@ class ApiEndpointsTests(APITestCase):
         response = self.client.patch(f'{self.url_tag_list}{self.tag.slug}/')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-
 # Tests for Article list endpoint:
     @tag('article_list_endpoint')
     def test_get_article_list_response_no_articles(self):
@@ -398,7 +391,6 @@ class ApiEndpointsTests(APITestCase):
         """
         response = self.client.post(self.url_article_list, self.new_article_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
 
 # Tests for Article detail endpoint:
     @tag('article_detail_endpoint')

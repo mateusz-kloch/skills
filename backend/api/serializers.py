@@ -1,8 +1,7 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from library.models import Article, Tag
-from accounts.models import Author
+from library.models import Article, Author, Tag
 
 
 class ArticleSerializer(serializers.HyperlinkedModelSerializer):
@@ -33,21 +32,6 @@ class ArticleSerializer(serializers.HyperlinkedModelSerializer):
         article.save()
         article.tags.set(tags)
         return article
-
-
-class TagSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = Tag
-        fields = ['url', 'name', 'slug', 'articles']
-        extra_kwargs = {
-            'url': {'lookup_field': 'slug'},
-            'slug': {'read_only': True},
-            'articles': {
-                'lookup_field': 'slug',
-                'read_only': True,
-                },
-        }
 
 
 class AuthorSerializer(serializers.HyperlinkedModelSerializer):
@@ -81,3 +65,18 @@ class AuthorSerializer(serializers.HyperlinkedModelSerializer):
         author.set_password(validated_data['password'])
         author.save()
         return author
+
+
+class TagSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Tag
+        fields = ['url', 'name', 'slug', 'articles']
+        extra_kwargs = {
+            'url': {'lookup_field': 'slug'},
+            'slug': {'read_only': True},
+            'articles': {
+                'lookup_field': 'slug',
+                'read_only': True,
+                },
+        }

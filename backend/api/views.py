@@ -12,8 +12,7 @@ from .serializers import (
     ArticleSerializer,
     TagSerializer,
 )
-from accounts.models import Author
-from library.models import Article, Tag
+from library.models import Article, Author, Tag
 
 
 class ArticleViewSet(viewsets.ModelViewSet):
@@ -30,19 +29,6 @@ class ArticleViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly
     ]
-
-
-class TagViewSet(viewsets.ModelViewSet):
-    """
-    Allows anyone to display tags and articles related to them.
-    
-    Uses custom permission `IsStaffOrReadOnly` that allows only
-    an staff user to manage tags.
-    """
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
-    lookup_field = 'slug'
-    permission_classes = [IsStaffOrReadOnly]
 
 
 class AuthorViewSet(
@@ -62,3 +48,16 @@ class AuthorViewSet(
     serializer_class = AuthorSerializer
     lookup_field = 'slug'
     permission_classes = [IsAnonymousOrNotAllowed]
+
+
+class TagViewSet(viewsets.ModelViewSet):
+    """
+    Allows anyone to display tags and articles related to them.
+    
+    Uses custom permission `IsStaffOrReadOnly` that allows only
+    an staff user to manage tags.
+    """
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    lookup_field = 'slug'
+    permission_classes = [IsStaffOrReadOnly]

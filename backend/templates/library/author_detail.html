@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8" />
+        <title>Author detail page</title>
+    </head>
+    <body>
+        <h1>Author info:</h1>
+        <p>Name: {{ author.user_name }}</p>
+        <p>E-mail: {{ author.email }}</p>
+        <p>Joined: {{ author.joined }}</p>
+        {% if articles %}
+            <h2>Published articles:</h2>
+            <ul>
+                {% for article in articles %}
+                <li><a href="{% url 'library:article-detail' article.id %}">{{ article.title }}</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <h2>Has not published any articles yet.</h2>
+        {% endif %}
+    </body>
+</html>

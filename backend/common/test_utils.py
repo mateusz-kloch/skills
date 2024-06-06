@@ -1,8 +1,7 @@
 from datetime import datetime
 
-from accounts.models import Author
-from api.serializers import ArticleSerializer, TagSerializer, AuthorSerializer
-from library.models import Article, Tag
+from api.serializers import ArticleSerializer, AuthorSerializer, TagSerializer
+from library.models import Article, Author, Tag
 
 
 def create_author(user_name: str, password: str) -> Author:
