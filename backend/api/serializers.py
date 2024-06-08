@@ -42,6 +42,7 @@ class AuthorSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'lookup_field': 'slug'},
             'slug': {'read_only': True},
+            'joined': {'read_only': True},
             'password': {'write_only': True},
             'articles': {
                 'lookup_field': 'slug',
