@@ -5,14 +5,16 @@
         <title>Article index page</title>
     </head>
     <body>
+        <a href="{% url 'library:index' %}">Home page</a>
         {% if published_articles_list %}
-            <ul>
-                {% for article in published_articles_list %}
-                <li><a href="{% url 'library:article-detail' article.id %}">{{ article.title }}</a></li>
-                {% endfor %}
-            </ul>
+        <p>Published articles:</p>
+        <ul>
+            {% for article in published_articles_list %}
+            <li><a href="{% url 'library:article-detail' article.id %}">{{ article.title }}</a></li>
+            {% endfor %}
+        </ul>
         {% else %}
-            <p>No articles are available.</p>
+        <p>No articles are available.</p>
         {% endif %}
     </body>
 </html>

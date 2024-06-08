@@ -5,14 +5,16 @@
         <title>Author index page</title>
     </head>
     <body>
+        <a href="{% url 'library:index' %}">Home page</a>
         {% if authors_list %}
-            <ul>
-                {% for author in authors_list %}
-                <li><a href="{% url 'library:author-detail' author.id %}">{{ author.user_name }}</a></li>
-                {% endfor %}
-            </ul>
+        <p>Authors:</p>
+        <ul>
+            {% for author in authors_list %}
+            <li><a href="{% url 'library:author-detail' author.id %}">{{ author.user_name }}</a></li>
+            {% endfor %}
+        </ul>
         {% else %}
-            <p>No authors are available.</p>
+        <p>No authors are available.</p>
         {% endif %}
     </body>
 </html>

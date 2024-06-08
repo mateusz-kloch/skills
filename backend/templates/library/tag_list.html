@@ -5,14 +5,16 @@
         <title>Tags index page</title>
     </head>
     <body>
+        <a href="{% url 'library:index' %}">Home page</a>
         {% if available_tags_list %}
-            <ul>
-                {% for tag in available_tags_list %}
-                <li><a href="{% url 'library:tag-detail' tag.id %}">{{ tag.name }}</a></li>
-                {% endfor %}
-            </ul>
+        <p>Tags:</p>
+        <ul>
+            {% for tag in available_tags_list %}
+            <li><a href="{% url 'library:tag-detail' tag.id %}">{{ tag.name }}</a></li>
+            {% endfor %}
+        </ul>
         {% else %}
-            <p>No categories are available.</p>
+            <p>No tags are available.</p>
         {% endif %}
     </body>
 </html>

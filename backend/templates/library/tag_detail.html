@@ -5,16 +5,18 @@
         <title>Tags detail page</title>
     </head>
     <body>
-        <h1>{{ tag.name }}</h1>
+        <a href="{% url 'library:index' %}">Home page</a>
+        <a href="{% url 'library:tag-list' %}">Tags list</a>
+        <p>{{ tag.name }}</p>
         {% if articles %}
-            <h2>Published articles:</h2>
-            <ul>
-                {% for article in articles %}
-                <li><a href="{% url 'library:article-detail' article.id %}">{{ article.title }}</a></li>
-                {% endfor %}
-            </ul>
+        <p>Published articles:</p>
+        <ul>
+            {% for article in articles %}
+            <li><a href="{% url 'library:article-detail' article.id %}">{{ article.title }}</a></li>
+            {% endfor %}
+        </ul>
         {% else %}
-            <p>No articles are available.</p>
+        <p>No articles are available.</p>
         {% endif %}
     </body>
 </html>
