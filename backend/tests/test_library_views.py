@@ -373,7 +373,7 @@ class LibraryViewsTests(TestCase):
         Tag.objects.all().delete()
         response = self.client.get(reverse(self.tag_list_url))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'No tags are available.')
+        self.assertContains(response, 'No categories are available.')
         self.assertQuerySetEqual(
             response.context['available_tags_list'], []
         )
