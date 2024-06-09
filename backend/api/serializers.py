@@ -38,7 +38,7 @@ class AuthorSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Author
-        fields = ['url', 'user_name', 'slug', 'email', 'joined', 'password', 'articles']
+        fields = ['url', 'user_name', 'slug', 'email', 'avatar', 'joined', 'password', 'articles']
         extra_kwargs = {
             'url': {'lookup_field': 'slug'},
             'slug': {'read_only': True},
