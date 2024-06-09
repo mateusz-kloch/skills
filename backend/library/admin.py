@@ -30,7 +30,7 @@ class UserAdminConfig(UserAdmin):
     list_display = ('user_name', 'email', 'id', 'joined', 'is_active', 'is_staff')
     fieldsets = (
         (None, {
-            'fields': ('user_name', 'slug', 'email')
+            'fields': ('user_name', 'slug', 'email', 'avatar')
         }),
         ('Permissions', {
             'fields': ('is_staff', 'is_active')
@@ -40,7 +40,7 @@ class UserAdminConfig(UserAdmin):
         (None, {
             'classes': ('wide',),
             'fields': (
-                'user_name', 'slug', 'email', 'password1', 'password2', 'is_active', 'is_staff'
+                'user_name', 'slug', 'email', 'avatar', 'password1', 'password2', 'is_active', 'is_staff'
             )
         }),
     )
