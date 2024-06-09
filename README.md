@@ -5,31 +5,32 @@ This platform was developed with Django and Django REST framework.
 
 ### Repository layout:
 ```
-├── skills_backend
-│   ├── accounts
-│   │   ├── __init__.py
-│   │   ├── admin.py
-│   │   ├── apps.py
-│   │   └── models.py
+├── backend
 │   ├── api
-│   │   ├── __init__.py
 │   │   ├── permissions.py
 │   │   ├── serializers.py
 │   │   ├── urls.py
 │   │   └── views.py
+│   ├── common
+│   │   └── test_utils.py
 │   ├── core
-│   │   ├── __init__.py
 │   │   ├── asgi.py
 │   │   ├── settings.py
 │   │   ├── urls.py
 │   │   └── wsgi.py
 │   ├── library
-│   │   ├── __init__.py
+│   │   ├── migrations
 │   │   ├── admin.py
 │   │   ├── apps.py
+│   │   ├── managers.py
 │   │   ├── models.py
 │   │   ├── urls.py
 │   │   └── views.py
+│   ├── static
+│   │   ├── library
+│   │   │   └── author
+│   │   │       └── default
+│   │   │           └── default_avatar.png
 │   ├── templates
 │   │   └── library
 │   │       ├── article_detail.html
@@ -37,20 +38,16 @@ This platform was developed with Django and Django REST framework.
 │   │       ├── author_detail.html
 │   │       ├── author_list.html
 │   │       ├── index.html
-│   │       ├── tag_list.html
-│   │       └── tag_relations_list.html
+│   │       ├── tag_detail.html
+│   │       └── tag_list.html
 │   ├── tests
-│   │   ├── __init__.py
-│   │   ├── test_api_articles_endpoints.py
-│   │   ├── test_api_root.py
-│   │   ├── test_api_tags_endpoints.py
-│   │   ├── test_api_users_endpoints.py
-│   │   ├── test_library_models.py
-│   │   ├── test_library_views.py
-│   │   └── utils.py
+│   │   ├── test_api_endpoints.py
+│   │   ├── test_for_test_utils.py
+│   │   ├── test_library_models.py
+│   │   └── test_library_views.py
+│   ├── .gitignore
 │   ├── LICENSE
 │   ├── manage.py
-│   ├── README.md
 │   └── requirements.txt
 └── README.md
 ```
