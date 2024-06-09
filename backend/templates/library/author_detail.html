@@ -15,7 +15,7 @@
         <p>Published articles:</p>
         <ul>
             {% for article in articles %}
-            <li><a href="{% url 'library:article-detail' article.id %}">{{ article.title }}</a></li>
+            <li><a href="{% url 'library:article-detail' article.slug %}">{{ article.title }}</a></li>
             {% endfor %}
         </ul>
         {% else %}

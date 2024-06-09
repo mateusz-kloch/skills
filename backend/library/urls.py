@@ -16,9 +16,9 @@ app_name = 'library'
 urlpatterns = [
     path('', TemplateView.as_view(template_name='library/index.html'), name='index'),
     path('articles/', ArticleListView.as_view(), name='article-list'),
-    re_path(r'^(?:article-(?P<pk>[0-9]+))/$', ArticleDetailView.as_view(), name='article-detail'),
+    re_path(r'^(?:article-(?P<slug>[0-9-a-z]+))/$', ArticleDetailView.as_view(), name='article-detail'),
     path('authors/', AuthorListView.as_view(), name='author-list'),
-    re_path(r'^(?:author-(?P<pk>[0-9]+))/$', AuthorDetailView.as_view(), name='author-detail'),
+    re_path(r'^(?:author-(?P<slug>[0-9-a-z]+))/$', AuthorDetailView.as_view(), name='author-detail'),
     path('tags/', TagListView.as_view(), name='tag-list'),
-    re_path(r'^(?:tag-(?P<pk>[0-9]+))/$', TagDetailView.as_view(), name='tag-detail'),
+    re_path(r'^(?:tag-(?P<slug>[0-9-a-z]+))/$', TagDetailView.as_view(), name='tag-detail'),
 ]

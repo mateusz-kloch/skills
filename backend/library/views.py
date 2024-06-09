@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from django.views import generic
 
 from .models import Article, Author, Tag
@@ -18,12 +19,15 @@ class ArticleListView(generic.ListView):
 class ArticleDetailView(generic.DetailView):
     template_name = 'library/article_detail.html'
 
+    # def get_object(self):
+    #     return get_object_or_404(Article, slug=self.kwargs['slug'])
+    
     def get_queryset(self):
         """
         Returns verified article whose primary key is provided in the request.
         """
-        search_request = self.request.resolver_match.kwargs.get('pk')
-        return Article.verified_objects.filter(pk=search_request)
+        search_request = self.request.resolver_match.kwargs.get('slug')
+        return Article.verified_objects.filter(slug=search_request)
 
 
 class AuthorListView(generic.ListView):
@@ -48,7 +52,7 @@ class AuthorDetailView(generic.DetailView):
         """
         context = super().get_context_data(**kwargs)
         author = self.get_object()
-        articles = Article.verified_objects.filter(author__pk=author.id)
+        articles = Article.verified_objects.filter(author__slug=author.slug)
         context['articles'] = articles
         return context
 
@@ -74,7 +78,7 @@ class TagDetailView(generic.DetailView):
         tags contain the tag with primary key provided in the request.
         """
         context = super().get_context_data(**kwargs)
-        search_request = self.request.resolver_match.kwargs.get('pk')
-        articles = Article.verified_objects.filter(tags__pk=search_request)
+        search_request = self.request.resolver_match.kwargs.get('slug')
+        articles = Article.verified_objects.filter(tags__slug=search_request)
         context['articles'] = articles
         return context

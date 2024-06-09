@@ -168,7 +168,7 @@ class LibraryViewsTests(TestCase):
         """
         Checks whether ArticleDetailView uses correct template.
         """
-        response = self.client.get(reverse(self.article_detail_url, args=(self.past_article.id,)))
+        response = self.client.get(reverse(self.article_detail_url, args=(self.past_article.slug,)))
         self.assertTemplateUsed(response, self.expect_article_detail_template)
 
     @tag('article-detail_view')
@@ -176,7 +176,7 @@ class LibraryViewsTests(TestCase):
         """
         Checks whether ArticleDetailView displays article with past pub_date.
         """
-        response = self.client.get(reverse(self.article_detail_url, args=(self.past_article.id,)))
+        response = self.client.get(reverse(self.article_detail_url, args=(self.past_article.slug,)))
         self.assertContains(response, self.past_article)
 
     @tag('article-detail_view')
@@ -184,7 +184,7 @@ class LibraryViewsTests(TestCase):
         """
         Checks whether ArticleDetailView not displays article with future pub_date.
         """
-        response = self.client.get(reverse(self.article_detail_url, args=(self.future_article.id,)))
+        response = self.client.get(reverse(self.article_detail_url, args=(self.future_article.slug,)))
         self.assertEqual(response.status_code, 404)
 
     @tag('article-detail_view')
@@ -193,13 +193,14 @@ class LibraryViewsTests(TestCase):
         Checks whether ArticleDetailView displays article without title field.
         """
         defective_article = Article(
+            slug='slug',
             author=self.author,
             pub_date=timezone.now() - timedelta(hours=1),
             content='content'
         )
         defective_article.save()
         defective_article.tags.set([self.tag])
-        response = self.client.get(reverse(self.article_detail_url, args=(defective_article.id,)))
+        response = self.client.get(reverse(self.article_detail_url, args=(defective_article.slug,)))
         self.assertEqual(response.status_code, 404)
 
     @tag('article-detail_view')
@@ -214,7 +215,7 @@ class LibraryViewsTests(TestCase):
         )
         defective_article.save()
         defective_article.tags.set([self.tag])
-        response = self.client.get(reverse(self.article_detail_url, args=(defective_article.id,)))
+        response = self.client.get(reverse(self.article_detail_url, args=(defective_article.slug,)))
         self.assertEqual(response.status_code, 404)
 
     @tag('article-detail_view')
@@ -229,7 +230,7 @@ class LibraryViewsTests(TestCase):
             content='content'
         )
         defective_article.save()
-        response = self.client.get(reverse(self.article_detail_url, args=(defective_article.id,)))
+        response = self.client.get(reverse(self.article_detail_url, args=(defective_article.slug,)))
         self.assertEqual(response.status_code, 404)
 
 # Tests for author-list view:
@@ -261,7 +262,7 @@ class LibraryViewsTests(TestCase):
         """
         Checks whether AuthorDetailView uses correct template.
         """
-        response = self.client.get(reverse(self.author_detail_url, args=(self.author.id,)))
+        response = self.client.get(reverse(self.author_detail_url, args=(self.author.slug,)))
         self.assertTemplateUsed(response, self.expect_author_detail_template)
 
     @tag('author-detail_view')
@@ -269,7 +270,7 @@ class LibraryViewsTests(TestCase):
         """
         Checks whether AuthorDetailView displays author data correctly.
         """
-        response = self.client.get(reverse(self.author_detail_url, args=(self.author.id,)))
+        response = self.client.get(reverse(self.author_detail_url, args=(self.author.slug,)))
         self.assertEqual(response.context['author'].user_name, self.author.user_name)
         self.assertEqual(response.context['author'].email, self.author.email)
         self.assertEqual(response.context['author'].joined, self.author.joined)
@@ -281,7 +282,7 @@ class LibraryViewsTests(TestCase):
         no related articles with author.
         """
         Article.objects.all().delete()
-        response = self.client.get(reverse(self.author_detail_url, args=(self.author.id,)))
+        response = self.client.get(reverse(self.author_detail_url, args=(self.author.slug,)))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Has not published any articles yet.')
         self.assertQuerySetEqual(response.context['articles'], [])
@@ -291,7 +292,7 @@ class LibraryViewsTests(TestCase):
         """
         Checks whether AuthorDetailView displays related article with past pub_date.
         """
-        response = self.client.get(reverse(self.author_detail_url, args=(self.author.id,)))
+        response = self.client.get(reverse(self.author_detail_url, args=(self.author.slug,)))
         self.assertQuerySetEqual(
             response.context['articles'], [self.past_article]
         )
@@ -301,7 +302,7 @@ class LibraryViewsTests(TestCase):
         """
         Checks whether AuthorDetailView not displays related article with future pub_date.
         """
-        response = self.client.get(reverse(self.author_detail_url, args=(self.author.id,)))
+        response = self.client.get(reverse(self.author_detail_url, args=(self.author.slug,)))
         self.assertNotIn(self.future_article, response.context['articles'])
 
     @tag('author-detail_view')
@@ -316,7 +317,7 @@ class LibraryViewsTests(TestCase):
         )
         defective_article.save()
         defective_article.tags.set([self.tag])
-        response = self.client.get(reverse(self.author_detail_url, args=(self.author.id,)))
+        response = self.client.get(reverse(self.author_detail_url, args=(self.author.slug,)))
         self.assertNotIn(
             defective_article, response.context['articles']
         )
@@ -333,7 +334,7 @@ class LibraryViewsTests(TestCase):
         )
         defective_article.save()
         defective_article.tags.set([self.tag])
-        response = self.client.get(reverse(self.author_detail_url, args=(self.author.id,)))
+        response = self.client.get(reverse(self.author_detail_url, args=(self.author.slug,)))
         self.assertNotIn(
             defective_article, response.context['articles']
         )
@@ -351,7 +352,7 @@ class LibraryViewsTests(TestCase):
             content='content'
         )
         defective_article.save()
-        response = self.client.get(reverse(self.author_detail_url, args=(self.author.id,)))
+        response = self.client.get(reverse(self.author_detail_url, args=(self.author.slug,)))
         self.assertNotIn(
             defective_article, response.context['articles']
         )
@@ -384,7 +385,7 @@ class LibraryViewsTests(TestCase):
         """
         Checks whether TagDetailView uses correct template.
         """
-        response = self.client.get(reverse(self.tag_detail_url, args=(self.tag.id,)))
+        response = self.client.get(reverse(self.tag_detail_url, args=(self.tag.slug,)))
         self.assertTemplateUsed(response, self.expect_tag_detail_template)
 
     @tag('tag-detail_view')
@@ -392,7 +393,7 @@ class LibraryViewsTests(TestCase):
         """
         Checks whether TagDetailView displays tag data correctly.
         """
-        response = self.client.get(reverse(self.tag_detail_url, args=(self.tag.id,)))
+        response = self.client.get(reverse(self.tag_detail_url, args=(self.tag.slug,)))
         self.assertEqual(response.context['tag'].name, self.tag.name)
 
     @tag('tag-detail_view')
@@ -401,7 +402,7 @@ class LibraryViewsTests(TestCase):
         Checks whether TagDetailView displays the appropriate message when there are no articles related with tag.
         """
         Article.objects.all().delete()
-        response = self.client.get(reverse(self.tag_detail_url, args=(self.tag.id,)))
+        response = self.client.get(reverse(self.tag_detail_url, args=(self.tag.slug,)))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(
@@ -413,7 +414,7 @@ class LibraryViewsTests(TestCase):
         """
         Checks whether TagDetailView displays related article with past pub_date.
         """
-        response = self.client.get(reverse(self.tag_detail_url, args=(self.tag.id,)))
+        response = self.client.get(reverse(self.tag_detail_url, args=(self.tag.slug,)))
         self.assertQuerySetEqual(
             response.context['articles'], [self.past_article]
         )
@@ -423,7 +424,7 @@ class LibraryViewsTests(TestCase):
         """
         Checks whether TagDetailView not displays related article with future pub_date.
         """
-        response = self.client.get(reverse(self.tag_detail_url, args=(self.tag.id,)))
+        response = self.client.get(reverse(self.tag_detail_url, args=(self.tag.slug,)))
         self.assertNotIn(self.future_article, response.context['articles'])
 
     @tag('tag-detail_view')
@@ -438,7 +439,7 @@ class LibraryViewsTests(TestCase):
         )
         defective_article.save()
         defective_article.tags.set([self.tag])
-        response = self.client.get(reverse(self.tag_detail_url, args=(self.tag.id,)))
+        response = self.client.get(reverse(self.tag_detail_url, args=(self.tag.slug,)))
         self.assertNotIn(defective_article, response.context['articles'])
 
     @tag('tag-detail_view')
@@ -453,5 +454,5 @@ class LibraryViewsTests(TestCase):
         )
         defective_article.save()
         defective_article.tags.set([self.tag])
-        response = self.client.get(reverse(self.tag_detail_url, args=(self.tag.id,)))
+        response = self.client.get(reverse(self.tag_detail_url, args=(self.tag.slug,)))
         self.assertNotIn(defective_article, response.context['articles'])
