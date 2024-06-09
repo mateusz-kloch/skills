@@ -85,6 +85,13 @@ class LibraryModelsTests(TestCase):
         """
         self.assertTrue(self.author.slug)
 
+    @tag('author_model')
+    def test_author_default_avatar(self):
+        """
+        Checks whether default avatar is provided by default.
+        """
+        self.assertTrue(self.author.avatar)
+
 # Tests for Tag model:
     @tag('tag_model')
     def test_tag_str(self):
