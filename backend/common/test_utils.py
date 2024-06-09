@@ -69,6 +69,7 @@ def serialize_author(author: Author) -> dict:
     """
     serialized_author = AuthorSerializer(author, context={'request': None}).data
     serialized_author['url'] = f'http://testserver{serialized_author["url"]}'
+    serialized_author['avatar'] = f'http://testserver{serialized_author["avatar"]}'
     serialized_author['articles'] = [f'http://testserver{article}' for article in serialized_author['articles']]
     return serialized_author
 
