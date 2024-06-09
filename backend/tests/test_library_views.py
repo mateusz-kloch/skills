@@ -276,7 +276,7 @@ class LibraryViewsTests(TestCase):
         self.assertEqual(response.context['author'].joined, self.author.joined)
 
     @tag('author-detail_view')
-    def test_article_list_no_articles(self):
+    def test_author_detail_no_articles(self):
         """
         Checks whether AuthorDetailView displays appropriate message when there are
         no related articles with author.
@@ -288,7 +288,7 @@ class LibraryViewsTests(TestCase):
         self.assertQuerySetEqual(response.context['articles'], [])
     
     @tag('author-detail_view')
-    def test_article_list_past_article(self):
+    def test_author_detail_past_article(self):
         """
         Checks whether AuthorDetailView displays related article with past pub_date.
         """
@@ -298,7 +298,7 @@ class LibraryViewsTests(TestCase):
         )
 
     @tag('author-detail_view')
-    def test_article_list_future_article(self):
+    def test_author_detail_future_article(self):
         """
         Checks whether AuthorDetailView not displays related article with future pub_date.
         """
@@ -306,7 +306,7 @@ class LibraryViewsTests(TestCase):
         self.assertNotIn(self.future_article, response.context['articles'])
 
     @tag('author-detail_view')
-    def test_article_list_article_with_missing_title_field(self):
+    def test_author_detail_article_with_missing_title_field(self):
         """
         Checks whether AuthorDetailView not displays related article without title field.
         """
@@ -323,7 +323,7 @@ class LibraryViewsTests(TestCase):
         )
 
     @tag('author-detail_view')
-    def test_article_list_article_with_missing_content_field(self):
+    def test_author_detail_article_with_missing_content_field(self):
         """
         Checks whether AuthorDetailView not displays related article without content field.
         """
@@ -340,7 +340,7 @@ class LibraryViewsTests(TestCase):
         )
 
     @tag('author-detail_view')
-    def test_article_list_article_without_related_tag(self):
+    def test_author_detail_article_without_related_tag(self):
         """
         Checks whether AuthorDetailView not displays related article without
         relation with any Tag model object.
