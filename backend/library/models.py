@@ -42,13 +42,23 @@ class Article(models.Model):
     
 
 class Author(AbstractBaseUser, PermissionsMixin):
-    
+
     class Meta:
         ordering = ['user_name']
+
+    def create_avatar_path(self, filename):
+        """
+        Creates a path where Author avatar will be uploaded.
+        """
+        return f'static/library/author/{self.user_name}/{filename}'
 
     user_name = models.CharField(max_length=250, unique=True)
     slug = models.SlugField(max_length=250, unique=True, blank=True)
     email = models.EmailField(max_length=250, unique=True)
+    avatar = models.ImageField(
+        default='static/library/author/default/default_avatar.png',
+        upload_to=create_avatar_path
+    )
     joined = models.DateTimeField(default=timezone.now)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
