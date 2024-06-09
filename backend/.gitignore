@@ -1,8 +1,13 @@
 __pycache__
 
 **/migrations/**
-
 !__init__.py
+
+static/admin
+static/debug_toolbar
+static/rest_framework
+static/library/author/**
+!default**
 
 .coverage
 
