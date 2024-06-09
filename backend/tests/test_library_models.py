@@ -17,13 +17,17 @@ from django.test import tag, TestCase
 from django.utils import timezone
 
 from library.models import Article, Author, Tag
-from common.test_utils import create_article, create_author, create_tag
+from common.test_utils import (
+    create_article, create_author, create_superuser_author, create_tag
+)
 
 
 class LibraryModelsTests(TestCase):
 
     def setUp(self):
         self.author = create_author('author', '48s5tb4w3')
+        self.avatar_filename = 'avatar.png'
+        self.expect_avatar_path = 'static/library/author/author/avatar.png'
         self.another_author = create_author('another_author', 'a49o7wg3qvf')
         self.yet_another_author = create_author('yet_another_author', 'aiuh3h347q')
 
@@ -86,11 +90,45 @@ class LibraryModelsTests(TestCase):
         self.assertTrue(self.author.slug)
 
     @tag('author_model')
+    def test_author_create_avatar_path(self):
+        self.assertEqual(
+            self.author.create_avatar_path(self.avatar_filename), self.expect_avatar_path
+        )
+
+    @tag('author_model')
     def test_author_default_avatar(self):
         """
         Checks whether default avatar is provided by default.
         """
         self.assertTrue(self.author.avatar)
+
+    @tag('author_model')
+    def test_superuser_not_is_superuser(self):
+        """
+        Checks whether raises ValueError when create superuser with
+        inappropriate argument.
+        """
+        with self.assertRaises(ValueError):
+            Author.objects.create_superuser(
+            user_name='superuser',
+            email='super@ex.com',
+            password='o947gh934',
+            is_superuser=False,
+            )
+
+    @tag('author_model')
+    def test_superuser_not_is_staff(self):
+        """
+        Checks whether raises ValueError when create superuser with
+        inappropriate argument.
+        """
+        with self.assertRaises(ValueError):
+            Author.objects.create_superuser(
+            user_name='superuser',
+            email='super@ex.com',
+            password='o947gh934',
+            is_staff=False,
+            )
 
 # Tests for Tag model:
     @tag('tag_model')
