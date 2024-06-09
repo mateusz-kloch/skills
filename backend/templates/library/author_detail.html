@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-US">
+{% load static %}
     <head>
         <meta charset="utf-8" />
         <title>Author detail page</title>
@@ -8,8 +9,10 @@
         <a href="{% url 'library:index' %}">Home page</a>
         <a href="{% url 'library:author-list' %}">Authors list</a>
         <p>Author info:</p>
-        <p>Name: {{ author.user_name }}</p>
-        <p>E-mail: {{ author.email }}</p>
+        <p>{{ author.user_name }}</p>
+        <p>{{ author.email }}</p>
+        <img src="{{ author.avatar.url }}" style="width:350px;height:350px;">
+        <p></p>
         <p>Joined: {{ author.joined }}</p>
         {% if articles %}
         <p>Published articles:</p>
