@@ -43,6 +43,7 @@ class LibraryViewsTests(TestCase):
         self.author_detail_url = 'library:author-detail'
         self.tag_list_url = 'library:tag-list'
         self.tag_detail_url = 'library:tag-detail'
+        self.user_register_url = 'library:user-register'
         
         self.author = create_author('author', '48s5tb4w3')
 
@@ -62,6 +63,13 @@ class LibraryViewsTests(TestCase):
             pub_date=timezone.now() + timedelta(days=1),
             content='future article content'
         )
+
+        self.new_user_data = {
+            'user_name': 'newuser',
+            'email': 'newuser@ex.com',
+            'password': '4qa6gtv8o4',
+            'password2': '4qa6gtv8o4'
+        }
 
 # Tests for index view:
     @tag('index_view')
@@ -456,3 +464,13 @@ class LibraryViewsTests(TestCase):
         defective_article.tags.set([self.tag])
         response = self.client.get(reverse(self.tag_detail_url, args=(self.tag.slug,)))
         self.assertNotIn(defective_article, response.context['articles'])
+
+# Tests for user-register view:
+    @tag('user-register_view')
+    def test_user_register_new_user(self):
+        """
+        Checks whether UserRegisterView adds new user.
+        """
+        response = self.client.post(reverse(self.user_register_url), self.new_user_data)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Author.objects.get(user_name=self.new_user_data['user_name']))
