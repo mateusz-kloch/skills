@@ -2,10 +2,12 @@
 <html lang="en-US">
     <head>
         <meta charset="utf-8" />
-        <title>Tags index page</title>
+        <title>Skills | Tags</title>
     </head>
     <body>
-        <a href="{% url 'library:index' %}">Home page</a>
+        <a href="{% url 'library:index' %}">
+            <button>Home page</button>
+        </a>
         {% if available_tags_list %}
         <p>Tags:</p>
         <ul>

@@ -2,11 +2,15 @@
 <html lang="en-US">
     <head>
         <meta charset="utf-8" />
-        <title>Tags detail page</title>
+        <title>Skills | Tag</title>
     </head>
     <body>
-        <a href="{% url 'library:index' %}">Home page</a>
-        <a href="{% url 'library:tag-list' %}">Tags list</a>
+        <a href="{% url 'library:index' %}">
+            <button>Home page</button>
+        </a>
+        <a href="{% url 'library:tag-list' %}">
+            <button>Tags list</button>
+        </a>
         <p>{{ tag.name }}</p>
         {% if articles %}
         <p>Published articles:</p>

@@ -2,10 +2,12 @@
 <html lang="en-US">
     <head>
         <meta charset="utf-8" />
-        <title>Article index page</title>
+        <title>Skills | Articles</title>
     </head>
     <body>
-        <a href="{% url 'library:index' %}">Home page</a>
+        <a href="{% url 'library:index' %}">
+            <button>Home page</button>
+        </a>
         {% if published_articles_list %}
         <p>Published articles:</p>
         <ul>
