@@ -5,6 +5,19 @@
         <title>Article index page</title>
     </head>
     <body>
+        {% if request.user.is_authenticated %}
+        <form method="post" action="{% url 'library:user-logout' %}">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+        {% else %}
+        <a href="{% url 'library:user-register' %}">
+            <button>Register</button>
+        </a>
+        <a href="{% url 'library:user-login' %}">
+            <button>Login</button>
+        </a>
+        {% endif %}
         <ul>
             <li><a href="{% url 'library:author-list' %}">Authors</a></li>
             <li><a href="{% url 'library:article-list' %}">Articles</a></li>
