@@ -1,6 +1,8 @@
 from django.http import Http404
 from django.views import generic
+from django.urls import reverse_lazy
 
+from .forms import UserRegisterForm
 from .models import Article, Author, Tag
 
 
@@ -39,7 +41,7 @@ class AuthorListView(generic.ListView):
         Returns a query set that includes authors of published articles.
         """
         return Author.objects.all()
-    
+
 
 class AuthorDetailView(generic.DetailView):
     model = Author
@@ -82,3 +84,15 @@ class TagDetailView(generic.DetailView):
         articles = Article.verified_objects.filter(tags__slug=tag_obj.slug)
         context['articles'] = articles
         return context
+    
+
+class UserRegisterView(generic.FormView):
+    form_class = UserRegisterForm
+    template_name = 'library/user_register.html'
+    success_url = reverse_lazy('library:user-login')
+
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        user.set_password(form.cleaned_data['password'])
+        user.save()
+        return super().form_valid(form)
