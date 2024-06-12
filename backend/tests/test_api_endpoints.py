@@ -87,11 +87,11 @@ class ApiEndpointsTests(APITestCase):
             'email': 'new_author@ex.com',
             'password': 'woeiuhtg9823y',
         }
-        self.bad_author_data = {
-            'user_name': 'author',
-            'email': 'author@ex.com',
-            'password': 'password',
-        }
+        
+        self.repeatitive_user_name = 'author'
+        self.repeatitive_email = 'author@ex.com'
+        self.bad_email = 'not_an_email'
+        self.bad_password = 'password'
 
         self.new_tag_data = {'name': 'new_tag'}
         self.changed_tag_name = {'name': 'changed_tag_name'}
@@ -145,31 +145,32 @@ class ApiEndpointsTests(APITestCase):
         self.assertTrue(Author.objects.get(user_name=self.new_author_data['user_name']))
 
     @tag('author_list_endpoint')
-    def test_post_author_list_new_author_bad_user_name(self):
+    def test_post_author_list_new_author_repeatitive_user_name(self):
         """
         Checks author list endpoint response for create new author with
         user_name that is already in database.
         """
-        bad_author_data = {
-            'user_name': self.bad_author_data['user_name'],
-            'email': self.new_author_data['email'],
-            'password': self.new_author_data['password'],
-        }
-        register = self.client.post(self.url_author_list, bad_author_data, format='json')
+        self.new_author_data['user_name'] = self.repeatitive_user_name
+        register = self.client.post(self.url_author_list, self.new_author_data, format='json')
         self.assertEqual(register.status_code, status.HTTP_400_BAD_REQUEST)
 
     @tag('author_list_endpoint')
-    def test_post_author_list_new_author_bad_email(self):
+    def test_post_author_list_new_author_repeatitive_email(self):
         """
         Checks author list endpoint response for create new author with
         email that is already in database.
         """
-        bad_author_data = {
-            'user_name': self.new_author_data['user_name'],
-            'email': self.bad_author_data['email'],
-            'password': self.new_author_data['password'],
-        }
-        register = self.client.post(self.url_author_list, bad_author_data, format='json')
+        self.new_author_data['email'] = self.repeatitive_email
+        register = self.client.post(self.url_author_list, self.new_author_data, format='json')
+        self.assertEqual(register.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    @tag('author_list_endpoint')
+    def test_post_author_list_new_author_bad_email(self):
+        """
+        Checks author list endpoint response for create new author with bad email address.
+        """
+        self.new_author_data['email'] = self.bad_email
+        register = self.client.post(self.url_author_list, self.new_author_data, format='json')
         self.assertEqual(register.status_code, status.HTTP_400_BAD_REQUEST)
 
     @tag('author_list_endpoint')
@@ -177,12 +178,8 @@ class ApiEndpointsTests(APITestCase):
         """
         Checks author list endpoint response for create new author with poor password.
         """
-        bad_author_data = {
-            'user_name': self.new_author_data['user_name'],
-            'email': self.new_author_data['email'],
-            'password': self.bad_author_data['password'],
-        }
-        register = self.client.post(self.url_author_list, bad_author_data, format='json')
+        self.new_author_data['password'] = self.bad_password
+        register = self.client.post(self.url_author_list, self.new_author_data, format='json')
         self.assertEqual(register.status_code, status.HTTP_400_BAD_REQUEST)
 
     @tag('author_list_endpoint')
