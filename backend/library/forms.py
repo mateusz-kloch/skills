@@ -20,5 +20,5 @@ class UserRegisterForm(forms.ModelForm):
         validate_password(password)
         password2 = cleaned_data.get('password2')
         if password and password2 and password != password2:
-            self.add_error('password2', 'Password dot match')
+            self.add_error('password2', 'Passwords dont match')
         return cleaned_data
