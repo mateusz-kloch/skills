@@ -2,6 +2,7 @@ from django.test import TestCase
 
 from library.forms import UserRegisterForm
 
+
 class LibraryFormsTests(TestCase):
 
     def setUp(self):
@@ -37,8 +38,10 @@ class LibraryFormsTests(TestCase):
 
     def test_form_passwords_not_match(self):
         """
-        Checks whether form is valid when password not matches.
+        Checks whether form is valid when passwords not match and
+        displays message.
         """
-        self.data['password'] = '84obg'
+        self.data['password'] = '84obg9a4t'
         form = UserRegisterForm(data=self.data)
         self.assertFalse(form.is_valid())
+        self.assertFormError(form=form, field='password2', errors='Passwords dont match')
