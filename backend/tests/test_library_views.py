@@ -5,12 +5,13 @@ Tests are tagged with the name of the view they concern.
 
 Available tags:
 - `index_view`
-- `article-list_view`
-- `article-detail_view`
-- `author-list_view`
-- `author-detail_view`
-- `tag-list_view`
-- `tag-detail_view`
+- `article_list_view`
+- `article_detail_view`
+- `author_list_view`
+- `author_detail_view`
+- `tag_list_view`
+- `tag_detail_view`
+- `user_register_view`
 
 Usage:
 `python manage.py test --tag={tag_name}`
@@ -82,7 +83,7 @@ class LibraryViewsTests(TestCase):
         self.assertTemplateUsed(response, self.expect_index_template)
 
 # Tests for article-list view:
-    @tag('article-list_view')
+    @tag('article_list_view')
     def test_article_list_template_used(self):
         """
         Checks whether ArticleListView uses correct template.
@@ -90,7 +91,7 @@ class LibraryViewsTests(TestCase):
         response = self.client.get(reverse(self.article_list_url))
         self.assertTemplateUsed(response, self.expect_article_list_template)
 
-    @tag('article-list_view')
+    @tag('article_list_view')
     def test_article_list_no_articles(self):
         """
         Checks whether ArticleListView displays appropriate message when there are no articles.
@@ -101,7 +102,7 @@ class LibraryViewsTests(TestCase):
         self.assertContains(response, 'No articles are available.')
         self.assertQuerySetEqual(response.context['published_articles_list'], [])
     
-    @tag('article-list_view')
+    @tag('article_list_view')
     def test_article_list_past_article(self):
         """
         Checks whether ArticleListView displays article with past pub_date.
@@ -111,7 +112,7 @@ class LibraryViewsTests(TestCase):
             response.context['published_articles_list'], [self.past_article]
         )
 
-    @tag('article-list_view')
+    @tag('article_list_view')
     def test_article_list_future_article(self):
         """
         Checks whether ArticleListView not displays article with future pub_date.
@@ -119,7 +120,7 @@ class LibraryViewsTests(TestCase):
         response = self.client.get(reverse(self.article_list_url))
         self.assertNotIn(self.future_article, response.context['published_articles_list'])
 
-    @tag('article-list_view')
+    @tag('article_list_view')
     def test_article_list_article_with_missing_title_field(self):
         """
         Checks whether ArticleListView not displays article without title field.
@@ -136,7 +137,7 @@ class LibraryViewsTests(TestCase):
             defective_article, response.context['published_articles_list']
         )
 
-    @tag('article-list_view')
+    @tag('article_list_view')
     def test_article_list_article_with_missing_content_field(self):
         """
         Checks whether ArticleListView not displays article without content field.
@@ -153,7 +154,7 @@ class LibraryViewsTests(TestCase):
             defective_article, response.context['published_articles_list']
         )
 
-    @tag('article-list_view')
+    @tag('article_list_view')
     def test_article_list_article_without_related_tag(self):
         """
         Checks whether ArticleListView not displays article without relation with any Tag model object.
@@ -171,7 +172,7 @@ class LibraryViewsTests(TestCase):
         )
 
 # Tests for article-detail view:
-    @tag('article-detail_view')
+    @tag('article_detail_view')
     def test_article_detail_template_used(self):
         """
         Checks whether ArticleDetailView uses correct template.
@@ -179,7 +180,7 @@ class LibraryViewsTests(TestCase):
         response = self.client.get(reverse(self.article_detail_url, args=(self.past_article.slug,)))
         self.assertTemplateUsed(response, self.expect_article_detail_template)
 
-    @tag('article-detail_view')
+    @tag('article_detail_view')
     def test_article_detail_past_article(self):
         """
         Checks whether ArticleDetailView displays article with past pub_date.
@@ -187,7 +188,7 @@ class LibraryViewsTests(TestCase):
         response = self.client.get(reverse(self.article_detail_url, args=(self.past_article.slug,)))
         self.assertContains(response, self.past_article)
 
-    @tag('article-detail_view')
+    @tag('article_detail_view')
     def test_article_detail_future_published_article(self):
         """
         Checks whether ArticleDetailView not displays article with future pub_date.
@@ -195,7 +196,7 @@ class LibraryViewsTests(TestCase):
         response = self.client.get(reverse(self.article_detail_url, args=(self.future_article.slug,)))
         self.assertEqual(response.status_code, 404)
 
-    @tag('article-detail_view')
+    @tag('article_detail_view')
     def test_article_detail_article_with_missing_title_field(self):
         """
         Checks whether ArticleDetailView displays article without title field.
@@ -211,7 +212,7 @@ class LibraryViewsTests(TestCase):
         response = self.client.get(reverse(self.article_detail_url, args=(defective_article.slug,)))
         self.assertEqual(response.status_code, 404)
 
-    @tag('article-detail_view')
+    @tag('article_detail_view')
     def test_article_detail_article_with_missing_content_field(self):
         """
         Checks whether ArticleDetailView displays article without content field.
@@ -226,7 +227,7 @@ class LibraryViewsTests(TestCase):
         response = self.client.get(reverse(self.article_detail_url, args=(defective_article.slug,)))
         self.assertEqual(response.status_code, 404)
 
-    @tag('article-detail_view')
+    @tag('article_detail_view')
     def test_article_detail_article_without_related_tag(self):
         """
         Checks whether ArticleDetailView displays article without relation with any Tag model object.
@@ -242,7 +243,7 @@ class LibraryViewsTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
 # Tests for author-list view:
-    @tag('author-list_view')
+    @tag('author_list_view')
     def test_author_list_template_used(self):
         """
         Checks whether AuthorListView uses correct template.
@@ -250,7 +251,7 @@ class LibraryViewsTests(TestCase):
         response = self.client.get(reverse(self.author_list_url))
         self.assertTemplateUsed(response, self.expect_author_list_template)
     
-    @tag('author-list_view')
+    @tag('author_list_view')
     def test_author_list_no_authors(self):
         """
         Checks whether AuthorListView displays appropriate message when there are no authors.
@@ -265,7 +266,7 @@ class LibraryViewsTests(TestCase):
         )
 
 # Tests for author-detail view:
-    @tag('author-detail_view')
+    @tag('author_detail_view')
     def test_author_detail_template_used(self):
         """
         Checks whether AuthorDetailView uses correct template.
@@ -273,7 +274,7 @@ class LibraryViewsTests(TestCase):
         response = self.client.get(reverse(self.author_detail_url, args=(self.author.slug,)))
         self.assertTemplateUsed(response, self.expect_author_detail_template)
 
-    @tag('author-detail_view')
+    @tag('author_detail_view')
     def test_author_detail_author_data(self):
         """
         Checks whether AuthorDetailView displays author data correctly.
@@ -283,7 +284,7 @@ class LibraryViewsTests(TestCase):
         self.assertEqual(response.context['author'].email, self.author.email)
         self.assertEqual(response.context['author'].joined, self.author.joined)
 
-    @tag('author-detail_view')
+    @tag('author_detail_view')
     def test_author_detail_no_articles(self):
         """
         Checks whether AuthorDetailView displays appropriate message when there are
@@ -295,7 +296,7 @@ class LibraryViewsTests(TestCase):
         self.assertContains(response, 'Has not published any articles yet.')
         self.assertQuerySetEqual(response.context['articles'], [])
     
-    @tag('author-detail_view')
+    @tag('author_detail_view')
     def test_author_detail_past_article(self):
         """
         Checks whether AuthorDetailView displays related article with past pub_date.
@@ -305,7 +306,7 @@ class LibraryViewsTests(TestCase):
             response.context['articles'], [self.past_article]
         )
 
-    @tag('author-detail_view')
+    @tag('author_detail_view')
     def test_author_detail_future_article(self):
         """
         Checks whether AuthorDetailView not displays related article with future pub_date.
@@ -313,7 +314,7 @@ class LibraryViewsTests(TestCase):
         response = self.client.get(reverse(self.author_detail_url, args=(self.author.slug,)))
         self.assertNotIn(self.future_article, response.context['articles'])
 
-    @tag('author-detail_view')
+    @tag('author_detail_view')
     def test_author_detail_article_with_missing_title_field(self):
         """
         Checks whether AuthorDetailView not displays related article without title field.
@@ -330,7 +331,7 @@ class LibraryViewsTests(TestCase):
             defective_article, response.context['articles']
         )
 
-    @tag('author-detail_view')
+    @tag('author_detail_view')
     def test_author_detail_article_with_missing_content_field(self):
         """
         Checks whether AuthorDetailView not displays related article without content field.
@@ -347,7 +348,7 @@ class LibraryViewsTests(TestCase):
             defective_article, response.context['articles']
         )
 
-    @tag('author-detail_view')
+    @tag('author_detail_view')
     def test_author_detail_article_without_related_tag(self):
         """
         Checks whether AuthorDetailView not displays related article without
@@ -366,7 +367,7 @@ class LibraryViewsTests(TestCase):
         )
 
 # Tests for tag-list view:
-    @tag('tag-list_view')
+    @tag('tag_list_view')
     def test_tag_list_template_used(self):
         """
         Checks whether TagListView uses correct template.
@@ -374,7 +375,7 @@ class LibraryViewsTests(TestCase):
         response = self.client.get(reverse(self.tag_list_url))
         self.assertTemplateUsed(response, self.expect_tag_list_template)
 
-    @tag('tag-list_view')
+    @tag('tag_list_view')
     def test_tag_list_no_tags(self):
         """
         Checks whether TagListView displays the appropriate message when there are no tags.
@@ -388,7 +389,7 @@ class LibraryViewsTests(TestCase):
         )
 
 # Tests for tag-detail view:
-    @tag('tag-detail_view')
+    @tag('tag_detail_view')
     def test_tag_detail_template_used(self):
         """
         Checks whether TagDetailView uses correct template.
@@ -396,7 +397,7 @@ class LibraryViewsTests(TestCase):
         response = self.client.get(reverse(self.tag_detail_url, args=(self.tag.slug,)))
         self.assertTemplateUsed(response, self.expect_tag_detail_template)
 
-    @tag('tag-detail_view')
+    @tag('tag_detail_view')
     def test_tag_detail_tag_data(self):
         """
         Checks whether TagDetailView displays tag data correctly.
@@ -404,7 +405,7 @@ class LibraryViewsTests(TestCase):
         response = self.client.get(reverse(self.tag_detail_url, args=(self.tag.slug,)))
         self.assertEqual(response.context['tag'].name, self.tag.name)
 
-    @tag('tag-detail_view')
+    @tag('tag_detail_view')
     def test_tag_detail_no_articles(self):
         """
         Checks whether TagDetailView displays the appropriate message when there are no articles related with tag.
@@ -417,7 +418,7 @@ class LibraryViewsTests(TestCase):
             response.context['articles'], []
         )
 
-    @tag('tag-detail_view')
+    @tag('tag_detail_view')
     def test_tag_detail_past_article(self):
         """
         Checks whether TagDetailView displays related article with past pub_date.
@@ -427,7 +428,7 @@ class LibraryViewsTests(TestCase):
             response.context['articles'], [self.past_article]
         )
 
-    @tag('tag-detail_view')
+    @tag('tag_detail_view')
     def test_tag_detail_future_article(self):
         """
         Checks whether TagDetailView not displays related article with future pub_date.
@@ -435,7 +436,7 @@ class LibraryViewsTests(TestCase):
         response = self.client.get(reverse(self.tag_detail_url, args=(self.tag.slug,)))
         self.assertNotIn(self.future_article, response.context['articles'])
 
-    @tag('tag-detail_view')
+    @tag('tag_detail_view')
     def test_tag_detail_article_with_missing_title_field(self):
         """
         Checks whether TagDetailView displays article without title field.
@@ -450,7 +451,7 @@ class LibraryViewsTests(TestCase):
         response = self.client.get(reverse(self.tag_detail_url, args=(self.tag.slug,)))
         self.assertNotIn(defective_article, response.context['articles'])
 
-    @tag('tag-detail_view')
+    @tag('tag_detail_view')
     def test_tag_detail_article_with_missing_content_field(self):
         """
         Checks whether TagDetailView displays article without content field.
@@ -466,7 +467,7 @@ class LibraryViewsTests(TestCase):
         self.assertNotIn(defective_article, response.context['articles'])
 
 # Tests for user-register view:
-    @tag('user-register_view')
+    @tag('user_register_view')
     def test_user_register_new_user(self):
         """
         Checks whether UserRegisterView adds new user.
