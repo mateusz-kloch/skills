@@ -5,21 +5,21 @@
         <title>Skills | Article</title>
     </head>
     <body>
-        <a href="{% url 'library:index' %}">
-            <button>Home page</button>
-        </a>
-        <a href="{% url 'library:article-list' %}">
-            <button>Articles list</button>
-        </a>
-        <p>Title: {{ article.title }}</p>
-        <p>Author: <a href="{% url 'library:author-detail' article.author.slug %}">{{ article.author }}</a></p>
-        <p>Tags:</p>
-        <ul>
-            {% for tag in article.tags.all %}
-            <li><a href="{% url 'library:tag-detail' tag.slug %}">{{ tag.name }}</a></li>
-            {% endfor %}
-        </ul>
-        <p>{{ article.pub_date }}</p>
-        <p>{{ article.content }}</p>
+        <div>
+            <a href="{% url 'library:index' %}"><button>Home page</button></a>
+            <a href="{% url 'library:article-list' %}"><button>Articles list</button></a>
+        </div>
+        <div>
+            <h2>{{ article.title }}</h2>
+            <p>Author: <a href="{% url 'library:author-detail' article.author.slug %}">{{ article.author }}</a></p>
+            <p>Tags:</p>
+            <ul>
+                {% for tag in article.tags.all %}
+                <li><a href="{% url 'library:tag-detail' tag.slug %}">{{ tag.name }}</a></li>
+                {% endfor %}
+            </ul>
+            <p>Published: {{ article.pub_date }}</p>
+            <p>{{ article.content }}</p>
+        </div>
     </body>
 </html>

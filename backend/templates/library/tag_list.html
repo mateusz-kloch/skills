@@ -5,18 +5,19 @@
         <title>Skills | Tags</title>
     </head>
     <body>
-        <a href="{% url 'library:index' %}">
-            <button>Home page</button>
-        </a>
-        {% if available_tags_list %}
-        <p>Tags:</p>
-        <ul>
-            {% for tag in available_tags_list %}
-            <li><a href="{% url 'library:tag-detail' tag.slug %}">{{ tag.name }}</a></li>
-            {% endfor %}
-        </ul>
-        {% else %}
-            <p>No tags are available.</p>
-        {% endif %}
+        <div>
+            <a href="{% url 'library:index' %}"><button>Home page</button></a>
+        </div>
+        <div>
+            {% if available_tags_list %}
+            <ul>
+                {% for tag in available_tags_list %}
+                <li><a href="{% url 'library:tag-detail' tag.slug %}">{{ tag.name }}</a></li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <h3>No tags are available.</h3>
+            {% endif %}
+        </div>
     </body>
 </html>

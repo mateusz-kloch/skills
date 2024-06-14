@@ -5,22 +5,22 @@
         <title>Skills | Tag</title>
     </head>
     <body>
-        <a href="{% url 'library:index' %}">
-            <button>Home page</button>
-        </a>
-        <a href="{% url 'library:tag-list' %}">
-            <button>Tags list</button>
-        </a>
-        <p>{{ tag.name }}</p>
-        {% if articles %}
-        <p>Published articles:</p>
-        <ul>
-            {% for article in articles %}
-            <li><a href="{% url 'library:article-detail' article.slug %}">{{ article.title }}</a></li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p>No articles are available.</p>
-        {% endif %}
+        <div>
+            <a href="{% url 'library:index' %}"><button>Home page</button></a>
+            <a href="{% url 'library:tag-list' %}"><button>Tags list</button></a>
+        </div>
+        <div>
+            <h2>{{ tag.name }}</h2>
+            {% if articles %}
+            <h3>Published articles:</h3>
+            <ul>
+                {% for article in articles %}
+                <li><a href="{% url 'library:article-detail' article.slug %}">{{ article.title }}</a></li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <h3>No articles are available.</h3>
+            {% endif %}
+        </div>
     </body>
 </html>

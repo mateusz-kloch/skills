@@ -5,18 +5,20 @@
         <title>Skills | Articles</title>
     </head>
     <body>
-        <a href="{% url 'library:index' %}">
-            <button>Home page</button>
-        </a>
-        {% if published_articles_list %}
-        <p>Published articles:</p>
-        <ul>
-            {% for article in published_articles_list %}
-            <li><a href="{% url 'library:article-detail' article.slug %}">{{ article.title }}</a></li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p>No articles are available.</p>
-        {% endif %}
+        <div>
+            <a href="{% url 'library:index' %}"><button>Home page</button></a>
+        </div>
+        <div>
+            {% if published_articles_list %}
+            <h3>Published articles:</h3>
+            <ul>
+                {% for article in published_articles_list %}
+                <li><a href="{% url 'library:article-detail' article.slug %}">{{ article.title }}</a></li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <h3>No articles are available.</h3>
+            {% endif %}
+        </div>
     </body>
 </html>

@@ -6,27 +6,25 @@
         <title>Skills | Author</title>
     </head>
     <body>
-        <a href="{% url 'library:index' %}">
-            <button>Home page</button>
-        </a>
-        <a href="{% url 'library:author-list' %}">
-            <button>Authors list</button>
-        </a>
-        <p>Author info:</p>
-        <p>{{ author.user_name }}</p>
-        <p>{{ author.email }}</p>
-        <img src="{{ author.avatar.url }}" style="width:350px;height:350px;">
-        <p></p>
-        <p>Joined: {{ author.joined }}</p>
-        {% if articles %}
-        <p>Published articles:</p>
-        <ul>
-            {% for article in articles %}
-            <li><a href="{% url 'library:article-detail' article.slug %}">{{ article.title }}</a></li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p>Has not published any articles yet.</p>
-        {% endif %}
+        <div>
+            <a href="{% url 'library:index' %}"><button>Home page</button></a>
+            <a href="{% url 'library:author-list' %}"><button>Authors list</button></a>
+        </div>
+        <div>
+            <h2>{{ author.user_name }}</h2>
+            <img src="{{ author.avatar.url }}" style="width:200px;height:200px;">
+            <p>{{ author.email }}</p>
+            <p>Joined: {{ author.joined }}</p>
+            {% if articles %}
+            <h3>Published articles:</h3>
+            <ul>
+                {% for article in articles %}
+                <li><a href="{% url 'library:article-detail' article.slug %}">{{ article.title }}</a></li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p3>Has not published any articles yet.</h3>
+            {% endif %}
+        </div>
     </body>
 </html>
