@@ -36,29 +36,25 @@ class Article(models.Model):
         """
         Returns names of all tags related with an article as a single string.
         """
-        return ', '.join(
-            tag.name for tag in self.tags.all()
-        )
+        return ', '.join(tag.name for tag in self.tags.all())
     
 
 class Author(AbstractBaseUser, PermissionsMixin):
+    DEFAULT_AVATAR = 'static/library/author/default/default_avatar.png'
 
     class Meta:
         ordering = ['user_name']
 
-    def create_avatar_path(self, filename):
+    def create_avatar_path(instance, filename):
         """
         Creates a path where Author avatar will be uploaded.
         """
-        return f'static/library/author/{self.user_name}/{filename}'
+        return f'static/library/author/{instance.user_name}/{filename}'
 
     user_name = models.CharField(max_length=250, unique=True)
     slug = models.SlugField(max_length=250, unique=True, blank=True)
     email = models.EmailField(max_length=250, unique=True)
-    avatar = models.ImageField(
-        default='static/library/author/default/default_avatar.png',
-        upload_to=create_avatar_path
-    )
+    avatar = models.ImageField(default=DEFAULT_AVATAR, upload_to=create_avatar_path)
     joined = models.DateTimeField(default=timezone.now)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
