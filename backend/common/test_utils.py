@@ -17,7 +17,7 @@ def create_author(user_name: str, password: str) -> Author:
     author.save()
     return author
 
-def create_superuser_author(user_name:str, password: str) -> Author:
+def create_superuser(user_name:str, password: str) -> Author:
     """
     Creates an Author model supeuser object.
     Sets superuser.email as: `f'{user_name}@ex.com'`.

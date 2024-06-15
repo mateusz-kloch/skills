@@ -1,35 +1,22 @@
-"""
-Tests for `library` app models.
-
-Tests are tagged with the name of the model they concern.
-
-Available tags:
-- `article_model`
-- `author_model`
-- `tag_model`
-
-Usage:
-`python manage.py test --tag={tag_name}`
-"""
 from datetime import timedelta
 
-from django.test import tag, TestCase
+from django.test import TestCase
 from django.utils import timezone
 
 from library.models import Article, Author, Tag
 from common.test_utils import (
-    create_article, create_author, create_superuser_author, create_tag
+    create_article, create_author, create_superuser, create_tag
 )
 
 
-class LibraryModelsTests(TestCase):
+class SetUpData(TestCase):
 
     def setUp(self):
         self.author = create_author('author', '48s5tb4w3')
         self.avatar_filename = 'avatar.png'
         self.expect_avatar_path = 'static/library/author/author/avatar.png'
         self.another_author = create_author('another_author', 'a49o7wg3qvf')
-        self.yet_another_author = create_author('yet_another_author', 'aiuh3h347q')
+        self.superuser = create_superuser('superuser', 'aiuh3h347q')
 
         self.tag = create_tag('tag')
         self.another_tag = create_tag('another_tag')
@@ -57,52 +44,54 @@ class LibraryModelsTests(TestCase):
             content='yet another article content'
         )
 
-# Tests for Author model:
-    @tag('author_model')
-    def test_author_str(self):
+
+class AuthorTests(SetUpData):
+
+    def test_str(self):
         """
         Checks whether __str__ displays author correctly.
         """
         self.assertEqual(self.author.user_name, str(self.author))
 
-    @tag('author_model')
-    def test_author_ordering(self):
+    def test_ordering(self):
         """
         CHecks whether authors are ordered by user_name.
         """
         self.assertQuerySetEqual(
             Author.objects.all(),
-            [self.another_author, self.author, self.yet_another_author]
+            [self.another_author, self.author, self.superuser]
         )
 
-    @tag('author_model')
-    def test_author_default_joined(self):
+    def test_default_joined(self):
         """
         Checks whether joined is provided by default.
         """
         self.assertTrue(self.author.joined)
 
-    @tag('author_model')
-    def test_author_default_slug(self):
+    def test_default_slug(self):
         """
         Checks whether slug is provided by default.
         """
         self.assertTrue(self.author.slug)
 
-    @tag('author_model')
-    def test_author_create_avatar_path(self):
+    def test_create_avatar_path(self):
         self.assertEqual(
             self.author.create_avatar_path(self.avatar_filename), self.expect_avatar_path
         )
 
-    @tag('author_model')
-    def test_author_default_avatar(self):
+    def test_default_avatar(self):
         """
         Checks whether default avatar is provided by default.
         """
         self.assertTrue(self.author.avatar)
 
-    @tag('author_model')
+    def test_super_user(self):
+        """
+        Checks superuser attributes.
+        """
+        self.assertTrue(self.superuser.is_staff)
+        self.assertTrue(self.superuser.is_superuser)
+
     def test_superuser_not_is_superuser(self):
         """
         Checks whether raises ValueError when create superuser with
@@ -116,7 +105,6 @@ class LibraryModelsTests(TestCase):
             is_superuser=False,
             )
 
-    @tag('author_model')
     def test_superuser_not_is_staff(self):
         """
         Checks whether raises ValueError when create superuser with
@@ -130,16 +118,16 @@ class LibraryModelsTests(TestCase):
             is_staff=False,
             )
 
-# Tests for Tag model:
-    @tag('tag_model')
-    def test_tag_str(self):
+
+class TagTests(SetUpData):
+
+    def test_str(self):
         """
         Checks whether __str__ displays tag correctly.
         """
         self.assertEqual(self.tag.name, str(self.tag))
 
-    @tag('tag_model')
-    def test_tag_ordering(self):
+    def test_ordering(self):
         """
         CHecks whether tags are ordered by name.
         """
@@ -148,23 +136,22 @@ class LibraryModelsTests(TestCase):
             [self.another_tag, self.tag, self.yet_another_tag]
         )
 
-    @tag('tag_model')
-    def test_tag_default_slug(self):
+    def test_default_slug(self):
         """
         Checks whether slug is provided by default.
         """
         self.assertTrue(self.tag.slug)
 
-# Tests for Article model:
-    @tag('article_model')
-    def test_article_str(self):
+
+class ArticleTests(SetUpData):
+
+    def test_str(self):
         """
         Checks whether __str__ displays article correctly.
         """
         self.assertEqual(self.article.title, str(self.article))
 
-    @tag('article_model')
-    def test_article_ordering(self):
+    def test_ordering(self):
         """
         CHecks whether tags are ordered by pub_date, latest first.
         """
@@ -173,8 +160,7 @@ class LibraryModelsTests(TestCase):
             [self.yet_another_article, self.another_article, self.article]
         )
 
-    @tag('article_model')
-    def test_article_default_pub_date(self):
+    def test_default_pub_date(self):
         """
         Checks whether pub_date is provided by default.
         """
@@ -185,15 +171,13 @@ class LibraryModelsTests(TestCase):
         test_article.tags.set([self.tag])
         self.assertTrue(self.article.pub_date)
 
-    @tag('article_model')
-    def test_article_default_slug(self):
+    def test_default_slug(self):
         """
         Checks whether slug is provided by default.
         """
         self.assertTrue(self.article.slug)
 
-    @tag('article_model')
-    def test_article_tags_as_str(self):
+    def test_tags_as_str(self):
         """
         Checks whether tag_as_str() correctly returns tags as string.
         """

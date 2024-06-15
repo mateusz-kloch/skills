@@ -3,7 +3,7 @@ from django.test import TestCase
 from library.forms import UserRegisterForm
 
 
-class LibraryFormsTests(TestCase):
+class SetUpData(TestCase):
 
     def setUp(self):
         self.data = {
@@ -13,6 +13,9 @@ class LibraryFormsTests(TestCase):
             'password2': 'o48aq7go4378'
         }
 
+    
+class UserRegisterFormTests(SetUpData):
+    
     def test_form_valid_data(self):
         """
         Checks whether form is valid when data is correct.
@@ -39,7 +42,7 @@ class LibraryFormsTests(TestCase):
     def test_form_passwords_not_match(self):
         """
         Checks whether form is valid when passwords not match and
-        displays message.
+        display message.
         """
         self.data['password'] = '84obg9a4t'
         form = UserRegisterForm(data=self.data)

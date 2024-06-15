@@ -1,20 +1,3 @@
-"""
-Tests for skills project api.
-
-Tests are tagged with the name of the endpoint they concern.
-
-Available tags:
-- `api_root`
-- `author_list_endpoint`
-- `author_detail_endpoint`
-- `tag_list_endpoint`
-- `tag_detail_endpoint`
-- `article_list_endpoint`
-- `article_detail_endpoint`
-
-Usage:
-`python manage.py test --tag={tag_name}`
-"""
 from datetime import timedelta
 
 from django.test import tag
@@ -26,7 +9,7 @@ from library.models import Article, Author, Tag
 from common.test_utils import (
     create_article,
     create_author,
-    create_superuser_author,
+    create_superuser,
     create_tag,
     serialize_article,
     serialize_author,
@@ -34,7 +17,7 @@ from common.test_utils import (
 )
 
 
-class ApiEndpointsTests(APITestCase):
+class SetUpData(APITestCase):
     
     def setUp(self):
         self.client = APIClient()
@@ -47,9 +30,7 @@ class ApiEndpointsTests(APITestCase):
         self.author = create_author('author', 'wao7984v')
         self.another_author = create_author('another_author', '28h4t032')
 
-        self.superuser = create_superuser_author('superuser', '9aw4vt94hmt')
-        self.superuser.is_staff = True
-        self.superuser.save()
+        self.superuser = create_superuser('superuser', '9aw4vt94hmt')
         
         self.tag = create_tag('tag')
         self.another_tag = create_tag('another_tag')
@@ -106,18 +87,20 @@ class ApiEndpointsTests(APITestCase):
         self.serialized_past_article = serialize_article(self.past_article)
         self.serialized_future_article = serialize_article(self.future_article)
 
-# Tests for API root:
-    @tag('api_root')
-    def test_get_api_root_response_status_code(self):
+
+class ApiRootTests(SetUpData):
+
+    def test_get_response_status_code(self):
         """
         Checks API root response status code for unauthenticated user.
         """
         response = self.client.get(self.url_root)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-# Tests for Author list endpoint:
-    @tag('author_list_endpoint')
-    def test_get_author_list_response(self):
+
+class AuthorListEndpointTests(SetUpData):
+
+    def test_get_response(self):
         """
         Checks author list endpoint response.
         """
@@ -125,8 +108,7 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['results'], [self.serialized_another_author, self.serialized_author, self.serialized_superuser])
 
-    @tag('author_list_endpoint')
-    def test_get_author_list_response_no_authors(self):
+    def test_get_response_no_authors(self):
         """
         Checks author list endpoint response when there are no authors in db.
         """
@@ -135,8 +117,7 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['results'], [])
 
-    @tag('author_list_endpoint')
-    def test_post_author_list_new_author(self):
+    def test_post_new_author(self):
         """
         Checks author list endpoint response for create new author.
         """
@@ -144,8 +125,7 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(register.status_code, status.HTTP_201_CREATED)
         self.assertTrue(Author.objects.get(user_name=self.new_author_data['user_name']))
 
-    @tag('author_list_endpoint')
-    def test_post_author_list_new_author_repeatitive_user_name(self):
+    def test_post_new_author_repeatitive_user_name(self):
         """
         Checks author list endpoint response for create new author with
         user_name that is already in database.
@@ -154,8 +134,7 @@ class ApiEndpointsTests(APITestCase):
         register = self.client.post(self.url_author_list, self.new_author_data, format='json')
         self.assertEqual(register.status_code, status.HTTP_400_BAD_REQUEST)
 
-    @tag('author_list_endpoint')
-    def test_post_author_list_new_author_repeatitive_email(self):
+    def test_post_new_author_repeatitive_email(self):
         """
         Checks author list endpoint response for create new author with
         email that is already in database.
@@ -164,8 +143,7 @@ class ApiEndpointsTests(APITestCase):
         register = self.client.post(self.url_author_list, self.new_author_data, format='json')
         self.assertEqual(register.status_code, status.HTTP_400_BAD_REQUEST)
     
-    @tag('author_list_endpoint')
-    def test_post_author_list_new_author_bad_email(self):
+    def test_post_new_author_bad_email(self):
         """
         Checks author list endpoint response for create new author with bad email address.
         """
@@ -173,8 +151,7 @@ class ApiEndpointsTests(APITestCase):
         register = self.client.post(self.url_author_list, self.new_author_data, format='json')
         self.assertEqual(register.status_code, status.HTTP_400_BAD_REQUEST)
 
-    @tag('author_list_endpoint')
-    def test_post_author_list_new_author_bad_password(self):
+    def test_post_new_author_bad_password(self):
         """
         Checks author list endpoint response for create new author with poor password.
         """
@@ -182,8 +159,7 @@ class ApiEndpointsTests(APITestCase):
         register = self.client.post(self.url_author_list, self.new_author_data, format='json')
         self.assertEqual(register.status_code, status.HTTP_400_BAD_REQUEST)
 
-    @tag('author_list_endpoint')
-    def test_post_author_list_new_author_by_logged_author(self):
+    def test_post_new_author_by_logged_author(self):
         """
         Checks author list endpoint respone for create new author if author is logged in.
         """
@@ -191,9 +167,10 @@ class ApiEndpointsTests(APITestCase):
         register = self.client.post(self.url_author_list, self.new_author_data)
         self.assertEqual(register.status_code, status.HTTP_403_FORBIDDEN)
 
-# Tests for Author detail endpoint:
-    @tag('author_detail_endpoint')
-    def test_get_author_detail_response(self):
+
+class AuthorDetailEndpointTests(SetUpData):
+
+    def test_get_response(self):
         """
         Checks author detail endpoint response for author in db.
         """
@@ -201,9 +178,10 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, self.serialized_author)
 
-# Tests for Tag list endpoint:
-    @tag('tag_list_endpoint')
-    def test_get_tag_list_response(self):
+
+class TagListEndpointTests(SetUpData):
+
+    def test_get_response(self):
         """
         Checks tag list endpoint response when there are some tags in db.
         """
@@ -211,8 +189,7 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['results'], [self.serialized_another_tag, self.serialized_tag])
 
-    @tag('tag_list_endpoint')
-    def test_get_tag_list_response_no_tags(self):
+    def test_get_response_no_tags(self):
         """
         Checks tag list endpoint response when ther are no tags in db.
         """
@@ -221,8 +198,7 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['results'], [])
 
-    @tag('tag_list_endpoint')
-    def test_post_tag_list_new_tag_by_superuser(self):
+    def test_post_new_tag_by_superuser(self):
         """
         Checks tag list endpoint response for create a new tag object by
         staff user.
@@ -232,8 +208,7 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(Tag.objects.get(name=self.new_tag_data['name']))
 
-    @tag('tag_list_endpoint')
-    def test_post_tag_list_new_tag_by_not_superuser(self):
+    def test_post_new_tag_by_not_superuser(self):
         """
         Checks tag list endpoint response for create a new tag object by
         not staff user.
@@ -242,8 +217,7 @@ class ApiEndpointsTests(APITestCase):
         response = self.client.post(self.url_tag_list, self.new_tag_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @tag('tag_list_endpoint')
-    def test_post_tag_list_new_tag_by_not_logged_user(self):
+    def test_post_new_tag_by_not_logged_user(self):
         """
         Checks tag list endpoint response for create a new tag object by
         not logged in user.
@@ -251,9 +225,10 @@ class ApiEndpointsTests(APITestCase):
         response = self.client.post(self.url_tag_list, self.new_tag_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-# Tests for Tag detail endpoint:
-    @tag('tag_detail_endpoint')
-    def test_get_tag_detail_response_tag_exist(self):
+
+class TagDetailEndpointTests(SetUpData):
+
+    def test_get_response_tag_exist(self):
         """
         Checks tag detail endpoint response for tag in db.
         """
@@ -261,8 +236,7 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, self.serialized_tag)
 
-    @tag('tag_detail_endpoint')
-    def test_put_tag_detail_new_tag_by_superuser(self):
+    def test_put_new_tag_by_superuser(self):
         """
         Checks tag detail endpoint response for put a new data by staff user.
         """
@@ -271,8 +245,7 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Tag.objects.get(pk=self.tag.id).name, self.changed_tag_name['name'])
 
-    @tag('tag_detail_endpoint')
-    def test_put_tag_detail_new_tag_by_not_superuser(self):
+    def test_put_new_tag_by_not_superuser(self):
         """
         Checks tag detail endpoint response for put a new data by not staff user.
         """
@@ -280,16 +253,14 @@ class ApiEndpointsTests(APITestCase):
         response = self.client.put(f'{self.url_tag_list}{self.tag.slug}/', self.changed_tag_name, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @tag('tag_detail_endpoint')
-    def test_put_tag_detail_new_tag_by_not_logged_user(self):
+    def test_put_new_tag_by_not_logged_user(self):
         """
         Checks tag detail endpoint response for put a new data by not logged in user.
         """
         response = self.client.put(f'{self.url_tag_list}{self.tag.slug}/', self.changed_tag_name, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @tag('tag_detail_endpoint')
-    def test_patch_tag_detail_new_tag_by_superuser(self):
+    def test_patch_new_tag_by_superuser(self):
         """
         Checks tag detail endpoint response for update a tag data by staff user.
         """
@@ -298,8 +269,7 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Tag.objects.get(pk=self.tag.id).name, self.changed_tag_name['name'])
 
-    @tag('tag_detail_endpoint')
-    def test_patch_tag_detail_new_tag_by_not_superuser(self):
+    def test_patch_new_tag_by_not_superuser(self):
         """
         Checks tag detail endpoint response for update a tag data by not staff user.
         """
@@ -307,16 +277,14 @@ class ApiEndpointsTests(APITestCase):
         response = self.client.patch(f'{self.url_tag_list}{self.tag.slug}/', self.changed_tag_name, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @tag('tag_detail_endpoint')
-    def test_patch_tag_detail_new_tag_by_not_logged_user(self):
+    def test_patch_new_tag_by_not_logged_user(self):
         """
         Checks tag detail endpoint response for update a tag data by not logged in user.
         """
         response = self.client.patch(f'{self.url_tag_list}{self.tag.slug}/', self.changed_tag_name, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @tag('tag_detail_endpoint')
-    def test_delete_tag_detail_new_tag_by_superuser(self):
+    def test_delete_new_tag_by_superuser(self):
         """
         Checks tag detail endpoint response for delete a tag object by
         staff user.
@@ -325,8 +293,7 @@ class ApiEndpointsTests(APITestCase):
         response = self.client.patch(f'{self.url_tag_list}{self.tag.slug}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    @tag('tag_detail_endpoint')
-    def test_delete_tag_detail_new_tag_by_not_superuser(self):
+    def test_delete_new_tag_by_not_superuser(self):
         """
         Checks tag detail endpoint response for delete a tag object by
         not staff user.
@@ -335,17 +302,17 @@ class ApiEndpointsTests(APITestCase):
         response = self.client.patch(f'{self.url_tag_list}{self.tag.slug}/')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @tag('tag_detail_endpoint')
-    def test_delete_tag_detail_new_tag_by_not_logged_user(self):
+    def test_delete_new_tag_by_not_logged_user(self):
         """
         Checks tag detail endpoint response for delete a tag object by not logged in user.
         """
         response = self.client.patch(f'{self.url_tag_list}{self.tag.slug}/')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-# Tests for Article list endpoint:
-    @tag('article_list_endpoint')
-    def test_get_article_list_response_no_articles(self):
+
+class ArticleListEndpointTests(SetUpData):
+
+    def test_get_response_no_articles(self):
         """
         Checks article list endpoint response when there are no articles in db.
         """
@@ -354,8 +321,7 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['results'], [])
 
-    @tag('article_list_endpoint')
-    def test_get_article_list_response_past_article(self):
+    def test_get_response_past_article(self):
         """
         Checks article list endpoint response when there is article with past pub_date in db.
         """
@@ -363,8 +329,7 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn(self.serialized_past_article, response.data['results'])
 
-    @tag('article_list_endpoint')
-    def test_get_article_list_response_future_article(self):
+    def test_get_response_future_article(self):
         """
         Checks article list endpoint response when there is article with future pub_date in db.
         """
@@ -372,8 +337,7 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertNotIn(self.serialized_future_article, response.data['results'])
 
-    @tag('article_list_endpoint')
-    def test_post_article_list_response_logged_user(self):
+    def test_post_response_logged_user(self):
         """
         Checks article list endpoint response for create new article by logged user.
         """
@@ -381,17 +345,17 @@ class ApiEndpointsTests(APITestCase):
         response = self.client.post(self.url_article_list, self.new_article_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    @tag('article_list_endpoint')
-    def test_post_article_list_response_not_logged_user(self):
+    def test_post_response_not_logged_user(self):
         """
         Checks article list endpoint response for create new article by not logged user.
         """
         response = self.client.post(self.url_article_list, self.new_article_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-# Tests for Article detail endpoint:
-    @tag('article_detail_endpoint')
-    def test_get_article_detail_response_past_article(self):
+
+class ArticleDetailEndpointTests(SetUpData):
+
+    def test_get_response_past_article(self):
         """
         Checks article detail endpoint response for article with past pub_date. 
         """
@@ -399,16 +363,14 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, self.serialized_past_article)
 
-    @tag('article_detail_endpoint')
-    def test_get_article_detail_response_future_article(self):
+    def test_get_response_future_article(self):
         """
         Checks article detail endpoint response for article with future pub_date.
         """
         response = self.client.get(f'{self.url_article_list}{self.future_article.slug}/')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    @tag('article_detail_endpoint')
-    def test_put_article_detail_logged_user_author(self):
+    def test_put_logged_user_author(self):
         """
         Checks article detail endpoint response for new data added by logged user who is author of article.
         """
@@ -417,8 +379,7 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Article.objects.get(pk=self.past_article.id).title, 'new_article_title')
 
-    @tag('article_detail_endpoint')
-    def test_put_article_detail_logged_user_not_author(self):
+    def test_put_logged_user_not_author(self):
         """
         Checks article detail endpoint response for new data added by logged user who is not author of article.
         """
@@ -427,8 +388,7 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Article.objects.get(pk=self.past_article.id).title, 'past_article_title')
 
-    @tag('article_detail_endpoint')
-    def test_put_article_detail_not_logged_user(self):
+    def test_put_not_logged_user(self):
         """
         Checks article detail endpoint response for new data added by not logged user.
         """
@@ -436,8 +396,7 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Article.objects.get(pk=self.past_article.id).title, 'past_article_title')
 
-    @tag('article_detail_endpoint')
-    def test_patch_article_detail_logged_user_author(self):
+    def test_patch_logged_user_author(self):
         """
         Checks article detail endpoint response for new data updated by logged user who is author of article.
         """
@@ -446,8 +405,7 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Article.objects.get(pk=self.past_article.id).title, 'changed_article_title')
 
-    @tag('article_detail_endpoint')
-    def test_patch_article_detail_logged_user_not_author(self):
+    def test_patch_logged_user_not_author(self):
         """
         Checks article detail endpoint response for new data updated by logged user who is not author of article.
         """
@@ -456,8 +414,7 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Article.objects.get(pk=self.past_article.id).title, 'past_article_title')
 
-    @tag('article_detail_endpoint')
-    def test_patch_article_detail_not_logged_user(self):
+    def test_patch_not_logged_user(self):
         """
         Checks article detail endpoint response for new data updated by not logged user.
         """
@@ -465,8 +422,7 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Article.objects.get(pk=self.past_article.id).title, 'past_article_title')
 
-    @tag('article_detail_endpoint')
-    def test_delete_article_detail_logged_user_author(self):
+    def test_delete_logged_user_author(self):
         """
         Checks article detail endpoint response for delete article by logged user who is author of article.
         """
@@ -475,8 +431,7 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertNotIn(self.past_article, Article.objects.all())
 
-    @tag('article_detail_endpoint')
-    def test_delete_article_detail_logged_user_not_author(self):
+    def test_delete_logged_user_not_author(self):
         """
         Checks article detail endpoint response for delete article by logged user who is not author of article.
         """
@@ -485,8 +440,7 @@ class ApiEndpointsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertTrue(Article.objects.get(pk=self.past_article.id))
 
-    @tag('article_detail_endpoint')
-    def test_delete_article_detail_not_logged_user(self):
+    def test_delete_not_logged_user(self):
         """
         Checks article detail endpoint response for delete article by not logged user.
         """
