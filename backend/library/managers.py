@@ -5,7 +5,7 @@ from django.utils import timezone
 
 class CustomArticleManager(models.Manager):
     """
-    A custom `Article` model manager.
+    A custom `Article` model manager that sors out defective articles.
     """
     def get_queryset(self) -> models.QuerySet:
         """
