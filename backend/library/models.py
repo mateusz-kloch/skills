@@ -8,11 +8,6 @@ from .managers import CustomArticleManager, CustomAccountManager
 
 
 class Article(models.Model):
-
-    class Meta:
-        ordering = ['-pub_date']
-        default_related_name = 'articles'
-
     title = models.CharField(max_length=250, unique=True)
     slug = models.SlugField(max_length=250, unique=True, blank=True)
     author = models.ForeignKey('Author', on_delete=models.CASCADE)
@@ -22,6 +17,10 @@ class Article(models.Model):
 
     objects = models.Manager()
     verified_objects = CustomArticleManager()
+
+    class Meta:
+        ordering = ['-pub_date']
+        default_related_name = 'articles'
 
     def __str__(self):
         return self.title
@@ -42,9 +41,6 @@ class Article(models.Model):
 class Author(AbstractBaseUser, PermissionsMixin):
     DEFAULT_AVATAR = 'static/library/author/default/default_avatar.png'
 
-    class Meta:
-        ordering = ['user_name']
-
     def create_avatar_path(instance, filename):
         """
         Creates a path where Author avatar will be uploaded.
@@ -64,6 +60,9 @@ class Author(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'user_name'
     REQUIRED_FIELDS = ['email']
 
+    class Meta:
+        ordering = ['user_name']
+
     def __str__(self):
         return self.user_name
     
@@ -74,12 +73,11 @@ class Author(AbstractBaseUser, PermissionsMixin):
 
 
 class Tag(models.Model):
+    name = models.CharField(max_length=250, unique=True)
+    slug = models.SlugField(max_length=250, unique=True, blank=True)
 
     class Meta:
         ordering = ['name']
-
-    name = models.CharField(max_length=250, unique=True)
-    slug = models.SlugField(max_length=250, unique=True, blank=True)
 
     def __str__(self):
         return self.name
