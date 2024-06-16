@@ -1,7 +1,7 @@
 # SKILLS
 
 ## A platform to share knowledge!
-This platform was developed with Django and Django REST framework.
+This platform consists both Django app and API service.
 
 ### Repository layout:
 ```
