@@ -24,7 +24,7 @@ class CustomArticleManager(models.Manager):
         )
     
 
-class CustomAccountManager(BaseUserManager):
+class CustomAuthorManager(BaseUserManager):
 
     def create_superuser(self, user_name, email, password, **other_fields):
         other_fields.setdefault('is_staff', True)
