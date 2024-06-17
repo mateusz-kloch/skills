@@ -1,16 +1,7 @@
-from django.contrib.auth import views as auth_views
 from django.urls import path, re_path
 from django.views import generic
 
-from .views import (
-    ArticleDetailView,
-    ArticleListView,
-    AuthorDetailView,
-    AuthorListView,
-    TagDetailView,
-    TagListView,
-    UserRegisterView,
-)
+from . import views as library_views
 
 
 app_name = 'library'
@@ -22,34 +13,30 @@ urlpatterns = [
         ), name='index'
     ),
     path(
-        'articles/', ArticleListView.as_view(), name='article-list'
+        'articles/', library_views.ArticleListView.as_view(), name='article-list'
     ),
     re_path(
-        r'^(?:article-(?P<slug>[0-9-a-z]+))/$', ArticleDetailView.as_view(), name='article-detail'
+        r'^(?:article-(?P<slug>[0-9-a-z]+))/$', library_views.ArticleDetailView.as_view(), name='article-detail'
     ),
     path(
-        'authors/', AuthorListView.as_view(), name='author-list'
+        'authors/', library_views.AuthorListView.as_view(), name='author-list'
     ),
     re_path(
-        r'^(?:author-(?P<slug>[0-9-a-z]+))/$', AuthorDetailView.as_view(), name='author-detail'
+        r'^(?:author-(?P<slug>[0-9-a-z]+))/$', library_views.AuthorDetailView.as_view(), name='author-detail'
     ),
     path(
-        'tags/', TagListView.as_view(), name='tag-list'
+        'tags/', library_views.TagListView.as_view(), name='tag-list'
     ),
     re_path(
-        r'^(?:tag-(?P<slug>[0-9-a-z]+))/$', TagDetailView.as_view(), name='tag-detail'
+        r'^(?:tag-(?P<slug>[0-9-a-z]+))/$', library_views.TagDetailView.as_view(), name='tag-detail'
     ),
     path(
-        'register/', UserRegisterView.as_view(), name='user-register'
+        'register/', library_views.UserRegisterView.as_view(), name='user-register'
     ),
     path(
-        'login/', auth_views.LoginView.as_view(
-            template_name = 'library/user_login.html', next_page = 'library:index'
-        ), name='user-login'
+        'login/', library_views.UserLoginView.as_view(), name='user-login'
     ),
     path(
-        'logout/', auth_views.LogoutView.as_view(
-            template_name = 'library/user_logout.html'
-        ), name='user-logout'
+        'logout/', library_views.UserLogoutView.as_view(), name='user-logout'
     ),
 ]
