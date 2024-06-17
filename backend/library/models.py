@@ -4,7 +4,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 
-from .managers import CustomArticleManager, CustomAccountManager
+from .managers import CustomArticleManager, CustomAuthorManager
 
 
 class Article(models.Model):
@@ -55,7 +55,7 @@ class Author(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
 
-    objects = CustomAccountManager()
+    objects = CustomAuthorManager()
     
     USERNAME_FIELD = 'user_name'
     REQUIRED_FIELDS = ['email']
