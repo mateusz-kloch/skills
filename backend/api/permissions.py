@@ -2,15 +2,26 @@ from django.contrib.auth.models import AnonymousUser
 from rest_framework import permissions
 
 
-class IsOwnerOrReadOnly(permissions.BasePermission):
+class ArticleIsOwnerOrReadOnly(permissions.BasePermission):
     """
-    Ensures that only author of an object can manage it.
+    Ensures that only author of an Article object can manage it.
     """
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
         else:
             return obj.author == request.user
+        
+
+class AuthorIsSelfOrReadOnly(permissions.BasePermission):
+    """
+    Ensures that only author himself can manage his data.
+    """
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        else:
+            return obj == request.user
         
 
 class IsStaffOrReadOnly(permissions.BasePermission):
