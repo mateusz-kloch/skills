@@ -1,8 +1,10 @@
+from django.contrib.auth import views as auth_views
 from django.http import Http404
 from django.views import generic
 from django.urls import reverse_lazy
 
 from .forms import UserRegisterForm
+from .mixins import RedirectAuthenticatedUserMixin, RedirectUnAuthenticatedUserMixin
 from .models import Article, Author, Tag
 
 
@@ -86,7 +88,7 @@ class TagDetailView(generic.DetailView):
         return context
     
 
-class UserRegisterView(generic.FormView):
+class UserRegisterView(generic.FormView, RedirectAuthenticatedUserMixin):
     form_class = UserRegisterForm
     template_name = 'library/user_register.html'
     success_url = reverse_lazy('library:user-login')
@@ -96,3 +98,12 @@ class UserRegisterView(generic.FormView):
         user.set_password(form.cleaned_data['password'])
         user.save()
         return super().form_valid(form)
+
+
+class UserLoginView(auth_views.LoginView, RedirectAuthenticatedUserMixin):
+    template_name = 'library/user_login.html'
+    next_page = 'library:index'
+
+
+class UserLogoutView(auth_views.LogoutView, RedirectUnAuthenticatedUserMixin):
+    template_name = 'library/user_logout.html'
