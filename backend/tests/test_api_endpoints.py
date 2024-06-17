@@ -68,6 +68,16 @@ class SetUpData(APITestCase):
             'email': 'new_author@ex.com',
             'password': 'woeiuhtg9823y',
         }
+
+        self.updated_author_data = {
+            'user_name': 'new_user_name',
+            'email': 'new_email@ex.com',
+            'password': 'n3wpa55w0r0'
+        }
+
+        self.changed_author_username = {
+            'user_name': 'changed_user_name'
+        }
         
         self.repeatitive_user_name = 'author'
         self.repeatitive_email = 'author@ex.com'
@@ -177,6 +187,78 @@ class AuthorDetailEndpointTests(SetUpData):
         response = self.client.get(f'{self.url_author_list}{self.author.slug}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, self.serialized_author)
+
+    def test_put_new_data_by_user_himself(self):
+        """
+        Checks auhtor detail endpoint response for put new data by himself.
+        """
+        self.client.login(username=self.author.user_name, password='wao7984v')
+        response = self.client.put(f'{self.url_author_list}{self.author.slug}/', self.new_author_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Author.objects.get(pk=self.author.id).user_name, self.new_author_data['user_name'])
+
+    def test_put_new_data_by_other_user(self):
+        """
+        Checks auhtor detail endpoint response for put new data by not user himself.
+        """
+        self.client.login(username=self.another_author, password='28h4t032')
+        response = self.client.put(f'{self.url_author_list}{self.author.slug}/', self.new_author_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_put_new_data_by_anonymous_user(self):
+        """
+        Checks auhtor detail endpoint response for put new data by not logged in user.
+        """
+        response = self.client.put(f'{self.url_author_list}{self.author.slug}/', self.new_author_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_patch_data_by_user_himself(self):
+        """
+        Checks auhtor detail endpoint response for patch data by himself.
+        """
+        self.client.login(username=self.author.user_name, password='wao7984v')
+        response = self.client.patch(f'{self.url_author_list}{self.author.slug}/', self.changed_author_username, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Author.objects.get(pk=self.author.id).user_name, self.changed_author_username['user_name'])
+
+    def test_patch_data_by_other_user(self):
+        """
+        Checks auhtor detail endpoint response for patch data by not user himself.
+        """
+        self.client.login(username=self.another_author, password='28h4t032')
+        response = self.client.patch(f'{self.url_author_list}{self.author.slug}/', self.changed_author_username, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_patch_data_by_anonymous_user(self):
+        """
+        Checks auhtor detail endpoint response for patch data by not logged in user.
+        """
+        response = self.client.patch(f'{self.url_author_list}{self.author.slug}/', self.changed_author_username, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_delete_data_by_user_himself(self):
+        """
+        Checks auhtor detail endpoint response for delete data by himself.
+        """
+        self.client.login(username=self.author.user_name, password='wao7984v')
+        response = self.client.delete(f'{self.url_author_list}{self.author.slug}/')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertNotIn(self.author, Author.objects.all())
+
+    def test_delete_data_by_other_user(self):
+        """
+        Checks auhtor detail endpoint response for delete data by not user himself.
+        """
+        self.client.login(username=self.another_author, password='28h4t032')
+        response = self.client.delete(f'{self.url_author_list}{self.author.slug}/')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_delete_data_by_anonymous_user(self):
+        """
+        Checks auhtor detail endpoint response for delete data by not logged in user.
+        """
+        response = self.client.delete(f'{self.url_author_list}{self.author.slug}/')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class TagListEndpointTests(SetUpData):
