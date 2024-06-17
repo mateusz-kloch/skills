@@ -88,7 +88,7 @@ class TagDetailView(generic.DetailView):
         return context
     
 
-class UserRegisterView(generic.FormView, RedirectAuthenticatedUserMixin):
+class UserRegisterView(RedirectAuthenticatedUserMixin, generic.FormView):
     form_class = UserRegisterForm
     template_name = 'library/user_register.html'
     success_url = reverse_lazy('library:user-login')
@@ -100,10 +100,10 @@ class UserRegisterView(generic.FormView, RedirectAuthenticatedUserMixin):
         return super().form_valid(form)
 
 
-class UserLoginView(auth_views.LoginView, RedirectAuthenticatedUserMixin):
+class UserLoginView(RedirectAuthenticatedUserMixin, auth_views.LoginView):
     template_name = 'library/user_login.html'
     next_page = 'library:index'
 
 
-class UserLogoutView(auth_views.LogoutView, RedirectUnAuthenticatedUserMixin):
+class UserLogoutView(RedirectUnAuthenticatedUserMixin, auth_views.LogoutView):
     template_name = 'library/user_logout.html'
