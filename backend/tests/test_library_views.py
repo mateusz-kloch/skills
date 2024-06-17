@@ -11,15 +11,18 @@ from library.models import Article, Author, Tag
 class SetUpData(TestCase):
 
     def setUp(self):
-        self.expect_index_template = 'library/index.html'
-        self.expect_article_list_template = 'library/article_list.html'
-        self.expect_article_detail_template = 'library/article_detail.html'
-        self.expect_author_list_template = 'library/author_list.html'
-        self.expect_author_detail_template = 'library/author_detail.html'
-        self.expect_tag_list_template = 'library/tag_list.html'
-        self.expect_tag_detail_template = 'library/tag_detail.html'
+        self.index_template = 'library/index.html'
+        self.article_list_template = 'library/article_list.html'
+        self.article_detail_template = 'library/article_detail.html'
+        self.author_list_template = 'library/author_list.html'
+        self.author_detail_template = 'library/author_detail.html'
+        self.tag_list_template = 'library/tag_list.html'
+        self.tag_detail_template = 'library/tag_detail.html'
+        self.user_register_template = 'library/user_register.html'
+        self.user_login_template = 'library/user_login.html'
+        self.user_logout_template = 'library/user_logout.html'
         
-        self.index_url = ''
+        self.index_url = 'library:index'
         self.article_list_url = 'library:article-list'
         self.article_detail_url = 'library:article-detail'
         self.author_list_url = 'library:author-list'
@@ -27,6 +30,8 @@ class SetUpData(TestCase):
         self.tag_list_url = 'library:tag-list'
         self.tag_detail_url = 'library:tag-detail'
         self.user_register_url = 'library:user-register'
+        self.user_login_url = 'library:user-login'
+        self.user_logout_url = 'library:user-logout'
         
         self.author = create_author('author', '48s5tb4w3')
 
@@ -54,6 +59,11 @@ class SetUpData(TestCase):
             'password2': '4qa6gtv8o4'
         }
 
+        self.user_login_data = {
+            'user_name': 'author',
+            'password': '48s5tb4w3'
+        }
+
 
 class IndexViewTests(SetUpData):
 
@@ -61,9 +71,9 @@ class IndexViewTests(SetUpData):
         """
         Checks whether index page uses correct template.
         """
-        response = self.client.get(self.index_url)
+        response = self.client.get(reverse(self.index_url))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, self.expect_index_template)
+        self.assertTemplateUsed(response, self.index_template)
 
 
 class ArticleListViewTests(SetUpData):
@@ -73,7 +83,7 @@ class ArticleListViewTests(SetUpData):
         Checks whether ArticleListView uses correct template.
         """
         response = self.client.get(reverse(self.article_list_url))
-        self.assertTemplateUsed(response, self.expect_article_list_template)
+        self.assertTemplateUsed(response, self.article_list_template)
 
     def test_no_articles(self):
         """
@@ -157,7 +167,7 @@ class ArticleDetailViewTests(SetUpData):
         Checks whether ArticleDetailView uses correct template.
         """
         response = self.client.get(reverse(self.article_detail_url, args=(self.past_article.slug,)))
-        self.assertTemplateUsed(response, self.expect_article_detail_template)
+        self.assertTemplateUsed(response, self.article_detail_template)
 
     def test_past_article(self):
         """
@@ -224,7 +234,7 @@ class AuthorListViewTests(SetUpData):
         Checks whether AuthorListView uses correct template.
         """
         response = self.client.get(reverse(self.author_list_url))
-        self.assertTemplateUsed(response, self.expect_author_list_template)
+        self.assertTemplateUsed(response, self.author_list_template)
     
     def test_no_authors(self):
         """
@@ -247,7 +257,7 @@ class AuthorDetailViewTests(SetUpData):
         Checks whether AuthorDetailView uses correct template.
         """
         response = self.client.get(reverse(self.author_detail_url, args=(self.author.slug,)))
-        self.assertTemplateUsed(response, self.expect_author_detail_template)
+        self.assertTemplateUsed(response, self.author_detail_template)
 
     def test_author_data(self):
         """
@@ -342,7 +352,7 @@ class TagListViewTests(SetUpData):
         Checks whether TagListView uses correct template.
         """
         response = self.client.get(reverse(self.tag_list_url))
-        self.assertTemplateUsed(response, self.expect_tag_list_template)
+        self.assertTemplateUsed(response, self.tag_list_template)
 
     def test_no_tags(self):
         """
@@ -364,7 +374,7 @@ class TagDetailViewTests(SetUpData):
         Checks whether TagDetailView uses correct template.
         """
         response = self.client.get(reverse(self.tag_detail_url, args=(self.tag.slug,)))
-        self.assertTemplateUsed(response, self.expect_tag_detail_template)
+        self.assertTemplateUsed(response, self.tag_detail_template)
 
     def test_tag_data(self):
         """
@@ -432,6 +442,14 @@ class TagDetailViewTests(SetUpData):
 
 class UserRegisterViewTests(SetUpData):
 
+    def test_templated_used(self):
+        """
+        Checks UserRegisterView templated used.
+        """
+        response = self.client.get(reverse(self.user_register_url))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, self.user_register_template)
+    
     def test_new_user(self):
         """
         Checks whether UserRegisterView adds new user.
@@ -439,3 +457,67 @@ class UserRegisterViewTests(SetUpData):
         response = self.client.post(reverse(self.user_register_url), self.new_user_data)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(Author.objects.get(user_name=self.new_user_data['user_name']))
+
+    def test_already_logged_in_user(self):
+        """
+        Checks whether UserRegisterView redirects user that is already logged in.
+        """
+        login = self.client.login(username=self.author.user_name, password='48s5tb4w3')
+        self.assertTrue(login)
+        response = self.client.get(reverse(self.user_register_url))
+        self.assertRedirects(response, reverse(self.index_url))
+
+
+class UserLoginViewTests(SetUpData):
+
+    def test_template_used(self):
+        """
+        Checks UserLoginView templated used.
+        """
+        response = self.client.get(reverse(self.user_login_url))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, self.user_login_template)
+
+    def test_login(self):
+        """
+        Check whether UserLoginView logins users.
+        """
+        response = self.client.post(reverse(self.user_login_url), self.user_login_data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_already_logged_in_user(self):
+        """
+        Checks whether UserLoginView redirects user that is already logged in.
+        """
+        login = self.client.login(username=self.author.user_name, password='48s5tb4w3')
+        self.assertTrue(login)
+        response = self.client.post(reverse(self.user_login_url), self.user_login_data)
+        self.assertRedirects(response, reverse(self.index_url))
+
+class UserLogoutViewTests(SetUpData):
+
+    def test_templated_used(self):
+        """
+        Checks UserLogoutView templated used.
+        """
+        login = self.client.login(username=self.author.user_name, password='48s5tb4w3')
+        self.assertTrue(login)
+        response = self.client.post(reverse(self.user_logout_url))
+        self.assertTemplateUsed(response, self.user_logout_template)
+
+    def test_logout(self):
+        """
+        Checks whether UserLogoutView logouts users.
+        """
+        login = self.client.login(username=self.author.user_name, password='48s5tb4w3')
+        self.assertTrue(login)
+        response = self.client.post(reverse(self.user_logout_url))
+        self.assertEqual(response.status_code, 200)
+
+
+    def test_not_logged_in_user(self):
+        """
+        Checks whether UserLogoutView redirects user that is not logged in.
+        """
+        response = self.client.post(reverse(self.user_logout_url))
+        self.assertRedirects(response, reverse(self.index_url))
