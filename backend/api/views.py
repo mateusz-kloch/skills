@@ -3,9 +3,10 @@ from rest_framework import permissions
 from rest_framework import viewsets
 
 from .permissions import (
+    ArticleIsOwnerOrReadOnly,
+    AuthorIsSelfOrReadOnly,
     IsStaffOrReadOnly,
     IsAnonymousOrNotAllowed,
-    IsOwnerOrReadOnly,
 )
 from .serializers import (
     AuthorSerializer,
@@ -20,34 +21,32 @@ class ArticleViewSet(viewsets.ModelViewSet):
     Allows anyone to display published articles and
     to create a new article by logged in User.
     
-    Uses custom permission `IsOwnerOrReadOnly` that allows only
+    Uses custom permission `ArticleIsOwnerOrReadOnly` that allows only
     author of an article to edit it.
     """
     queryset = Article.verified_objects.all()
     serializer_class = ArticleSerializer
     lookup_field = 'slug'
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly
+        permissions.IsAuthenticatedOrReadOnly, ArticleIsOwnerOrReadOnly
     ]
 
 
-class AuthorViewSet(
-    mixins.ListModelMixin,
-    mixins.RetrieveModelMixin,
-    mixins.CreateModelMixin,
-    viewsets.GenericViewSet
-):
+class AuthorViewSet(viewsets.ModelViewSet):
     """
     Allows anyone to display users and
     to create a new account by anonymous visitors.
 
     Uses custom permission `IsAnonymousOrNotAllowed` that allows only
     not logged in user to create an account.
+
+    Uses custom permission `AuthorIsSelfOrReadOnly` that allows only
+    a user to manage his personal data.
     """
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
     lookup_field = 'slug'
-    permission_classes = [IsAnonymousOrNotAllowed]
+    permission_classes = [IsAnonymousOrNotAllowed, AuthorIsSelfOrReadOnly]
 
 
 class TagViewSet(viewsets.ModelViewSet):
