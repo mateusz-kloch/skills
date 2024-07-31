@@ -1,7 +1,7 @@
 # SKILLS
 
 ## A platform to share knowledge!
-This platform consists both Django app and API service.
+This blog platform consists both Django app and API service.
 
 ### Repository layout:
 ```
@@ -51,3 +51,4 @@ This platform consists both Django app and API service.
 │   └── requirements.txt
 └── README.md
 ```
+A default avatar image by [raphaelsilva](https://pixabay.com/users/raphaelsilva-4702998/) comes from [pixabay](https://pixabay.com/).
