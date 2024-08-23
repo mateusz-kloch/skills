@@ -1,6 +1,5 @@
 from datetime import timedelta
 
-from django.test import tag
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
